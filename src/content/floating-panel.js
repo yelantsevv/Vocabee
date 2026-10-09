@@ -77,9 +77,22 @@
   }
 
   function applyState() {
+    const maxWidth = Math.max(1, window.innerWidth - 16);
+    const maxHeight = Math.max(1, window.innerHeight - 16);
+    if (Number.isFinite(panelState.width)) {
+      panelState.width = Math.max(Math.min(280, maxWidth), Math.min(panelState.width, maxWidth));
+    }
+    if (Number.isFinite(panelState.height)) {
+      panelState.height = Math.max(Math.min(200, maxHeight), Math.min(panelState.height, maxHeight));
+    }
     panel.hidden = false;
     panel.style.visibility = panelState.visible ? '' : 'hidden';
     panel.classList.toggle('is-minimized', panelState.minimized);
+    panel.classList.toggle('has-custom-size', Number.isFinite(panelState.width) && Number.isFinite(panelState.height));
+    panel.style.width = Number.isFinite(panelState.width) ? `${panelState.width}px` : '';
+    panel.style.height = !panelState.minimized && Number.isFinite(panelState.height)
+      ? `${panelState.height}px`
+      : '';
     panel.style.left = `${panelState.x}px`;
     panel.style.top = `${panelState.y}px`;
     const position = clampPosition(panelState.x, panelState.y);
@@ -188,7 +201,10 @@
           </p>
         </section>
         <section class="vocabee-panel-view" data-panel-content="dictionary">
-          <h2 class="vocabee-dictionary-title">Мой словарь</h2>
+          <div class="vocabee-dictionary-heading">
+            <h2 class="vocabee-dictionary-title">Мой словарь</h2>
+            <p class="vocabee-dictionary-language-pair"></p>
+          </div>
           <div class="vocabee-dictionary">
             <p class="vocabee-dictionary-status" role="status" aria-live="polite">Загружаю словарь…</p>
             <ul class="vocabee-dictionary-list"></ul>
@@ -196,6 +212,7 @@
           <p class="vocabee-dictionary-hint">Добавляй слова из карточки перевода на YouTube.</p>
         </section>
       </div>
+      <div class="vocabee-panel-resize-handle" role="separator" aria-label="Изменить размер панели" title="Перетащите, чтобы изменить размер"></div>
     `;
     document.body.appendChild(panel);
 
@@ -298,6 +315,48 @@
       saveState();
     });
 
+    const resizeHandle = panel.querySelector('.vocabee-panel-resize-handle');
+    let resizeOrigin;
+    resizeHandle.addEventListener('pointerdown', (event) => {
+      if (panelState.minimized) return;
+      const bounds = panel.getBoundingClientRect();
+      resizeOrigin = {
+        pointerX: event.clientX,
+        pointerY: event.clientY,
+        width: bounds.width,
+        height: bounds.height
+      };
+      resizeHandle.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    resizeHandle.addEventListener('pointermove', (event) => {
+      if (!resizeOrigin || !resizeHandle.hasPointerCapture(event.pointerId)) return;
+      const maxWidth = Math.max(1, window.innerWidth - 16);
+      const maxHeight = Math.max(1, window.innerHeight - 16);
+      panelState.width = Math.max(
+        Math.min(280, maxWidth),
+        Math.min(maxWidth, resizeOrigin.width + event.clientX - resizeOrigin.pointerX)
+      );
+      panelState.height = Math.max(
+        Math.min(200, maxHeight),
+        Math.min(maxHeight, resizeOrigin.height + event.clientY - resizeOrigin.pointerY)
+      );
+      applyState();
+      event.stopPropagation();
+    });
+    const finishResize = (event) => {
+      if (!resizeOrigin) return;
+      resizeOrigin = null;
+      if (resizeHandle.hasPointerCapture(event.pointerId)) {
+        resizeHandle.releasePointerCapture(event.pointerId);
+      }
+      saveState();
+      event.stopPropagation();
+    };
+    resizeHandle.addEventListener('pointerup', finishResize);
+    resizeHandle.addEventListener('pointercancel', finishResize);
+
     for (const eventName of ['pointerdown', 'pointerup', 'click', 'dblclick']) {
       panel.addEventListener(eventName, (event) => event.stopPropagation());
     }
@@ -306,7 +365,15 @@
   function renderDictionary(words) {
     const list = panel.querySelector('.vocabee-dictionary-list');
     const status = panel.querySelector('.vocabee-dictionary-status');
+    const languagePair = panel.querySelector('.vocabee-dictionary-language-pair');
     list.replaceChildren();
+
+    const languagePairs = words.length
+      ? [...new Set(words.map((word) =>
+          `${app.languageNames[word.sourceLang] || word.sourceLang} → ${app.languageNames[word.targetLang] || word.targetLang}`
+        ))]
+      : [`${app.languageNames[app.detectedCaptionLanguage || app.state.sourceLang] || app.detectedCaptionLanguage || app.state.sourceLang} → ${app.languageNames[app.state.lang] || app.state.lang}`];
+    languagePair.textContent = languagePairs.join(' · ');
 
     if (words.length === 0) {
       status.textContent = 'Пока нет сохранённых слов. Добавляй их из карточки перевода.';
@@ -333,7 +400,7 @@
       details.className = 'vocabee-dictionary-details';
       const date = new Intl.DateTimeFormat('ru', { day: 'numeric', month: 'short' })
         .format(new Date(word.addedAt));
-      details.textContent = `${app.languageNames[word.sourceLang] || word.sourceLang} → ${app.languageNames[word.targetLang] || word.targetLang} · ${date}`;
+      details.textContent = date;
 
       pair.append(source, translated);
       item.append(pair, details);
@@ -394,6 +461,8 @@
     panelState = {
       ...panelState,
       ...savedState,
+      width: Number.isFinite(savedState.width) ? savedState.width : undefined,
+      height: Number.isFinite(savedState.height) ? savedState.height : undefined,
       activeView: savedState.activeView === 'settings' ? 'settings' : 'dictionary',
       ...(isOldDefaultPosition ? getDefaultPosition() : {})
     };
