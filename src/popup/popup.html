@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vocabee</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <h1>Vocabee</h1>
+      <p class="brand-note">Создано с помощью ИИ · бесплатно</p>
+      <label class="row">
+        <input type="checkbox" id="enabled" checked />
+        <span>Включить перевод</span>
+      </label>
+
+      <div class="row">
+        <span>Язык субтитров</span>
+        <strong id="source-language">Определяется…</strong>
+      </div>
+
+      <label class="row" for="lang">
+        <span>Переводить на</span>
+        <select id="lang">
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+          <option value="uk">Українська</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
+
+      <p class="hint">Поддерживаются английские и немецкие субтитры. По умолчанию перевод — на русский.</p>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

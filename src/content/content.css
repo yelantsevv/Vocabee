@@ -1,0 +1,171 @@
+.vocabee-word {
+  display: inline;
+  border-radius: 4px;
+  padding: 1px 2px;
+  background: rgba(59, 130, 246, 0.14);
+  color: #dbeafe;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vocabee-word:hover {
+  background: rgba(59, 130, 246, 0.26);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.7);
+}
+
+#vocabee-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  width: min(360px, calc(100vw - 24px));
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  background: #fff;
+  color: #202124;
+  border: 1px solid #dadce0;
+  box-shadow: 0 8px 28px rgba(60, 64, 67, 0.3);
+  font: 14px/1.5 Arial, sans-serif;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  white-space: normal;
+  overflow-y: auto;
+}
+
+#vocabee-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#vocabee-tooltip .vocabee-panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+#vocabee-tooltip .vocabee-language,
+#vocabee-tooltip .vocabee-panel-footer {
+  color: #5f6368;
+  font-size: 12px;
+}
+
+#vocabee-tooltip .vocabee-language span {
+  color: #1a73e8;
+  padding: 0 4px;
+}
+
+#vocabee-tooltip .vocabee-target-language {
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  background: #fff;
+  color: #5f6368;
+  font: inherit;
+  padding: 3px 6px;
+}
+
+#vocabee-tooltip .vocabee-title {
+  margin-top: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+#vocabee-tooltip .vocabee-word-row,
+#vocabee-tooltip .vocabee-translation-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#vocabee-tooltip .vocabee-pronunciation {
+  color: #5f6368;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+#vocabee-tooltip .vocabee-close,
+#vocabee-tooltip .vocabee-copy,
+#vocabee-tooltip .vocabee-add-to-dictionary {
+  border: 0;
+  background: transparent;
+  color: #5f6368;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+#vocabee-tooltip .vocabee-close {
+  font-size: 22px;
+  line-height: 1;
+  align-self: flex-start;
+}
+
+#vocabee-tooltip .vocabee-close:hover,
+#vocabee-tooltip .vocabee-copy:hover,
+#vocabee-tooltip .vocabee-add-to-dictionary:hover,
+#vocabee-tooltip .vocabee-speak:hover {
+  background: #f1f3f4;
+}
+
+#vocabee-tooltip .vocabee-translation {
+  color: #188038;
+  font-size: 19px;
+  padding: 14px 0;
+}
+
+#vocabee-tooltip .vocabee-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid #e8eaed;
+  padding-top: 10px;
+  margin-top: 12px;
+}
+
+#vocabee-tooltip .vocabee-copy,
+#vocabee-tooltip .vocabee-add-to-dictionary {
+  color: #1a73e8;
+  font-size: 12px;
+}
+
+#vocabee-tooltip .vocabee-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#vocabee-tooltip .vocabee-speak {
+  border: 0;
+  flex: 0 0 auto;
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: transparent;
+  color: #1a73e8;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#vocabee-tooltip .vocabee-speak:disabled,
+#vocabee-tooltip .vocabee-copy:disabled,
+#vocabee-tooltip .vocabee-add-to-dictionary:disabled {
+  color: #9aa0a6;
+  cursor: default;
+}
+
+#vocabee-tooltip button:focus-visible {
+  outline: 2px solid #1a73e8;
+}
+
+#ytp-caption-window-container,
+#ytp-caption-window-container .caption-window,
+#ytp-caption-window-container .captions-text,
+#ytp-caption-window-container .caption-visual-line,
+#ytp-caption-window-container .ytp-caption-segment,
+#ytp-caption-window-container .vocabee-word {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-user-drag: none !important;
+}
