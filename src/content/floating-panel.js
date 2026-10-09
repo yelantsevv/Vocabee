@@ -103,9 +103,10 @@
           <span>Мой словарь</span>
           <span class="vocabee-panel-arrow" aria-hidden="true">→</span>
         </button>
-        <p class="vocabee-panel-message" role="status" hidden>
-          Словарь скоро появится. Сохранение слов пока в разработке.
-        </p>
+        <section class="vocabee-dictionary" aria-label="Сохранённые слова" hidden>
+          <p class="vocabee-dictionary-status" role="status" aria-live="polite">Загружаю словарь…</p>
+          <ul class="vocabee-dictionary-list"></ul>
+        </section>
         <p class="vocabee-panel-footer">
           Поддерживаются английские и немецкие субтитры
         </p>
@@ -132,7 +133,9 @@
     });
 
     panel.querySelector('.vocabee-panel-dictionary').addEventListener('click', () => {
-      panel.querySelector('.vocabee-panel-message').hidden = false;
+      const dictionary = panel.querySelector('.vocabee-dictionary');
+      dictionary.hidden = !dictionary.hidden;
+      if (!dictionary.hidden) loadDictionary();
     });
     panel.querySelector('.vocabee-panel-minimize').addEventListener('click', () => {
       panelState.minimized = !panelState.minimized;
@@ -184,6 +187,69 @@
       panel.addEventListener(eventName, (event) => event.stopPropagation());
     }
   }
+
+  function renderDictionary(words) {
+    const list = panel.querySelector('.vocabee-dictionary-list');
+    const status = panel.querySelector('.vocabee-dictionary-status');
+    list.replaceChildren();
+
+    if (words.length === 0) {
+      status.textContent = 'Пока нет сохранённых слов. Добавляй их из карточки перевода.';
+      return;
+    }
+
+    status.textContent = `Сохранено слов: ${words.length}`;
+    for (const word of words) {
+      const item = document.createElement('li');
+      item.className = 'vocabee-dictionary-item';
+
+      const pair = document.createElement('div');
+      pair.className = 'vocabee-dictionary-pair';
+
+      const source = document.createElement('strong');
+      source.className = 'vocabee-dictionary-source';
+      source.textContent = word.sourceText;
+
+      const translated = document.createElement('span');
+      translated.className = 'vocabee-dictionary-translation';
+      translated.textContent = word.translatedText;
+
+      const details = document.createElement('small');
+      details.className = 'vocabee-dictionary-details';
+      const date = new Intl.DateTimeFormat('ru', { day: 'numeric', month: 'short' })
+        .format(new Date(word.addedAt));
+      details.textContent = `${app.languageNames[word.sourceLang] || word.sourceLang} → ${app.languageNames[word.targetLang] || word.targetLang} · ${date}`;
+
+      pair.append(source, translated);
+      item.append(pair, details);
+      list.append(item);
+    }
+  }
+
+  function loadDictionary() {
+    const status = panel.querySelector('.vocabee-dictionary-status');
+    const list = panel.querySelector('.vocabee-dictionary-list');
+    status.textContent = 'Загружаю словарь…';
+    list.replaceChildren();
+
+    chrome.runtime.sendMessage({ type: 'GET_DICTIONARY_WORDS' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Vocabee: could not request dictionary', chrome.runtime.lastError.message);
+        status.textContent = 'Не удалось загрузить словарь. Попробуйте открыть его снова.';
+        return;
+      }
+      if (!response?.ok) {
+        console.error('Vocabee: dictionary request failed', response?.error);
+        status.textContent = response?.error || 'Не удалось загрузить словарь.';
+        return;
+      }
+      renderDictionary(response.words);
+    });
+  }
+
+  app.refreshDictionaryView = function () {
+    if (!panel.querySelector('.vocabee-dictionary').hidden) loadDictionary();
+  };
 
   function togglePanel(sendResponse) {
     if (panelState.visible && !panelState.minimized) {

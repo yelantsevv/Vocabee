@@ -36,10 +36,51 @@
         <span>${loading ? 'Запрос к Google Translate' : 'Vocabee'}</span>
         <div class="vocabee-actions">
           <button class="vocabee-copy" type="button" ${loading ? 'disabled' : ''}>Копировать</button>
-          <button class="vocabee-add-to-dictionary" type="button" ${loading ? 'disabled' : ''}>Добавить в словарь</button>
+          <button class="vocabee-add-to-dictionary" type="button" ${loading || !hasTranslation ? 'disabled' : ''}>Добавить в словарь</button>
+          <span class="vocabee-save-feedback" role="status" aria-live="polite"></span>
         </div>
       </footer>
     `;
+  }
+
+  function addToDictionary(tooltip, button) {
+    const sourceText = tooltip.querySelector('.vocabee-title')?.textContent?.trim() || '';
+    const translatedText = tooltip.querySelector('.vocabee-translation')?.textContent?.trim() || '';
+    const feedback = tooltip.querySelector('.vocabee-save-feedback');
+    const originalLabel = 'Добавить в словарь';
+
+    button.disabled = true;
+    button.textContent = 'Сохраняю…';
+    feedback.textContent = '';
+
+    chrome.runtime.sendMessage({
+      type: 'ADD_DICTIONARY_WORD',
+      word: {
+        sourceText,
+        translatedText,
+        sourceLang: app.state.sourceLang,
+        targetLang: app.state.lang
+      }
+    }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Vocabee: could not send dictionary request', chrome.runtime.lastError.message);
+        button.disabled = false;
+        button.textContent = originalLabel;
+        feedback.textContent = 'Не удалось связаться с Vocabee. Попробуйте ещё раз.';
+        return;
+      }
+
+      if (!response?.ok) {
+        button.disabled = false;
+        button.textContent = originalLabel;
+        feedback.textContent = response?.error || 'Не удалось сохранить слово.';
+        return;
+      }
+
+      button.textContent = response.duplicate ? 'Уже в словаре ✓' : 'Добавлено ✓';
+      feedback.textContent = response.duplicate ? 'Это слово уже сохранено.' : 'Слово сохранено.';
+      app.refreshDictionaryView?.();
+    });
   }
 
   function speakText(text, language) {
@@ -124,6 +165,11 @@
             console.warn('Vocabee: could not copy translation', error);
           });
         }
+        return;
+      }
+      const addButton = event.target.closest('.vocabee-add-to-dictionary');
+      if (addButton && !addButton.disabled) {
+        addToDictionary(tooltip, addButton);
         return;
       }
       if (event.target.closest('.vocabee-target-language')) return;
