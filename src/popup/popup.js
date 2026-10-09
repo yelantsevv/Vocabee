@@ -3,6 +3,8 @@ const storage = chrome.storage.sync || chrome.storage.local;
 const enabledInput = document.getElementById('enabled');
 const langSelect = document.getElementById('lang');
 const sourceLanguage = document.getElementById('source-language');
+const dictionaryButton = document.getElementById('dictionary-button');
+const dictionaryMessage = document.getElementById('dictionary-message');
 
 function loadSettings() {
   storage.get({ enabled: true, lang: 'ru' }, (result) => {
@@ -35,5 +37,8 @@ function saveSettings() {
 
 enabledInput.addEventListener('change', saveSettings);
 langSelect.addEventListener('change', saveSettings);
+dictionaryButton.addEventListener('click', () => {
+  dictionaryMessage.hidden = false;
+});
 
 loadSettings();

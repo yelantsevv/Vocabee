@@ -25,7 +25,7 @@
   border: 1px solid #dadce0;
   box-shadow: 0 8px 28px rgba(60, 64, 67, 0.3);
   font: 14px/1.5 Arial, sans-serif;
-  pointer-events: auto;
+  pointer-events: none;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.16s ease, transform 0.16s ease;
@@ -36,6 +36,7 @@
 #vocabee-tooltip.visible {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 #vocabee-tooltip .vocabee-panel-header {

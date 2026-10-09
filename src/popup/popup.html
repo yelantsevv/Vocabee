@@ -8,29 +8,59 @@
   </head>
   <body>
     <div class="popup">
-      <h1>Vocabee</h1>
-      <p class="brand-note">Создано с помощью ИИ · бесплатно</p>
-      <label class="row">
-        <input type="checkbox" id="enabled" checked />
-        <span>Включить перевод</span>
-      </label>
+      <header class="brand">
+        <img class="brand-icon" src="../icons/vocabee.svg" alt="" />
+        <div class="brand-copy">
+          <h1>Vocabee</h1>
+          <p>Слова, которые остаются с тобой</p>
+        </div>
+        <span class="free-badge">FREE</span>
+      </header>
 
-      <div class="row">
-        <span>Язык субтитров</span>
-        <strong id="source-language">Определяется…</strong>
+      <section class="settings-card" aria-label="Настройки перевода">
+        <label class="setting-row toggle-row" for="enabled">
+          <span class="setting-copy">
+            <strong>Перевод</strong>
+            <small>Слова и фразы на YouTube</small>
+          </span>
+          <input type="checkbox" id="enabled" checked />
+          <span class="toggle" aria-hidden="true"></span>
+        </label>
+
+        <div class="setting-row language-row">
+          <span class="setting-copy">
+            <strong>Язык субтитров</strong>
+            <small>Определяется автоматически</small>
+          </span>
+          <span class="language-value" id="source-language">Определяется…</span>
+        </div>
+
+        <label class="setting-row target-row" for="lang">
+          <span class="setting-copy">
+            <strong>Переводить на</strong>
+          </span>
+          <select id="lang" aria-label="Язык перевода">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+            <option value="uk">Українська</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </label>
+      </section>
+
+      <button class="dictionary-button" id="dictionary-button" type="button">
+        <span class="dictionary-icon" aria-hidden="true">✦</span>
+        <span>Мой словарь</span>
+        <span class="button-arrow" aria-hidden="true">→</span>
+      </button>
+      <p class="dictionary-message" id="dictionary-message" role="status" hidden>
+        Словарь скоро появится. Сохранение слов пока в разработке.
+      </p>
+
+      <div class="footer">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Поддерживаются английские и немецкие субтитры</span>
       </div>
-
-      <label class="row" for="lang">
-        <span>Переводить на</span>
-        <select id="lang">
-          <option value="ru">Русский</option>
-          <option value="en">English</option>
-          <option value="uk">Українська</option>
-          <option value="de">Deutsch</option>
-        </select>
-      </label>
-
-      <p class="hint">Поддерживаются английские и немецкие субтитры. По умолчанию перевод — на русский.</p>
     </div>
 
     <script type="module" src="popup.js"></script>

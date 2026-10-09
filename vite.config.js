@@ -16,8 +16,19 @@ function copyExtensionRuntime() {
         resolve(outputDirectory, 'content'),
         { recursive: true }
       );
+      cpSync(
+        resolve(sourceDirectory, 'icons'),
+        resolve(outputDirectory, 'icons'),
+        { recursive: true }
+      );
       const manifest = JSON.parse(readFileSync(resolve(projectRoot, 'manifest.json'), 'utf8'));
       manifest.action.default_popup = manifest.action.default_popup.replace(/^src\//, '');
+      manifest.icons = Object.fromEntries(
+        Object.entries(manifest.icons).map(([size, file]) => [size, file.replace(/^src\//, '')])
+      );
+      manifest.action.default_icon = Object.fromEntries(
+        Object.entries(manifest.action.default_icon).map(([size, file]) => [size, file.replace(/^src\//, '')])
+      );
       manifest.content_scripts = manifest.content_scripts.map((contentScript) => ({
         ...contentScript,
         css: contentScript.css.map((file) => file.replace(/^src\//, '')),
