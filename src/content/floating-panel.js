@@ -11,6 +11,7 @@
   let panelState = {
     visible: false,
     minimized: false,
+    activeView: 'dictionary',
     ...getDefaultPosition()
   };
   let positionSaveTimer;
@@ -33,6 +34,9 @@
     panelState = { ...panelState, ...position };
     panel.style.left = `${panelState.x}px`;
     panel.style.top = `${panelState.y}px`;
+    panel.querySelectorAll('[data-panel-content]').forEach((view) => {
+      view.hidden = view.dataset.panelContent !== panelState.activeView;
+    });
     panel.hidden = !panelState.visible;
     panel.style.visibility = '';
     panel.querySelector('.vocabee-panel-minimize').setAttribute(
@@ -40,6 +44,10 @@
       panelState.minimized ? 'Развернуть панель' : 'Свернуть панель'
     );
     panel.querySelector('.vocabee-panel-minimize').textContent = panelState.minimized ? '+' : '−';
+    panel.querySelectorAll('[data-panel-target]').forEach((button) => {
+      const isActive = button.dataset.panelTarget === panelState.activeView;
+      button.setAttribute('aria-pressed', String(isActive));
+    });
   }
 
   function saveState() {
@@ -69,47 +77,56 @@
     panel.hidden = true;
     panel.innerHTML = `
       <header class="vocabee-floating-header">
-        <span class="vocabee-panel-brand-mark" aria-hidden="true">V</span>
-        <span class="vocabee-panel-brand">Vocabee</span>
+        <button class="vocabee-panel-home" type="button" aria-label="Открыть словарь">
+          <span class="vocabee-panel-brand-mark" aria-hidden="true">V</span>
+          <span class="vocabee-panel-brand">Vocabee</span>
+        </button>
+        <button class="vocabee-panel-control vocabee-panel-section-switch" type="button" data-panel-target="dictionary" aria-label="Мой словарь" title="Мой словарь">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H17a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V5.5Zm3-.5a.5.5 0 0 0-.5.5v10.6c.16-.06.33-.1.5-.1h11V6a1 1 0 0 0-1-1H7Z"/><path d="M9 8h7v1.8H9zm0 4h7v1.8H9z"/></svg>
+        </button>
+        <button class="vocabee-panel-control vocabee-panel-section-switch" type="button" data-panel-target="settings" aria-label="Настройки" title="Настройки">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.8 7.8 0 0 0 0-2l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 3h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5-2.1-1.6ZM13 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" transform="translate(-1 -0.5) scale(.96)"/></svg>
+        </button>
         <button class="vocabee-panel-control vocabee-panel-minimize" type="button">−</button>
         <button class="vocabee-panel-control vocabee-panel-close" type="button" aria-label="Закрыть панель">×</button>
       </header>
       <div class="vocabee-floating-content">
-        <label class="vocabee-floating-row vocabee-floating-toggle" for="vocabee-panel-enabled">
-          <span class="vocabee-floating-label">
-            <strong>Перевод</strong>
-            <small>Слова и фразы на YouTube</small>
-          </span>
-          <input type="checkbox" id="vocabee-panel-enabled" />
-          <span class="vocabee-floating-switch" aria-hidden="true"></span>
-        </label>
-        <div class="vocabee-floating-row">
-          <span class="vocabee-floating-label">
-            <strong>Язык субтитров</strong>
-            <small>Определяется автоматически</small>
-          </span>
-          <span class="vocabee-panel-source-language">Не найден</span>
-        </div>
-        <label class="vocabee-floating-row" for="vocabee-panel-language">
-          <span class="vocabee-floating-label"><strong>Переводить на</strong></span>
-          <select id="vocabee-panel-language" aria-label="Язык перевода">
-            ${app.targetLanguages.map((language) =>
-              `<option value="${language}">${app.languageNames[language]}</option>`
-            ).join('')}
-          </select>
-        </label>
-        <button class="vocabee-panel-dictionary" type="button">
-          <span aria-hidden="true">✦</span>
-          <span>Мой словарь</span>
-          <span class="vocabee-panel-arrow" aria-hidden="true">→</span>
-        </button>
-        <section class="vocabee-dictionary" aria-label="Сохранённые слова" hidden>
-          <p class="vocabee-dictionary-status" role="status" aria-live="polite">Загружаю словарь…</p>
-          <ul class="vocabee-dictionary-list"></ul>
+        <section class="vocabee-panel-view" data-panel-content="settings" hidden>
+          <label class="vocabee-floating-row vocabee-floating-toggle" for="vocabee-panel-enabled">
+            <span class="vocabee-floating-label">
+              <strong>Перевод</strong>
+              <small>Слова и фразы на YouTube</small>
+            </span>
+            <input type="checkbox" id="vocabee-panel-enabled" />
+            <span class="vocabee-floating-switch" aria-hidden="true"></span>
+          </label>
+          <div class="vocabee-floating-row">
+            <span class="vocabee-floating-label">
+              <strong>Язык субтитров</strong>
+              <small>Определяется автоматически</small>
+            </span>
+            <span class="vocabee-panel-source-language">Не найден</span>
+          </div>
+          <label class="vocabee-floating-row" for="vocabee-panel-language">
+            <span class="vocabee-floating-label"><strong>Переводить на</strong></span>
+            <select id="vocabee-panel-language" aria-label="Язык перевода">
+              ${app.targetLanguages.map((language) =>
+                `<option value="${language}">${app.languageNames[language]}</option>`
+              ).join('')}
+            </select>
+          </label>
+          <p class="vocabee-panel-footer">
+            Поддерживаются английские и немецкие субтитры
+          </p>
         </section>
-        <p class="vocabee-panel-footer">
-          Поддерживаются английские и немецкие субтитры
-        </p>
+        <section class="vocabee-panel-view" data-panel-content="dictionary">
+          <h2 class="vocabee-dictionary-title">Мой словарь</h2>
+          <div class="vocabee-dictionary">
+            <p class="vocabee-dictionary-status" role="status" aria-live="polite">Загружаю словарь…</p>
+            <ul class="vocabee-dictionary-list"></ul>
+          </div>
+          <p class="vocabee-dictionary-hint">Добавляй слова из карточки перевода на YouTube.</p>
+        </section>
       </div>
     `;
     document.body.appendChild(panel);
@@ -132,10 +149,22 @@
       app.setTargetLanguage(languageSelect.value);
     });
 
-    panel.querySelector('.vocabee-panel-dictionary').addEventListener('click', () => {
-      const dictionary = panel.querySelector('.vocabee-dictionary');
-      dictionary.hidden = !dictionary.hidden;
-      if (!dictionary.hidden) loadDictionary();
+    panel.querySelector('.vocabee-panel-home').addEventListener('click', () => {
+      panelState.activeView = 'dictionary';
+      panelState.minimized = false;
+      applyState();
+      saveState();
+      loadDictionary();
+    });
+
+    panel.querySelectorAll('[data-panel-target]').forEach((button) => {
+      button.addEventListener('click', () => {
+        panelState.activeView = button.dataset.panelTarget;
+        panelState.minimized = false;
+        applyState();
+        saveState();
+        if (panelState.activeView === 'dictionary') loadDictionary();
+      });
     });
     panel.querySelector('.vocabee-panel-minimize').addEventListener('click', () => {
       panelState.minimized = !panelState.minimized;
@@ -248,19 +277,21 @@
   }
 
   app.refreshDictionaryView = function () {
-    if (!panel.querySelector('.vocabee-dictionary').hidden) loadDictionary();
+    if (panelState.activeView === 'dictionary') loadDictionary();
   };
 
   function togglePanel(sendResponse) {
     if (panelState.visible && !panelState.minimized) {
       panelState.visible = false;
     } else {
+      if (!panelState.visible) panelState.activeView = 'dictionary';
       panelState.visible = true;
       panelState.minimized = false;
     }
     updateSourceLanguage();
     applyState();
     saveState();
+    if (panelState.visible && panelState.activeView === 'dictionary') loadDictionary();
     sendResponse?.({ visible: panelState.visible });
   }
 
@@ -275,10 +306,14 @@
     panelState = {
       ...panelState,
       ...savedState,
+      activeView: savedState.activeView === 'settings' ? 'settings' : 'dictionary',
       ...(isOldDefaultPosition ? getDefaultPosition() : {})
     };
     applyState();
     updateSourceLanguage();
+    if (panelState.visible && !panelState.minimized && panelState.activeView === 'dictionary') {
+      loadDictionary();
+    }
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
