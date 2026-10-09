@@ -114,6 +114,7 @@
           height: window.innerHeight
         };
     const padding = 8;
+    const anchorGap = 0;
     const width = Math.min(360, bounds.width - padding * 2);
     const maxHeight = Math.max(120, bounds.height - padding * 2);
     const preferredHeight = Math.min(280, maxHeight);
@@ -127,7 +128,7 @@
     const left = Math.max(bounds.left + padding, Math.min(centeredLeft, bounds.right - width - padding));
     const top = Math.max(
       bounds.top + padding,
-      anchorRect.top - Math.min(tooltipHeight, preferredHeight) - padding
+      anchorRect.top - Math.min(tooltipHeight, preferredHeight) - anchorGap
     );
 
     tooltip.style.left = `${left}px`;
