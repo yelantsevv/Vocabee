@@ -15,6 +15,58 @@
     ...getDefaultPosition()
   };
   let positionSaveTimer;
+  let dictionaryFontSizeSaveTimer;
+  let interfaceFontScaleSaveTimer;
+  let dictionaryFontSize = 16;
+  let interfaceFontScale = 100;
+
+  function normalizeDictionaryFontSize(value) {
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue)) return 16;
+    return Math.max(12, Math.min(24, Math.round(parsedValue)));
+  }
+
+  function applyDictionaryFontSize(value) {
+    dictionaryFontSize = normalizeDictionaryFontSize(value);
+    const sizeInput = panel.querySelector('#vocabee-dictionary-font-size');
+    const sizeValue = panel.querySelector('.vocabee-dictionary-font-size-value');
+    sizeInput.value = String(dictionaryFontSize);
+    sizeValue.textContent = `${dictionaryFontSize} px`;
+    panel.style.setProperty('--vocabee-dictionary-font-size', `${dictionaryFontSize}px`);
+  }
+
+  function saveDictionaryFontSize() {
+    clearTimeout(dictionaryFontSizeSaveTimer);
+    app.storage.set({ dictionaryFontSize }, () => {
+      if (chrome.runtime.lastError) {
+        console.error('Vocabee: could not save dictionary font size', chrome.runtime.lastError.message);
+      }
+    });
+  }
+
+  function normalizeInterfaceFontScale(value) {
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue)) return 100;
+    return Math.max(80, Math.min(140, Math.round(parsedValue / 5) * 5));
+  }
+
+  function applyInterfaceFontScale(value) {
+    interfaceFontScale = normalizeInterfaceFontScale(value);
+    const sizeInput = panel.querySelector('#vocabee-interface-font-scale');
+    const sizeValue = panel.querySelector('.vocabee-interface-font-scale-value');
+    sizeInput.value = String(interfaceFontScale);
+    sizeValue.textContent = `${interfaceFontScale}%`;
+    panel.style.setProperty('--vocabee-ui-font-scale', String(interfaceFontScale / 100));
+  }
+
+  function saveInterfaceFontScale() {
+    clearTimeout(interfaceFontScaleSaveTimer);
+    app.storage.set({ interfaceFontScale }, () => {
+      if (chrome.runtime.lastError) {
+        console.error('Vocabee: could not save interface font scale', chrome.runtime.lastError.message);
+      }
+    });
+  }
 
   function clampPosition(x, y) {
     const bounds = panel.getBoundingClientRect();
@@ -115,6 +167,22 @@
               ).join('')}
             </select>
           </label>
+          <div class="vocabee-font-setting">
+            <label class="vocabee-font-setting-label" for="vocabee-interface-font-scale">
+              <strong>Размер текста интерфейса</strong>
+              <output class="vocabee-font-setting-value vocabee-interface-font-scale-value" for="vocabee-interface-font-scale">100%</output>
+            </label>
+            <input id="vocabee-interface-font-scale" type="range" min="80" max="140" step="5" value="100" />
+            <p class="vocabee-font-setting-preview">Пример текста интерфейса</p>
+          </div>
+          <div class="vocabee-font-setting">
+            <label class="vocabee-font-setting-label" for="vocabee-dictionary-font-size">
+              <strong>Размер текста словаря</strong>
+              <output class="vocabee-font-setting-value vocabee-dictionary-font-size-value" for="vocabee-dictionary-font-size">16 px</output>
+            </label>
+            <input id="vocabee-dictionary-font-size" type="range" min="12" max="24" step="1" value="16" />
+            <p class="vocabee-font-setting-preview vocabee-dictionary-font-preview">Пример текста словаря</p>
+          </div>
           <p class="vocabee-panel-footer">
             Поддерживаются английские и немецкие субтитры
           </p>
@@ -133,8 +201,12 @@
 
     const enabledInput = panel.querySelector('#vocabee-panel-enabled');
     const languageSelect = panel.querySelector('#vocabee-panel-language');
+    const dictionaryFontSizeInput = panel.querySelector('#vocabee-dictionary-font-size');
+    const interfaceFontScaleInput = panel.querySelector('#vocabee-interface-font-scale');
     enabledInput.checked = app.state.enabled;
     languageSelect.value = app.state.lang;
+    applyDictionaryFontSize(dictionaryFontSize);
+    applyInterfaceFontScale(interfaceFontScale);
 
     enabledInput.addEventListener('change', () => {
       app.state.enabled = enabledInput.checked;
@@ -148,6 +220,20 @@
     languageSelect.addEventListener('change', () => {
       app.setTargetLanguage(languageSelect.value);
     });
+
+    dictionaryFontSizeInput.addEventListener('input', () => {
+      applyDictionaryFontSize(dictionaryFontSizeInput.value);
+      clearTimeout(dictionaryFontSizeSaveTimer);
+      dictionaryFontSizeSaveTimer = setTimeout(saveDictionaryFontSize, 1000);
+    });
+    dictionaryFontSizeInput.addEventListener('change', saveDictionaryFontSize);
+
+    interfaceFontScaleInput.addEventListener('input', () => {
+      applyInterfaceFontScale(interfaceFontScaleInput.value);
+      clearTimeout(interfaceFontScaleSaveTimer);
+      interfaceFontScaleSaveTimer = setTimeout(saveInterfaceFontScale, 1000);
+    });
+    interfaceFontScaleInput.addEventListener('change', saveInterfaceFontScale);
 
     panel.querySelector('.vocabee-panel-home').addEventListener('click', () => {
       panelState.activeView = 'dictionary';
@@ -296,11 +382,13 @@
   }
 
   buildPanel();
-  app.storage.get({ vocabeePanel: panelState }, (settings) => {
+  app.storage.get({ vocabeePanel: panelState, dictionaryFontSize, interfaceFontScale }, (settings) => {
     if (chrome.runtime.lastError) {
       console.error('Vocabee: could not load panel state', chrome.runtime.lastError.message);
       return;
     }
+    applyDictionaryFontSize(settings.dictionaryFontSize);
+    applyInterfaceFontScale(settings.interfaceFontScale);
     const savedState = settings.vocabeePanel || {};
     const isOldDefaultPosition = savedState.x === 24 && savedState.y === 92;
     panelState = {
@@ -331,6 +419,12 @@
     if (changes.lang) {
       app.state.lang = changes.lang.newValue || 'ru';
       panel.querySelector('#vocabee-panel-language').value = app.state.lang;
+    }
+    if (changes.dictionaryFontSize) {
+      applyDictionaryFontSize(changes.dictionaryFontSize.newValue);
+    }
+    if (changes.interfaceFontScale) {
+      applyInterfaceFontScale(changes.interfaceFontScale.newValue);
     }
   });
 
