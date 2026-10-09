@@ -19,6 +19,7 @@
   function processComments() {
     app.makeCaptionTextSelectable();
     app.updateDetectedSourceLanguage();
+    app.refreshFloatingPanelLanguage?.();
     findCommentNodes().forEach(app.decorateCommentNode);
   }
 

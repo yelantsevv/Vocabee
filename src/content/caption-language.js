@@ -76,6 +76,7 @@
   document.addEventListener('pointerdown', (event) => {
     if (!(event.target instanceof Element)) return;
     if (event.target.closest('#vocabee-tooltip')) return;
+    if (event.target.closest('.vocabee-floating-panel')) return;
     if (getSelectionScope(event.target)) return;
 
     app.hideTooltip(true);

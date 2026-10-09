@@ -14,13 +14,15 @@
     "https://www.youtube.com/*",
     "https://translate.googleapis.com/*"
   ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "action": {
     "default_title": "Vocabee",
     "default_icon": {
       "16": "src/icons/vocabee-16.png",
       "32": "src/icons/vocabee-32.png"
-    },
-    "default_popup": "src/popup/popup.html"
+    }
   },
   "content_scripts": [
     {
@@ -31,6 +33,7 @@
         "src/content/translation-ui.js",
         "src/content/caption-language.js",
         "src/content/video-pause.js",
+        "src/content/floating-panel.js",
         "src/content/main.js"
       ],
       "run_at": "document_idle"

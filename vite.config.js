@@ -16,13 +16,17 @@ function copyExtensionRuntime() {
         resolve(outputDirectory, 'content'),
         { recursive: true }
       );
+      writeFileSync(
+        resolve(outputDirectory, 'background.js'),
+        readFileSync(resolve(sourceDirectory, 'background.js'), 'utf8')
+      );
       cpSync(
         resolve(sourceDirectory, 'icons'),
         resolve(outputDirectory, 'icons'),
         { recursive: true }
       );
       const manifest = JSON.parse(readFileSync(resolve(projectRoot, 'manifest.json'), 'utf8'));
-      manifest.action.default_popup = manifest.action.default_popup.replace(/^src\//, '');
+      manifest.background.service_worker = manifest.background.service_worker.replace(/^src\//, '');
       manifest.icons = Object.fromEntries(
         Object.entries(manifest.icons).map(([size, file]) => [size, file.replace(/^src\//, '')])
       );
