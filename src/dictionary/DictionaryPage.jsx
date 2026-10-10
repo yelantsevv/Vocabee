@@ -19,6 +19,7 @@ import { SettingsPanel } from './SettingsPanel.jsx';
 import { useDictionaryCatalog } from './useDictionaryCatalog.js';
 import { phraseSections } from './phraseSections.js';
 import { PhraseSectionPanel } from './PhraseSectionPanel.jsx';
+import { DictionarySearch } from './DictionarySearch.jsx';
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -38,8 +39,8 @@ export function DictionaryPage() {
   const [settingsStatus, setSettingsStatus] = useState('');
   const catalog = useDictionaryCatalog();
 
-  function loadBuiltinDictionary(language) {
-    catalog.setSelectedSourceLanguage(language);
+  async function loadBuiltinDictionary(language) {
+    await catalog.loadBuiltinDictionary(language);
     setActivePhraseSection(null);
     setActiveView('dictionaries');
   }
@@ -50,7 +51,15 @@ export function DictionaryPage() {
   }
 
   useEffect(() => {
-    const requestedPreset = new URLSearchParams(window.location.search).get('load');
+    const params = new URLSearchParams(window.location.search);
+    const requestedPreset = params.get('load');
+    if (requestedPreset) {
+      params.delete('load');
+      const remainingQuery = params.toString();
+      const cleanUrl = `${window.location.pathname}${remainingQuery ? `?${remainingQuery}` : ''}${window.location.hash}`;
+      window.history.replaceState(window.history.state, '', cleanUrl);
+    }
+
     if (requestedPreset === 'words-en') loadBuiltinDictionary('en');
     if (requestedPreset === 'words-de') loadBuiltinDictionary('de');
     if (requestedPreset?.startsWith('phrase-')) {
@@ -74,6 +83,17 @@ export function DictionaryPage() {
   useEffect(() => {
     loadDictionary();
   }, [loadDictionary]);
+
+  useEffect(() => {
+    function handleDatabaseDeleted(event) {
+      if (!['my-words-vocabee', 'vocabee-dictionary'].includes(event.detail?.databaseName)) return;
+      setWords([]);
+      setStatus('');
+      setConnection((current) => ({ ...current, warning: '' }));
+    }
+    window.addEventListener('vocabee:indexeddb-deleted', handleDatabaseDeleted);
+    return () => window.removeEventListener('vocabee:indexeddb-deleted', handleDatabaseDeleted);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -119,14 +139,6 @@ export function DictionaryPage() {
     '--vocabee-ui-font-scale': settings.interfaceFontScale / 100,
     '--vocabee-dictionary-font-size': `${settings.dictionaryFontSize}px`
   };
-  const showHeaderSearch = activeView === 'dictionary'
-    || (activeView === 'dictionaries' && !activePhraseSection);
-  const headerSearchValue = activeView === 'dictionary' ? search : catalog.sourceSearch;
-  const updateHeaderSearch = activeView === 'dictionary' ? setSearch : catalog.setSourceSearch;
-  const headerSearchLabel = activeView === 'dictionary'
-    ? 'Найти слово или перевод'
-    : 'Поиск слова, фразы или перевода';
-
   return (
     <main className={styles.page} style={pageStyle}>
       <header className={styles.header}>
@@ -165,18 +177,15 @@ export function DictionaryPage() {
             onClick={() => setActiveView('settings')}
           >⚙</button>
         </nav>
-        {showHeaderSearch && (
-          <label className={clsx(styles.search, styles.headerSearch)}>
-            <span className={styles.searchIcon} aria-hidden="true">⌕</span>
-            <input
-              type="search"
-              value={headerSearchValue}
-              onChange={(event) => updateHeaderSearch(event.target.value)}
-              placeholder={headerSearchLabel}
-              aria-label={headerSearchLabel}
-            />
-          </label>
-        )}
+        <DictionarySearch
+          activeView={activeView}
+          activePhraseSection={activePhraseSection}
+          selectedSourceLanguage={catalog.selectedSourceLanguage}
+          savedWordsSearch={search}
+          onSavedWordsSearchChange={setSearch}
+          sourceSearch={catalog.sourceSearch}
+          onSourceSearchChange={catalog.setSourceSearch}
+        />
       </header>
 
       {connection.warning && (
@@ -193,6 +202,7 @@ export function DictionaryPage() {
           : <DictionaryCatalogPanel
               catalog={catalog}
               onAddToLearning={catalog.addToLearning}
+              onOpenSettings={() => setActiveView('settings')}
             />
       ) : (
         <SettingsPanel

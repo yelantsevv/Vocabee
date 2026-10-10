@@ -1,9 +1,63 @@
-const DICTIONARY_DATABASE = 'vocabee-dictionary';
+const DICTIONARY_DATABASE = 'my-words-vocabee';
+const LEGACY_DICTIONARY_DATABASE = 'vocabee-dictionary';
 const DICTIONARY_STORE = 'words';
 const SOURCE_LANGUAGES = ['en', 'de'];
 const TARGET_LANGUAGES = ['en', 'ru', 'uk', 'de'];
 
 let dictionaryDatabase;
+let legacyDictionaryMigration;
+
+function migrateLegacyDictionary(database) {
+  if (legacyDictionaryMigration) return legacyDictionaryMigration;
+
+  legacyDictionaryMigration = (async () => {
+    if (!indexedDB.databases) return;
+    const knownDatabases = await indexedDB.databases();
+    if (!knownDatabases.some(({ name }) => name === LEGACY_DICTIONARY_DATABASE)) return;
+
+    const legacy = await new Promise((resolve, reject) => {
+      const request = indexedDB.open(LEGACY_DICTIONARY_DATABASE, 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('Не удалось прочитать старую базу слов.'));
+      request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
+    });
+
+    let words = [];
+    if (legacy.objectStoreNames.contains(DICTIONARY_STORE)) {
+      words = await new Promise((resolve, reject) => {
+        const request = legacy.transaction(DICTIONARY_STORE, 'readonly')
+          .objectStore(DICTIONARY_STORE)
+          .getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('Не удалось перенести старые слова.'));
+      });
+    }
+    legacy.close();
+
+    if (words.length) {
+      await new Promise((resolve, reject) => {
+        const transaction = database.transaction(DICTIONARY_STORE, 'readwrite');
+        const store = transaction.objectStore(DICTIONARY_STORE);
+        words.forEach((word) => store.put(word));
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error || new Error('Не удалось сохранить перенесённые слова.'));
+        transaction.onabort = () => reject(transaction.error || new Error('Перенос слов отменён.'));
+      });
+    }
+
+    await new Promise((resolve, reject) => {
+      const request = indexedDB.deleteDatabase(LEGACY_DICTIONARY_DATABASE);
+      request.onsuccess = resolve;
+      request.onerror = () => reject(request.error || new Error('Не удалось удалить старую базу слов.'));
+      request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
+    });
+  })().catch((error) => {
+    legacyDictionaryMigration = undefined;
+    throw error;
+  });
+
+  return legacyDictionaryMigration;
+}
 
 chrome.action.onClicked.addListener(() => {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -46,9 +100,15 @@ function openDictionary() {
     };
     request.onsuccess = () => {
       const database = request.result;
-      database.onversionchange = () => database.close();
+      database.onversionchange = () => {
+        database.close();
+        dictionaryDatabase = undefined;
+      };
       resolve(database);
     };
+  }).then(async (database) => {
+    await migrateLegacyDictionary(database);
+    return database;
   }).catch((error) => {
     dictionaryDatabase = undefined;
     throw error;
@@ -132,6 +192,41 @@ async function getDictionaryWords() {
   });
 }
 
+async function deleteIndexedDatabase(databaseName) {
+  if (databaseName === DICTIONARY_DATABASE) {
+    const openRequest = dictionaryDatabase;
+    dictionaryDatabase = undefined;
+    legacyDictionaryMigration = undefined;
+    if (openRequest) {
+      try {
+        (await openRequest).close();
+      } catch {
+        // It may already be closed or failed to open.
+      }
+    }
+  }
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(databaseName);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(new Error(
+      `Не удалось удалить словарь: ${request.error?.message || 'ошибка IndexedDB'}`
+    ));
+    request.onblocked = () => reject(new Error(
+      'Удаление заблокировано открытой вкладкой расширения. Закройте её и повторите.'
+    ));
+  });
+}
+
+async function listIndexedDatabases() {
+  if (!indexedDB.databases) {
+    throw new Error('Браузер не поддерживает просмотр списка IndexedDB.');
+  }
+  return (await indexedDB.databases())
+    .map(({ name }) => name)
+    .filter(Boolean)
+    .sort((first, second) => first.localeCompare(second));
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === 'OPEN_DICTIONARY_QUICK_ACTION') {
     const validActions = new Set([
@@ -154,13 +249,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  if (message?.type !== 'ADD_DICTIONARY_WORD' && message?.type !== 'GET_DICTIONARY_WORDS') {
+  if (![
+    'ADD_DICTIONARY_WORD',
+    'GET_DICTIONARY_WORDS',
+    'DELETE_INDEXED_DATABASE',
+    'LIST_INDEXED_DATABASES'
+  ].includes(message?.type)) {
     return false;
   }
 
   if (sender.id !== chrome.runtime.id) {
     sendResponse({ ok: false, error: 'Запрос на сохранение отклонён.' });
     return false;
+  }
+
+  if (message.type === 'DELETE_INDEXED_DATABASE') {
+    const allowedDatabaseNames = new Set([
+      DICTIONARY_DATABASE,
+      LEGACY_DICTIONARY_DATABASE,
+      'en-ru-vocabee',
+      'de-ru-vocabee',
+      'vocabee-catalog'
+    ]);
+    if (!allowedDatabaseNames.has(message.databaseName)) {
+      sendResponse({ ok: false, error: 'Неизвестная база данных.' });
+      return false;
+    }
+    deleteIndexedDatabase(message.databaseName)
+      .then(() => sendResponse({ ok: true }))
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (message.type === 'LIST_INDEXED_DATABASES') {
+    listIndexedDatabases()
+      .then((databases) => sendResponse({ ok: true, databases }))
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
 
   if (message.type === 'GET_DICTIONARY_WORDS') {

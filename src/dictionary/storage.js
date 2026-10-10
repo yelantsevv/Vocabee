@@ -1,4 +1,4 @@
-const DATABASE_NAME = 'vocabee-dictionary';
+const DATABASE_NAME = 'my-words-vocabee';
 const STORE_NAME = 'words';
 const CHANNEL = 'VOCABEE_LOCAL_DICTIONARY';
 const SETTINGS_KEY = 'vocabee-settings';
@@ -21,7 +21,9 @@ function requestExtension(action, payload = {}, timeout = 1500) {
 
     const timer = setTimeout(() => {
       window.removeEventListener('message', onMessage);
-      reject(new Error('Расширение Vocabee не отвечает.'));
+      reject(new Error(
+        'Нет ответа от расширения. Перезагрузите Vocabee на странице chrome://extensions, затем обновите страницу словаря.'
+      ));
     }, timeout);
 
     window.addEventListener('message', onMessage);
@@ -89,6 +91,14 @@ export async function getDictionaryData() {
     source: 'website',
     warning: 'Нет соединения с базой расширения. Показаны только данные этого сайта.'
   };
+}
+
+export async function deleteExtensionIndexedDatabase(databaseName) {
+  return requestExtension('DELETE_INDEXED_DATABASE', { databaseName }, 5000);
+}
+
+export async function getExtensionIndexedDatabases() {
+  return requestExtension('LIST_INDEXED_DATABASES', {}, 5000);
 }
 
 export async function getDictionarySettings(defaults) {

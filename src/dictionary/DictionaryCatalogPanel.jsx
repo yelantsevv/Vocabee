@@ -10,12 +10,15 @@ function toggleValue(values, setter, value) {
     : [...values, value]);
 }
 
-export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
+export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSettings }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
   const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
+    availableSourceLanguages,
+    catalogLoading,
+    catalogError,
     sourceLevels,
     setSourceLevels,
     sourceVerbTypes,
@@ -49,8 +52,8 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
 
   return (
     <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
-      <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
-        <div
+      {selectedSourceLanguage && <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
+        {selectedSourceLanguage && <div
           className={styles.overallProgress}
           role="progressbar"
           aria-label={`Общий прогресс изучения выбранного словаря: ${overallDictionaryProgress}%`}
@@ -60,22 +63,20 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
           title={`Весь словарь: ${overallDictionaryProgress}%`}
         >
           <span style={{ width: `${overallDictionaryProgress}%` }} />
-        </div>
+        </div>}
         <div className={styles.filterTopRow}>
           <div className={styles.sourceControls}>
-            <div className={styles.sourcePickerGroup}>
-              <label className={styles.filterField}>
-                <select
-                  id="source-dictionary"
-                  aria-label="Словарь"
-                  value={selectedSourceLanguage}
-                  onChange={(event) => setSelectedSourceLanguage(event.target.value)}
-                >
-                  <option value="en">🇬🇧 EN → RU</option>
-                  <option value="de">🇩🇪 DE → RU</option>
-                </select>
-              </label>
-            </div>
+            <label className={styles.filterField}>
+              <select
+                aria-label="Словарь"
+                value={selectedSourceLanguage}
+                onChange={(event) => setSelectedSourceLanguage(event.target.value)}
+              >
+                <option value="all">🌐 Все словари</option>
+                {availableSourceLanguages.includes('en') && <option value="en">🇬🇧 EN → RU</option>}
+                {availableSourceLanguages.includes('de') && <option value="de">🇩🇪 DE → RU</option>}
+              </select>
+            </label>
             <label className={styles.filterField}>
               <select
                 id="source-sort"
@@ -91,7 +92,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
             </label>
           </div>
 
-          <div className={styles.filterStack}>
+          {selectedSourceLanguage && <div className={styles.filterStack}>
             <fieldset className={styles.filterGroup} aria-label="Уровень">
               <div className={styles.filterChips}>
                 {['A1', 'A2', 'B1', 'B2'].map((level) => (
@@ -124,9 +125,9 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
                 {sourceLevels.length ? sourceLevels.join(', ') : 'Все уровни'} · {selectedLevelEntries.length} слов
               </span>
             </div>
-          </div>
+          </div>}
 
-          <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label="Тип глагола">
+          {selectedSourceLanguage && <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label="Тип глагола">
             <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
               {[
                 ['regular', '✅ Правильные'],
@@ -157,20 +158,36 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
                 >{label}</button>
               ))}
             </div>
-          </fieldset>
+          </fieldset>}
         </div>
+      </section>}
 
-      </section>
-
+      {catalogLoading ? (
+        <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
+      ) : catalogError ? (
+        <div className={styles.emptyCatalog} role="status">
+          <p>{catalogError}</p>
+          <button type="button" onClick={onOpenSettings}>Открыть настройки</button>
+        </div>
+      ) : !selectedSourceLanguage ? (
+        <div className={styles.emptyCatalog}>
+          <p>База словарей пока не загружена.</p>
+          <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+        </div>
+      ) : <>
       <p className={styles.dictionaryCount}>
         Показано {filteredSourceEntries.length} из {selectedSourceDictionary.length} слов
       </p>
       <section className={commonStyles.wordList} aria-label="Записи выбранного словаря">
         <ul>
           {filteredSourceEntries.map((entry) => {
-            const learningLevel = getEntryLearningLevel(entry, selectedSourceLanguage, learningLevelOverrides);
+            const learningLevel = getEntryLearningLevel(
+              entry,
+              entry._catalogLanguage || selectedSourceLanguage,
+              learningLevelOverrides
+            );
             return (
-              <li className={styles.entryCard} key={entry.word}>
+              <li className={styles.entryCard} key={`${entry._catalogLanguage}:${entry.word}`}>
                 <div className={styles.entryHeader}>
                   <div className={styles.entryMain}>
                     <div className={styles.entryWordBlock}>
@@ -250,6 +267,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
           <p className={commonStyles.message}>Ничего не найдено. Измените фильтры или поисковый запрос.</p>
         )}
       </section>
+      </>}
     </section>
   );
 }

@@ -26,6 +26,37 @@
       return;
     }
 
+    if (message.action === 'DELETE_INDEXED_DATABASE' && typeof message.databaseName === 'string') {
+      chrome.runtime.sendMessage({
+        type: 'DELETE_INDEXED_DATABASE',
+        databaseName: message.databaseName
+      }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? true : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
+    if (message.action === 'LIST_INDEXED_DATABASES') {
+      chrome.runtime.sendMessage({ type: 'LIST_INDEXED_DATABASES' }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? response.databases : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
     if (message.action === 'GET_SETTINGS') {
       chrome.storage.sync.get(message.keys, (settings) => {
         window.postMessage({

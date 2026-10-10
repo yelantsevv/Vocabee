@@ -4,6 +4,7 @@ import panelStyles from './SettingsPanel.module.css';
 import { SettingsActionButtons } from '../settings/SettingsActionButtons.jsx';
 import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from '../settings/dictionaryQuickActions.js';
+import { DatabaseManager } from './DatabaseManager.jsx';
 
 function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, dictionaryPreview, onChange }) {
   return (
@@ -78,6 +79,7 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
         />
         <p className={panelStyles.settingsFooter}>Поддерживаются английские и немецкие субтитры</p>
         {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
+        <DatabaseManager />
       </section>
     </section>
   );

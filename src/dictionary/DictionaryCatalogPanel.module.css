@@ -38,6 +38,26 @@
   gap: 10px;
 }
 
+.emptyCatalog {
+  margin: 24px 2px;
+  color: #a5acc4;
+  font-size: 15px;
+}
+
+.emptyCatalog p {
+  margin: 0 0 14px;
+}
+
+.emptyCatalog button {
+  min-height: 42px;
+  border: 1px solid rgba(169, 91, 255, 0.55);
+  border-radius: 10px;
+  background: rgba(119, 82, 255, 0.18);
+  color: #f3f4fc;
+  cursor: pointer;
+  padding: 0 14px;
+}
+
 .sourceControls,
 .filterStack {
   display: grid;
@@ -45,11 +65,13 @@
   gap: 12px;
 }
 
-.sourcePickerGroup {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-  gap: 8px;
+.sourceBadge {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  color: #dce0f1;
+  font-size: 14px;
+  font-weight: 650;
 }
 
 .filterField {

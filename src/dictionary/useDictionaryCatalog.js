@@ -1,22 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import sourceDictionary from '../../dictionary/en-ru.json';
 import germanRussianDictionary from '../../dictionary/de-ru.json';
+import { readCatalogDictionaries, writeCatalogDictionary } from './catalogDatabase.js';
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
-  IMPORTED_DICTIONARIES_KEY,
   LEARNED_ENTRIES_KEY,
   matchesVerbType,
   normalizeImportedEntries
 } from './dictionaryUtils.js';
 
 const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
+const CATALOG_FILTERS_VERSION = 3;
 const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
 const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'phrasal'];
 
 function readCatalogFilters() {
   const defaults = {
-    selectedSourceLanguage: 'en',
+    selectedSourceLanguage: null,
     sourceLevels: ['A1', 'A2', 'B1'],
     sourceVerbTypes: ['irregular', 'phrasal'],
     sourceSort: 'popular',
@@ -26,8 +27,9 @@ function readCatalogFilters() {
 
   try {
     const saved = JSON.parse(localStorage.getItem(CATALOG_FILTERS_KEY) || '{}');
+    const isMigrated = saved.version === CATALOG_FILTERS_VERSION;
     return {
-      selectedSourceLanguage: ['en', 'de'].includes(saved.selectedSourceLanguage)
+      selectedSourceLanguage: isMigrated && ['en', 'de', 'all'].includes(saved.selectedSourceLanguage)
         ? saved.selectedSourceLanguage
         : defaults.selectedSourceLanguage,
       sourceLevels: Array.isArray(saved.sourceLevels)
@@ -63,7 +65,9 @@ function readStoredObject(key, legacyArrayAsLearned = false) {
 
 export function useDictionaryCatalog() {
   const [initialFilters] = useState(readCatalogFilters);
-  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(initialFilters.selectedSourceLanguage);
+  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(null);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState('');
   const [sourceLevels, setSourceLevels] = useState(initialFilters.sourceLevels);
   const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
   const [sourceSort, setSourceSort] = useState(initialFilters.sourceSort);
@@ -71,16 +75,80 @@ export function useDictionaryCatalog() {
   const [progressView, setProgressView] = useState(initialFilters.progressView);
   const [importStatus, setImportStatus] = useState('');
   const importInputRef = useRef(null);
-  const [importedDictionaries, setImportedDictionaries] = useState(() => (
-    readStoredObject(IMPORTED_DICTIONARIES_KEY)
-  ));
+  const catalogMutationRef = useRef(0);
+  const [importedDictionaries, setImportedDictionaries] = useState({});
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readStoredObject(LEARNED_ENTRIES_KEY, true)
   ));
 
   useEffect(() => {
+    let active = true;
+    const mutationAtStart = catalogMutationRef.current;
+    async function loadCatalogFromDatabase() {
+      try {
+        let records = await readCatalogDictionaries();
+        const legacyDictionaries = readStoredObject('vocabee-imported-dictionaries-v1');
+        const existingLanguages = new Set(records.map(({ language }) => language));
+        const legacyRecords = await Promise.all(Object.entries(legacyDictionaries)
+          .filter(([language, entries]) => (
+            ['en', 'de'].includes(language) && Array.isArray(entries) && !existingLanguages.has(language)
+          ))
+          .map(async ([language, entries]) => {
+            await writeCatalogDictionary(language, entries);
+            return { language, entries, updatedAt: 0 };
+          }));
+        records = [...records, ...legacyRecords];
+        localStorage.removeItem('vocabee-imported-dictionaries-v1');
+        if (!active || mutationAtStart !== catalogMutationRef.current) return;
+
+        records.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        const dictionaries = Object.fromEntries(records.map(({ language, entries }) => [language, entries]));
+        setImportedDictionaries(dictionaries);
+        const preferredLanguage = initialFilters.selectedSourceLanguage;
+        setSelectedSourceLanguage(preferredLanguage === 'all' && records.length
+          ? 'all'
+          : dictionaries[preferredLanguage]
+          ? preferredLanguage
+          : records.length > 1 ? 'all' : records[0]?.language || null);
+      } catch (error) {
+        if (active) setCatalogError(error.message || 'Не удалось прочитать базу словарей.');
+      } finally {
+        if (active) setCatalogLoading(false);
+      }
+    }
+    loadCatalogFromDatabase();
+    return () => { active = false; };
+  }, [initialFilters.selectedSourceLanguage]);
+
+  useEffect(() => {
+    const handleDatabaseDeleted = (event) => {
+      const databaseName = event.detail?.databaseName;
+      if (!['en-ru-vocabee', 'de-ru-vocabee', 'vocabee-catalog'].includes(databaseName)) return;
+      catalogMutationRef.current += 1;
+      const language = databaseName === 'en-ru-vocabee' ? 'en' : 'de';
+      const remainingLanguages = Object.keys(importedDictionaries).filter((item) => item !== language);
+      setImportedDictionaries((current) => {
+        if (databaseName === 'vocabee-catalog') return {};
+        const next = { ...current };
+        delete next[language];
+        return next;
+      });
+      if (databaseName === 'vocabee-catalog') {
+        setSelectedSourceLanguage(null);
+      } else if (selectedSourceLanguage === language || (selectedSourceLanguage === 'all' && !remainingLanguages.length)) {
+        setSelectedSourceLanguage(remainingLanguages.length > 1 ? 'all' : remainingLanguages[0] || null);
+      }
+      setCatalogError('');
+      setCatalogLoading(false);
+    };
+    window.addEventListener('vocabee:indexeddb-deleted', handleDatabaseDeleted);
+    return () => window.removeEventListener('vocabee:indexeddb-deleted', handleDatabaseDeleted);
+  }, [importedDictionaries, selectedSourceLanguage]);
+
+  useEffect(() => {
     try {
       localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
+        version: CATALOG_FILTERS_VERSION,
         selectedSourceLanguage,
         sourceLevels,
         sourceVerbTypes,
@@ -93,20 +161,20 @@ export function useDictionaryCatalog() {
     }
   }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceSort, sourceSearch, progressView]);
 
+  const availableSourceLanguages = useMemo(() => Object.keys(importedDictionaries)
+    .filter((language) => ['en', 'de'].includes(language)), [importedDictionaries]);
   const selectedSourceDictionary = useMemo(() => {
-    const baseEntries = selectedSourceLanguage === 'de' ? germanRussianDictionary : sourceDictionary;
-    const entries = new Map(baseEntries.map((entry) => [entry.word.toLocaleLowerCase(), entry]));
-    for (const entry of importedDictionaries[selectedSourceLanguage] || []) {
-      entries.set(entry.word.toLocaleLowerCase(), entry);
-    }
-    return [...entries.values()];
-  }, [importedDictionaries, selectedSourceLanguage]);
+    if (!selectedSourceLanguage) return [];
+    const languages = selectedSourceLanguage === 'all' ? availableSourceLanguages : [selectedSourceLanguage];
+    return languages.flatMap((language) => (importedDictionaries[language] || [])
+      .map((entry) => ({ ...entry, _catalogLanguage: language })));
+  }, [availableSourceLanguages, importedDictionaries, selectedSourceLanguage]);
 
   const learnedCount = selectedSourceDictionary.filter((entry) => (
-    getEntryLearningLevel(entry, selectedSourceLanguage, learningLevelOverrides) === 9
+    getEntryLearningLevel(entry, entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides) === 9
   )).length;
   const inProgressCount = selectedSourceDictionary.filter((entry) => {
-    const level = getEntryLearningLevel(entry, selectedSourceLanguage, learningLevelOverrides);
+    const level = getEntryLearningLevel(entry, entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
     return level > 0 && level < 9;
   }).length;
   const overallDictionaryProgress = getAverageProgress(
@@ -126,7 +194,8 @@ export function useDictionaryCatalog() {
   const filteredSourceEntries = useMemo(() => {
     const query = sourceSearch.trim().toLocaleLowerCase();
     const entries = selectedSourceDictionary.filter((entry) => {
-      const learningLevel = getEntryLearningLevel(entry, selectedSourceLanguage, learningLevelOverrides);
+      const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
+      const learningLevel = getEntryLearningLevel(entry, entryLanguage, learningLevelOverrides);
       const searchableText = [
         entry.word,
         ...entry.definitions,
@@ -136,7 +205,7 @@ export function useDictionaryCatalog() {
 
       const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
       const matchesType = sourceVerbTypes.length === 0
-        || sourceVerbTypes.some((type) => matchesVerbType(entry, type, selectedSourceLanguage));
+        || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
       const matchesProgress = progressView === 'all'
         || (progressView === 'learning' && learningLevel > 0 && learningLevel < 9)
         || (progressView === 'learned' && learningLevel === 9);
@@ -145,12 +214,12 @@ export function useDictionaryCatalog() {
     });
 
     if (sourceSort === 'alphabetical') {
-      return entries.sort((a, b) => a.word.localeCompare(b.word, selectedSourceLanguage));
+      return entries.sort((a, b) => a.word.localeCompare(b.word, a._catalogLanguage || selectedSourceLanguage));
     }
     if (sourceSort === 'progress' || sourceSort === 'progress-desc') {
       return entries.sort((a, b) => {
-        const progressDifference = getEntryLearningLevel(a, selectedSourceLanguage, learningLevelOverrides)
-          - getEntryLearningLevel(b, selectedSourceLanguage, learningLevelOverrides);
+        const progressDifference = getEntryLearningLevel(a, a._catalogLanguage || selectedSourceLanguage, learningLevelOverrides)
+          - getEntryLearningLevel(b, b._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
         return (sourceSort === 'progress-desc' ? -progressDifference : progressDifference)
           || (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity);
       });
@@ -172,9 +241,21 @@ export function useDictionaryCatalog() {
     if (!file) return;
 
     try {
-      const importedEntries = normalizeImportedEntries(JSON.parse(await file.text()));
+      const payload = JSON.parse(await file.text());
+      const declaredLanguage = [
+        payload?.language,
+        payload?.source_language,
+        payload?.sourceLang,
+        payload?.dictionary,
+        file.name
+      ].map((value) => String(value || '').toLowerCase())
+        .map((value) => value.match(/(?:^|[^a-z])(en|de)(?:[-_.]|$)/)?.[1])
+        .find(Boolean);
+      const language = ['en', 'de'].includes(declaredLanguage) ? declaredLanguage : selectedSourceLanguage;
+      if (!language) throw new Error('Укажите язык базы в JSON (language: "en" или "de").');
+      const importedEntries = normalizeImportedEntries(payload);
       const nextLanguageEntries = new Map(
-        (importedDictionaries[selectedSourceLanguage] || [])
+        (importedDictionaries[language] || [])
           .map((entry) => [entry.word.toLocaleLowerCase(), entry])
       );
       for (const entry of importedEntries) {
@@ -182,10 +263,12 @@ export function useDictionaryCatalog() {
       }
       const nextDictionaries = {
         ...importedDictionaries,
-        [selectedSourceLanguage]: [...nextLanguageEntries.values()]
+        [language]: [...nextLanguageEntries.values()]
       };
-      localStorage.setItem(IMPORTED_DICTIONARIES_KEY, JSON.stringify(nextDictionaries));
+      catalogMutationRef.current += 1;
+      await writeCatalogDictionary(language, nextDictionaries[language]);
       setImportedDictionaries(nextDictionaries);
+      setSelectedSourceLanguage(language);
       setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
     } catch (error) {
       setImportStatus(`Не удалось импортировать базу: ${error.message}`);
@@ -194,10 +277,25 @@ export function useDictionaryCatalog() {
     }
   }
 
+  async function loadBuiltinDictionary(language) {
+    if (!['en', 'de'].includes(language)) return;
+    const entries = language === 'de' ? germanRussianDictionary : sourceDictionary;
+    try {
+      catalogMutationRef.current += 1;
+      await writeCatalogDictionary(language, entries);
+      setImportedDictionaries((current) => ({ ...current, [language]: entries }));
+      setSelectedSourceLanguage(language);
+      setImportStatus(`База ${language.toUpperCase()} → RU загружена.`);
+    } catch (error) {
+      setImportStatus(error.message || 'Не удалось сохранить базу словаря.');
+    }
+  }
+
   function addToLearning(entry) {
-    const key = getLearnedEntryKey(selectedSourceLanguage, entry.word);
+    const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
+    const key = getLearnedEntryKey(entryLanguage, entry.word);
     setLearningLevelOverrides((current) => {
-      const currentLevel = getEntryLearningLevel(entry, selectedSourceLanguage, current);
+      const currentLevel = getEntryLearningLevel(entry, entryLanguage, current);
       if (currentLevel > 0) return current;
 
       const nextLevel = 1;
@@ -212,6 +310,10 @@ export function useDictionaryCatalog() {
   return {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
+    availableSourceLanguages,
+    catalogLoading,
+    catalogError,
+    loadBuiltinDictionary,
     sourceLevels,
     setSourceLevels,
     sourceVerbTypes,
@@ -240,7 +342,7 @@ export function useDictionaryCatalog() {
 function getAverageProgress(entries, language, overrides) {
   if (!entries.length) return 0;
   const total = entries.reduce((sum, entry) => (
-    sum + getEntryLearningLevel(entry, language, overrides)
+    sum + getEntryLearningLevel(entry, entry._catalogLanguage || language, overrides)
   ), 0);
   return Math.round(total / (entries.length * 9) * 100);
 }
