@@ -1,8 +1,6 @@
 export const targetLanguages = [
   ['ru', 'Русский'],
-  ['en', 'English'],
-  ['uk', 'Українська'],
-  ['de', 'Deutsch']
+  ['uk', 'Українська']
 ];
 
 export const languageNames = Object.fromEntries(targetLanguages);

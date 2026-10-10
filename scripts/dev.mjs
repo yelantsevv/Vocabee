@@ -32,23 +32,6 @@ async function startContentWatcher() {
   }
 }
 
-try {
-  const popupWatcher = await build({
-    configFile: 'vite.config.js',
-    build: { watch: {} }
-  });
-
-  watchers.add(popupWatcher);
-  reportEvents('popup', popupWatcher);
-  popupWatcher.on('event', (event) => {
-    if (event.code === 'END') void startContentWatcher();
-  });
-  console.log('[dev] Watching popup; content build starts after the initial popup build.');
-} catch (error) {
-  console.error('[popup] Initial build failed:', error);
-  process.exitCode = 1;
-}
-
 async function closeWatchers() {
   await Promise.all([
     ...[...watchers].map((watcher) => watcher.close()),
@@ -68,6 +51,8 @@ function openPreview(url) {
   });
 }
 
+process.env.NODE_ENV = 'development';
+
 try {
   previewServer = await createServer({ configFile: 'vite.config.js' });
   await previewServer.listen();
@@ -76,6 +61,23 @@ try {
   openPreview(dictionaryUrl);
 } catch (error) {
   console.error('[dictionary] Could not start dictionary site:', error);
+  process.exitCode = 1;
+}
+
+try {
+  const popupWatcher = await build({
+    configFile: 'vite.config.js',
+    build: { watch: {} }
+  });
+
+  watchers.add(popupWatcher);
+  reportEvents('popup', popupWatcher);
+  popupWatcher.on('event', (event) => {
+    if (event.code === 'END') void startContentWatcher();
+  });
+  console.log('[dev] Watching popup; content build starts after the initial popup build.');
+} catch (error) {
+  console.error('[popup] Initial build failed:', error);
   process.exitCode = 1;
 }
 

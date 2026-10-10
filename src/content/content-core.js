@@ -13,7 +13,7 @@ globalThis.Vocabee = globalThis.Vocabee || {};
     ru: 'Русский',
     uk: 'Украинский'
   };
-  app.targetLanguages = ['en', 'ru', 'uk', 'de'];
+  app.targetLanguages = ['ru', 'uk'];
 
   app.escapeHtml = function (value = '') {
     return String(value)

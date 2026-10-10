@@ -1,6 +1,9 @@
 import clsx from 'clsx';
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SettingsPanel.module.css';
+import { SettingsActionButtons } from '../settings/SettingsActionButtons.jsx';
+import { DictionaryImportButton } from './DictionaryImportButton.jsx';
+import { dictionaryQuickActions } from '../settings/dictionaryQuickActions.js';
 
 function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, dictionaryPreview, onChange }) {
   return (
@@ -25,48 +28,31 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, 
   );
 }
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, languageNames, targetLanguages }) {
+export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, onLoadPhraseSection }) {
+  const quickLoadActions = [
+    ...dictionaryQuickActions.map((action) => ({
+      label: action.label,
+      onClick: () => action.id.startsWith('words-')
+        ? onLoadDictionary(action.id.slice('words-'.length))
+        : onLoadPhraseSection(action.id.slice('phrase-'.length))
+    }))
+  ];
+
   return (
-    <section className={styles.content} aria-labelledby="settings-title">
-      <div className={styles.titleRow}>
-        <div>
-          <h1 id="settings-title">Настройки</h1>
-          <p className={styles.languagePair}>Параметры расширения и словаря</p>
-        </div>
-      </div>
+    <section className={styles.content} aria-label="Настройки">
       <section className={panelStyles.settings} aria-label="Настройки Vocabee">
-        <label className={clsx(panelStyles.settingRow, panelStyles.toggleRow)} htmlFor="translation-enabled">
-          <span className={panelStyles.settingCopy}>
-            <strong>Перевод</strong>
-            <small>Слова и фразы на YouTube</small>
-          </span>
-          <input
-            id="translation-enabled"
-            type="checkbox"
-            checked={settings.enabled}
-            onChange={(event) => updateSetting('enabled', event.target.checked)}
-          />
-          <span className={panelStyles.switch} aria-hidden="true" />
-        </label>
-        <div className={panelStyles.settingRow}>
-          <span className={panelStyles.settingCopy}>
-            <strong>Язык субтитров</strong>
-            <small>Определяется автоматически на YouTube</small>
-          </span>
-          <span className={panelStyles.settingValue}>Автоматически</span>
-        </div>
-        <label className={panelStyles.settingRow} htmlFor="target-language">
-          <span className={panelStyles.settingCopy}><strong>Переводить на</strong></span>
-          <select
-            id="target-language"
-            value={settings.lang}
-            onChange={(event) => updateSetting('lang', event.target.value)}
-          >
-            {targetLanguages.map((language) => (
-              <option key={language} value={language}>{languageNames[language]}</option>
-            ))}
-          </select>
-        </label>
+        <SettingsActionButtons
+          actions={quickLoadActions}
+          firstAction={(
+            <DictionaryImportButton
+              key="import-dictionary"
+              inputRef={catalog.importInputRef}
+              onImportFile={catalog.importDictionaryFile}
+              fill
+            />
+          )}
+        />
+        {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
         <FontSizeSetting
           id="interface-font-scale"
           label="Размер текста интерфейса"

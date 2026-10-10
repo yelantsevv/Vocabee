@@ -52,7 +52,8 @@
     if (areaName !== 'sync' && areaName !== 'local') return;
     if (changes.enabled) app.state.enabled = Boolean(changes.enabled.newValue);
     if (changes.lang) {
-      app.state.lang = changes.lang.newValue || 'ru';
+      const language = changes.lang.newValue;
+      app.state.lang = app.targetLanguages.includes(language) ? language : 'ru';
       app.clearTranslationCache();
     }
   });

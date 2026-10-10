@@ -2,54 +2,6 @@
   display: block;
 }
 
-.row {
-  display: flex;
-  min-height: 55px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.1);
-  padding: 9px 2px;
-}
-
-.label {
-  display: grid;
-  gap: 3px;
-}
-
-.label strong {
-  color: #f3f4fc;
-  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
-  font-weight: 650;
-}
-
-.label small {
-  color: #929bb7;
-  font-size: calc(10px * var(--vocabee-ui-font-scale, 1));
-}
-
-.sourceLanguage {
-  max-width: 115px;
-  overflow: hidden;
-  color: #d7d9eb;
-  font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.row select {
-  max-width: 140px;
-  border: 1px solid rgba(176, 186, 222, 0.2);
-  border-radius: 9px;
-  background: #202640;
-  color: #f6f7ff;
-  cursor: pointer;
-  padding: 7px 9px;
-  font: inherit;
-  font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
-}
-
 .fontSetting {
   display: grid;
   gap: 8px;
@@ -89,50 +41,6 @@
 
 .dictionaryFontPreview {
   font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
-}
-
-.toggleRow {
-  position: relative;
-  cursor: pointer;
-}
-
-.toggleRow input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
-.switch {
-  position: relative;
-  width: 36px;
-  height: 21px;
-  flex: 0 0 auto;
-  border: 1px solid rgba(182, 191, 224, 0.22);
-  border-radius: 99px;
-  background: #353d59;
-}
-
-.switch::after {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: #d8dcef;
-  content: "";
-  transition: transform 0.18s ease;
-}
-
-.toggleRow input:checked + .switch {
-  border-color: #8e6cff;
-  background: linear-gradient(110deg, #7b5cff, #a64dff);
-}
-
-.toggleRow input:checked + .switch::after {
-  transform: translateX(15px);
-  background: #fff;
 }
 
 .settingsFooter {

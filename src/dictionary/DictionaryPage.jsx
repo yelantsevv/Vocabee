@@ -12,11 +12,13 @@ import {
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale
 } from '../content/panel/settings.js';
-import { languageNames, targetLanguages } from './dictionaryUtils.js';
+import { targetLanguages } from './dictionaryUtils.js';
 import { SavedWordsPanel } from './SavedWordsPanel.jsx';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
 import { SettingsPanel } from './SettingsPanel.jsx';
 import { useDictionaryCatalog } from './useDictionaryCatalog.js';
+import { phraseSections } from './phraseSections.js';
+import { PhraseSectionPanel } from './PhraseSectionPanel.jsx';
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -31,10 +33,32 @@ export function DictionaryPage() {
   const [status, setStatus] = useState('Загружаю словарь…');
   const [connection, setConnection] = useState({ source: 'loading', warning: '' });
   const [activeView, setActiveView] = useState('dictionary');
+  const [activePhraseSection, setActivePhraseSection] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
   const [loadVersion, setLoadVersion] = useState(0);
   const catalog = useDictionaryCatalog();
+
+  function loadBuiltinDictionary(language) {
+    catalog.setSelectedSourceLanguage(language);
+    setActivePhraseSection(null);
+    setActiveView('dictionaries');
+  }
+
+  function loadPhraseSection(sectionKey) {
+    setActivePhraseSection(phraseSections[sectionKey]);
+    setActiveView('dictionaries');
+  }
+
+  useEffect(() => {
+    const requestedPreset = new URLSearchParams(window.location.search).get('load');
+    if (requestedPreset === 'words-en') loadBuiltinDictionary('en');
+    if (requestedPreset === 'words-de') loadBuiltinDictionary('de');
+    if (requestedPreset?.startsWith('phrase-')) {
+      const sectionKey = requestedPreset.slice('phrase-'.length);
+      if (phraseSections[sectionKey]) loadPhraseSection(sectionKey);
+    }
+  }, []);
 
   const loadDictionary = useCallback(() => {
     setStatus('Загружаю словарь…');
@@ -58,7 +82,7 @@ export function DictionaryPage() {
       if (!active) return;
       setSettings({
         enabled: Boolean(result.enabled),
-        lang: result.lang,
+        lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale)
       });
@@ -155,19 +179,21 @@ export function DictionaryPage() {
       {activeView === 'dictionary' ? (
         <SavedWordsPanel words={words} search={search} onSearchChange={setSearch} status={status} />
       ) : activeView === 'dictionaries' ? (
-        <DictionaryCatalogPanel
-          catalog={catalog}
-          onSearchChange={catalog.setSourceSearch}
-          onImportFile={catalog.importDictionaryFile}
-          onToggleLearningLevel={catalog.toggleLearningLevel}
-        />
+        activePhraseSection
+          ? <PhraseSectionPanel section={activePhraseSection} onBack={() => setActivePhraseSection(null)} />
+          : <DictionaryCatalogPanel
+              catalog={catalog}
+              onSearchChange={catalog.setSourceSearch}
+              onToggleLearningLevel={catalog.toggleLearningLevel}
+            />
       ) : (
         <SettingsPanel
           settings={settings}
           updateSetting={updateSetting}
           settingsStatus={settingsStatus}
-          languageNames={languageNames}
-          targetLanguages={targetLanguages}
+          catalog={catalog}
+          onLoadDictionary={loadBuiltinDictionary}
+          onLoadPhraseSection={loadPhraseSection}
         />
       )}
 

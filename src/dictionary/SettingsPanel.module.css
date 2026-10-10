@@ -8,90 +8,6 @@
   padding: 12px 24px;
 }
 
-.settingRow {
-  display: flex;
-  min-height: 68px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
-  padding: 12px 2px;
-}
-
-.settingCopy {
-  display: grid;
-  gap: 5px;
-}
-
-.settingCopy strong {
-  color: #f3f4fc;
-  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
-}
-
-.settingCopy small {
-  color: #929bb7;
-  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
-}
-
-.settingValue {
-  color: #d7d9eb;
-  font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
-}
-
-.settingRow select {
-  max-width: 220px;
-  border: 1px solid rgba(176, 186, 222, 0.2);
-  border-radius: 9px;
-  background: #202640;
-  color: #f6f7ff;
-  cursor: pointer;
-  padding: 9px 12px;
-}
-
-.toggleRow {
-  position: relative;
-  cursor: pointer;
-}
-
-.toggleRow input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
-.switch {
-  position: relative;
-  width: 42px;
-  height: 24px;
-  flex: 0 0 auto;
-  border: 1px solid rgba(182, 191, 224, 0.22);
-  border-radius: 99px;
-  background: #353d59;
-}
-
-.switch::after {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #d8dcef;
-  content: "";
-  transition: transform 0.18s ease;
-}
-
-.toggleRow input:checked + .switch {
-  border-color: #8e6cff;
-  background: linear-gradient(110deg, #7b5cff, #a64dff);
-}
-
-.toggleRow input:checked + .switch::after {
-  transform: translateX(18px);
-  background: #fff;
-}
-
 .fontSetting {
   display: grid;
   gap: 12px;
@@ -147,9 +63,5 @@
 @media (max-width: 640px) {
   .settings {
     padding: 8px 16px;
-  }
-
-  .settingRow {
-    gap: 12px;
   }
 }

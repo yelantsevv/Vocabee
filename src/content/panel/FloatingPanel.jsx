@@ -85,7 +85,6 @@ export function FloatingPanel({ app }) {
       <div className={styles.floatingContent}>
         {panelState.activeView === 'settings'
           ? <PanelSettings
-              app={app}
               preferences={preferences}
               dictionaryFontSize={dictionaryFontSize}
               interfaceFontScale={interfaceFontScale}

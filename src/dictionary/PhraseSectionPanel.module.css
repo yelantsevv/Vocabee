@@ -1,0 +1,43 @@
+.phraseContent {
+  gap: 18px;
+}
+
+.phraseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.phraseHeader h1 {
+  margin: 0;
+}
+
+.phraseHeader p {
+  margin: 6px 0 0;
+  color: #929bb7;
+  font-size: 13px;
+}
+
+.backButton {
+  flex: 0 0 auto;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #d7d9eb;
+  cursor: pointer;
+  padding: 9px 12px;
+  font: inherit;
+}
+
+.backButton:hover {
+  border-color: rgba(169, 91, 255, 0.72);
+  background: rgba(119, 82, 255, 0.16);
+}
+
+@media (max-width: 520px) {
+  .phraseHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

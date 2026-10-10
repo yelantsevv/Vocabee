@@ -9,7 +9,7 @@ function toggleValue(values, setter, value) {
     : [...values, value]);
 }
 
-export function DictionaryCatalogPanel({ catalog, onSearchChange, onImportFile, onToggleLearningLevel }) {
+export function DictionaryCatalogPanel({ catalog, onSearchChange, onToggleLearningLevel }) {
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -22,8 +22,6 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onImportFile, 
     sourceSearch,
     progressView,
     setProgressView,
-    importStatus,
-    importInputRef,
     overallDictionaryProgress,
     selectedSourceDictionary,
     selectedLevelEntries,
@@ -51,27 +49,6 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onImportFile, 
         <div className={styles.filterTopRow}>
           <div className={styles.sourceControls}>
             <div className={styles.sourcePickerGroup}>
-              <div className={styles.importControl}>
-                <input
-                  ref={importInputRef}
-                  className={styles.hiddenFileInput}
-                  type="file"
-                  accept=".json,application/json"
-                  aria-label="Выбрать JSON-файл словаря для импорта"
-                  onChange={onImportFile}
-                />
-                <button
-                  className={styles.importButton}
-                  type="button"
-                  aria-label="Импортировать базу словаря"
-                  title="Импорт базы"
-                  onClick={() => importInputRef.current?.click()}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v5h14v-5" />
-                  </svg>
-                </button>
-              </div>
               <label className={styles.filterField}>
                 <select
                   id="source-dictionary"
@@ -180,7 +157,6 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onImportFile, 
             />
           </label>
         </div>
-        {importStatus && <p className={styles.importStatus} role="status">{importStatus}</p>}
       </section>
 
       <p className={styles.dictionaryCount}>

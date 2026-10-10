@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { targetLanguages } from '../../shared/languages.js';
+import { targetLanguages } from '../../settings/languages.js';
 
 const storage = chrome.storage.sync || chrome.storage.local;
 
@@ -8,14 +8,30 @@ export function usePopupSettings() {
   const [language, setLanguage] = useState('ru');
 
   useEffect(() => {
+    function applySettings(settings) {
+      if (typeof settings.enabled === 'boolean') setEnabled(settings.enabled);
+      if (settings.lang !== undefined) {
+        setLanguage(targetLanguages.some(([value]) => value === settings.lang) ? settings.lang : 'ru');
+      }
+    }
+
     storage.get({ enabled: true, lang: 'ru' }, (settings) => {
       if (chrome.runtime.lastError) {
         console.error('Vocabee: could not load popup settings', chrome.runtime.lastError.message);
         return;
       }
-      setEnabled(Boolean(settings.enabled));
-      setLanguage(settings.lang || 'ru');
+      applySettings(settings);
     });
+
+    const onStorageChange = (changes, areaName) => {
+      if (areaName !== 'sync' && areaName !== 'local') return;
+      applySettings({
+        ...(changes.enabled ? { enabled: changes.enabled.newValue } : {}),
+        ...(changes.lang ? { lang: changes.lang.newValue } : {})
+      });
+    };
+    chrome.storage.onChanged.addListener(onStorageChange);
+    return () => chrome.storage.onChanged.removeListener(onStorageChange);
   }, []);
 
   function save(nextEnabled, nextLanguage) {

@@ -3,7 +3,7 @@ import styles from './popup.module.css';
 import { Brand } from './components/Brand.jsx';
 import { DictionaryNotice } from './components/DictionaryNotice.jsx';
 import { PopupFooter } from './components/PopupFooter.jsx';
-import { SettingsCard } from './components/SettingsCard.jsx';
+import { TranslationSettings } from '../settings/TranslationSettings.jsx';
 import { usePopupSettings } from './hooks/usePopupSettings.js';
 import { useSourceLanguage } from './hooks/useSourceLanguage.js';
 
@@ -15,12 +15,14 @@ export function PopupApp() {
   return (
     <main className={styles.popup}>
       <Brand />
-      <SettingsCard
+      <TranslationSettings
+        idPrefix="popup"
+        variant="compact"
         enabled={settings.enabled}
-        language={settings.language}
+        targetLanguage={settings.language}
         sourceLanguage={sourceLanguage}
         onEnabledChange={settings.changeEnabled}
-        onLanguageChange={settings.changeLanguage}
+        onTargetLanguageChange={settings.changeLanguage}
       />
       <DictionaryNotice
         visible={dictionaryNoticeVisible}

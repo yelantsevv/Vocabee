@@ -15,7 +15,8 @@
 
   function loadSettings() {
     app.storage.get({ enabled: true, lang: 'ru', sourceLang: 'en' }, (settings) => {
-      app.state = { ...app.state, ...settings };
+      const lang = app.targetLanguages.includes(settings.lang) ? settings.lang : 'ru';
+      app.state = { ...app.state, ...settings, lang };
       app.updateDetectedSourceLanguage();
     });
   }

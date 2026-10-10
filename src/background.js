@@ -133,6 +133,27 @@ async function getDictionaryWords() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === 'OPEN_DICTIONARY_QUICK_ACTION') {
+    const validActions = new Set([
+      'words-en', 'words-de', 'phrase-everyday', 'phrase-travel', 'phrase-work'
+    ]);
+    if (sender.id !== chrome.runtime.id || !validActions.has(message.id)) {
+      sendResponse({ ok: false, error: 'Неизвестный раздел словаря.' });
+      return false;
+    }
+
+    const pageUrl = new URL(chrome.runtime.getURL('dictionary.html'));
+    pageUrl.searchParams.set('load', message.id);
+    chrome.tabs.create({ url: pageUrl.toString() }, () => {
+      if (chrome.runtime.lastError) {
+        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+        return;
+      }
+      sendResponse({ ok: true });
+    });
+    return true;
+  }
+
   if (message?.type !== 'ADD_DICTIONARY_WORD' && message?.type !== 'GET_DICTIONARY_WORDS') {
     return false;
   }

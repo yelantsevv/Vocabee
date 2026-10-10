@@ -15,13 +15,16 @@ export function usePanelPreferences(app) {
         return;
       }
       setEnabled(Boolean(settings.enabled));
-      setTargetLanguage(settings.lang || 'ru');
+      setTargetLanguage(app.targetLanguages.includes(settings.lang) ? settings.lang : 'ru');
     });
 
     const onStorageChange = (changes, areaName) => {
       if (areaName !== 'sync' && areaName !== 'local') return;
       if (changes.enabled) setEnabled(Boolean(changes.enabled.newValue));
-      if (changes.lang) setTargetLanguage(changes.lang.newValue || 'ru');
+      if (changes.lang) {
+        const language = changes.lang.newValue;
+        setTargetLanguage(app.targetLanguages.includes(language) ? language : 'ru');
+      }
     };
     app.storage.onChanged.addListener(onStorageChange);
     return () => app.storage.onChanged.removeListener(onStorageChange);
