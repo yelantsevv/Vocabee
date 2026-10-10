@@ -5,11 +5,6 @@
         "level": "A2",
         "frequency_rank": 310,
         "is_irregular": true,
-        "base_verb": "give",
-        "particles": [
-            "up"
-        ],
-        "info": "transitive/intransitive",
         "definitions": [
             "сдаваться",
             "бросать (привычку)",
@@ -28,18 +23,23 @@
         "examples": [
             {
                 "phrase": "Never give up.",
-                "translation": "Никогда не сдавайся."
+                "translation": "Никогда не сдавайся.",
+                "level": "A1"
             },
             {
                 "phrase": "Give up smoking.",
-                "translation": "Брось курить."
+                "translation": "Брось курить.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "He gave up his job to start a small business.",
+                "translation": "Он оставил работу, чтобы открыть небольшой бизнес."
             }
         ],
         "forms": {
             "past_simple": "gave up",
-            "past_participle": "given up",
-            "present_participle": "giving up",
-            "third_person_singular": "gives up"
+            "past_participle": "given up"
         },
         "learning_level": 3
     },
@@ -49,11 +49,6 @@
         "level": "A2",
         "frequency_rank": 520,
         "is_irregular": false,
-        "base_verb": "look",
-        "particles": [
-            "after"
-        ],
-        "info": "transitive; separable: no",
         "definitions": [
             "заботиться о",
             "присматривать за"
@@ -70,19 +65,20 @@
         "examples": [
             {
                 "phrase": "Look after Anna.",
-                "translation": "Присмотри за Анной."
+                "translation": "Присмотри за Анной.",
+                "level": "A1"
             },
             {
                 "phrase": "Look after him.",
-                "translation": "Позаботься о нём."
+                "translation": "Позаботься о нём.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "She looks after her younger brother when their parents are away.",
+                "translation": "Она присматривает за младшим братом, когда родителей нет."
             }
         ],
-        "forms": {
-            "past_simple": "looked after",
-            "past_participle": "looked after",
-            "present_participle": "looking after",
-            "third_person_singular": "looks after"
-        },
         "learning_level": 5
     },
     {
@@ -91,11 +87,6 @@
         "level": "A1",
         "frequency_rank": 95,
         "is_irregular": true,
-        "base_verb": "get",
-        "particles": [
-            "up"
-        ],
-        "info": "intransitive; separable: no",
         "definitions": [
             "вставать с кровати",
             "подниматься"
@@ -111,18 +102,23 @@
         "examples": [
             {
                 "phrase": "Get up early.",
-                "translation": "Вставай рано."
+                "translation": "Вставай рано.",
+                "level": "A1"
             },
             {
                 "phrase": "I got up.",
-                "translation": "Я встал."
+                "translation": "Я встал.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "I usually get up before sunrise when I have an early shift.",
+                "translation": "Я обычно встаю до рассвета, когда у меня ранняя смена."
             }
         ],
         "forms": {
             "past_simple": "got up",
-            "past_participle": "got up",
-            "present_participle": "getting up",
-            "third_person_singular": "gets up"
+            "past_participle": "got up"
         },
         "learning_level": 9
     },
@@ -131,15 +127,7 @@
         "part_of_speech": "phrasal_verb",
         "level": "A2",
         "frequency_rank": 180,
-        "topics": [
-            "travel"
-        ],
         "is_irregular": true,
-        "base_verb": "take",
-        "particles": [
-            "off"
-        ],
-        "info": "transitive/intransitive; separable when transitive",
         "definitions": [
             "снимать (одежду)",
             "взлетать (о самолёте)",
@@ -157,18 +145,23 @@
         "examples": [
             {
                 "phrase": "Take off your coat.",
-                "translation": "Сними пальто."
+                "translation": "Сними пальто.",
+                "level": "A1"
             },
             {
                 "phrase": "The plane took off.",
-                "translation": "Самолёт взлетел."
+                "translation": "Самолёт взлетел.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "The flight was delayed, but the plane finally took off at midnight.",
+                "translation": "Рейс задержали, но самолёт наконец вылетел в полночь."
             }
         ],
         "forms": {
             "past_simple": "took off",
-            "past_participle": "taken off",
-            "present_participle": "taking off",
-            "third_person_singular": "takes off"
+            "past_participle": "taken off"
         },
         "learning_level": 2
     },
@@ -178,11 +171,6 @@
         "level": "A2",
         "frequency_rank": 145,
         "is_irregular": true,
-        "base_verb": "find",
-        "particles": [
-            "out"
-        ],
-        "info": "transitive; separable",
         "definitions": [
             "выяснять",
             "узнавать",
@@ -200,18 +188,23 @@
         "examples": [
             {
                 "phrase": "Find out why.",
-                "translation": "Выясни почему."
+                "translation": "Выясни почему.",
+                "level": "A1"
             },
             {
                 "phrase": "She found out.",
-                "translation": "Она выяснила."
+                "translation": "Она выяснила.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "We need to find out whether the museum is open on Mondays.",
+                "translation": "Нужно выяснить, открыт ли музей по понедельникам."
             }
         ],
         "forms": {
             "past_simple": "found out",
-            "past_participle": "found out",
-            "present_participle": "finding out",
-            "third_person_singular": "finds out"
+            "past_participle": "found out"
         },
         "learning_level": 6
     },
@@ -221,11 +214,6 @@
         "level": "A2",
         "frequency_rank": 205,
         "is_irregular": true,
-        "base_verb": "put",
-        "particles": [
-            "on"
-        ],
-        "info": "transitive; separable",
         "definitions": [
             "надевать",
             "включать (устройство)",
@@ -244,18 +232,23 @@
         "examples": [
             {
                 "phrase": "Put on your coat.",
-                "translation": "Надень пальто."
+                "translation": "Надень пальто.",
+                "level": "A1"
             },
             {
                 "phrase": "Put it on.",
-                "translation": "Надень это."
+                "translation": "Надень это.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "He put on a warm jacket before going out into the snow.",
+                "translation": "Он надел тёплую куртку перед выходом на снег."
             }
         ],
         "forms": {
             "past_simple": "put on",
-            "past_participle": "put on",
-            "present_participle": "putting on",
-            "third_person_singular": "puts on"
+            "past_participle": "put on"
         },
         "learning_level": 1
     },
@@ -264,15 +257,7 @@
         "part_of_speech": "phrasal_verb",
         "level": "A1",
         "frequency_rank": 72,
-        "topics": [
-            "it-work"
-        ],
         "is_irregular": false,
-        "base_verb": "turn",
-        "particles": [
-            "off"
-        ],
-        "info": "transitive; separable",
         "definitions": [
             "выключать",
             "отталкивать (вызывать неприязнь)"
@@ -290,19 +275,20 @@
         "examples": [
             {
                 "phrase": "Turn off lights.",
-                "translation": "Выключи свет."
+                "translation": "Выключи свет.",
+                "level": "A1"
             },
             {
                 "phrase": "Turn it off.",
-                "translation": "Выключи это."
+                "translation": "Выключи это.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "Please turn off your phone during the performance.",
+                "translation": "Пожалуйста, выключите телефон во время представления."
             }
         ],
-        "forms": {
-            "past_simple": "turned off",
-            "past_participle": "turned off",
-            "present_participle": "turning off",
-            "third_person_singular": "turns off"
-        },
         "learning_level": 8
     },
     {
@@ -310,15 +296,7 @@
         "part_of_speech": "phrasal_verb",
         "level": "A2",
         "frequency_rank": 260,
-        "topics": [
-            "it-work"
-        ],
         "is_irregular": false,
-        "base_verb": "carry",
-        "particles": [
-            "on"
-        ],
-        "info": "intransitive; often followed by with + noun or verb-ing",
         "definitions": [
             "продолжать",
             "не прекращать"
@@ -336,19 +314,20 @@
         "examples": [
             {
                 "phrase": "Carry on working.",
-                "translation": "Продолжай работать."
+                "translation": "Продолжай работать.",
+                "level": "A1"
             },
             {
                 "phrase": "Carry on with it.",
-                "translation": "Продолжай это."
+                "translation": "Продолжай это.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "Despite the rain, they carried on walking toward the village.",
+                "translation": "Несмотря на дождь, они продолжили идти в сторону деревни."
             }
         ],
-        "forms": {
-            "past_simple": "carried on",
-            "past_participle": "carried on",
-            "present_participle": "carrying on",
-            "third_person_singular": "carries on"
-        },
         "learning_level": 4
     },
     {
@@ -357,11 +336,6 @@
         "level": "A2",
         "frequency_rank": 115,
         "is_irregular": true,
-        "base_verb": "run",
-        "particles": [
-            "out"
-        ],
-        "info": "intransitive; often followed by of + noun",
         "definitions": [
             "заканчиваться (о запасах)",
             "исчерпываться"
@@ -379,18 +353,23 @@
         "examples": [
             {
                 "phrase": "We ran out.",
-                "translation": "У нас закончилось."
+                "translation": "У нас закончилось.",
+                "level": "A1"
             },
             {
                 "phrase": "Run out of milk.",
-                "translation": "Молоко закончилось."
+                "translation": "Молоко закончилось.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "We had to stop because the car ran out of fuel.",
+                "translation": "Нам пришлось остановиться, потому что в машине закончилось топливо."
             }
         ],
         "forms": {
             "past_simple": "ran out",
-            "past_participle": "run out",
-            "present_participle": "running out",
-            "third_person_singular": "runs out"
+            "past_participle": "run out"
         },
         "learning_level": 0
     },
@@ -399,15 +378,7 @@
         "part_of_speech": "phrasal_verb",
         "level": "B1",
         "frequency_rank": 330,
-        "topics": [
-            "it-work"
-        ],
         "is_irregular": true,
-        "base_verb": "break",
-        "particles": [
-            "down"
-        ],
-        "info": "intransitive (machine/emotional); transitive and separable (analyze into parts)",
         "definitions": [
             "ломаться (о машине или устройстве)",
             "терять самообладание",
@@ -426,18 +397,23 @@
         "examples": [
             {
                 "phrase": "The car broke down.",
-                "translation": "Машина сломалась."
+                "translation": "Машина сломалась.",
+                "level": "A1"
             },
             {
                 "phrase": "Don't break down.",
-                "translation": "Не сдавайся."
+                "translation": "Не сдавайся.",
+                "level": "A2"
+            },
+            {
+                "level": "B1",
+                "phrase": "The old computer broke down while I was finishing the report.",
+                "translation": "Старый компьютер сломался, когда я заканчивал отчёт."
             }
         ],
         "forms": {
             "past_simple": "broke down",
-            "past_participle": "broken down",
-            "present_participle": "breaking down",
-            "third_person_singular": "breaks down"
+            "past_participle": "broken down"
         },
         "learning_level": 7
     },
@@ -456,14 +432,23 @@
         "examples": [
             {
                 "phrase": "I go to work by bus.",
-                "translation": "Я езжу на работу на автобусе."
+                "translation": "Я езжу на работу на автобусе.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We go to the library after class.",
+                "translation": "После занятий мы ходим в библиотеку."
+            },
+            {
+                "level": "B1",
+                "phrase": "The road goes through several small villages.",
+                "translation": "Дорога проходит через несколько небольших деревень."
             }
         ],
         "forms": {
             "past_simple": "went",
-            "past_participle": "gone",
-            "present_participle": "going",
-            "third_person_singular": "goes"
+            "past_participle": "gone"
         }
     },
     {
@@ -480,14 +465,23 @@
         "examples": [
             {
                 "phrase": "Come here, please.",
-                "translation": "Подойди сюда, пожалуйста."
+                "translation": "Подойди сюда, пожалуйста.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We came home late yesterday.",
+                "translation": "Вчера мы поздно пришли домой."
+            },
+            {
+                "level": "B1",
+                "phrase": "Many visitors come here to see the old castle.",
+                "translation": "Многие приезжают сюда, чтобы увидеть старый замок."
             }
         ],
         "forms": {
             "past_simple": "came",
-            "past_participle": "come",
-            "present_participle": "coming",
-            "third_person_singular": "comes"
+            "past_participle": "come"
         }
     },
     {
@@ -505,14 +499,23 @@
         "examples": [
             {
                 "phrase": "I got your message.",
-                "translation": "Я получил твоё сообщение."
+                "translation": "Я получил твоё сообщение.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I get home at six every day.",
+                "translation": "Я прихожу домой в шесть каждый день."
+            },
+            {
+                "level": "B1",
+                "phrase": "She got a chance to study abroad.",
+                "translation": "Она получила возможность учиться за границей."
             }
         ],
         "forms": {
             "past_simple": "got",
-            "past_participle": "got",
-            "present_participle": "getting",
-            "third_person_singular": "gets"
+            "past_participle": "got"
         }
     },
     {
@@ -530,14 +533,23 @@
         "examples": [
             {
                 "phrase": "She makes great coffee.",
-                "translation": "Она готовит отличный кофе."
+                "translation": "Она готовит отличный кофе.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We made lunch together.",
+                "translation": "Мы вместе приготовили обед."
+            },
+            {
+                "level": "B1",
+                "phrase": "This change could make the process easier for everyone.",
+                "translation": "Это изменение может упростить процесс для всех."
             }
         ],
         "forms": {
             "past_simple": "made",
-            "past_participle": "made",
-            "present_participle": "making",
-            "third_person_singular": "makes"
+            "past_participle": "made"
         }
     },
     {
@@ -555,14 +567,23 @@
         "examples": [
             {
                 "phrase": "Take an umbrella with you.",
-                "translation": "Возьми с собой зонт."
+                "translation": "Возьми с собой зонт.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "She took the bus to school.",
+                "translation": "Она поехала в школу на автобусе."
+            },
+            {
+                "level": "B1",
+                "phrase": "It takes about an hour to reach the coast.",
+                "translation": "Чтобы добраться до побережья, нужно около часа."
             }
         ],
         "forms": {
             "past_simple": "took",
-            "past_participle": "taken",
-            "present_participle": "taking",
-            "third_person_singular": "takes"
+            "past_participle": "taken"
         }
     },
     {
@@ -579,14 +600,23 @@
         "examples": [
             {
                 "phrase": "Give me a minute.",
-                "translation": "Дай мне минуту."
+                "translation": "Дай мне минуту.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "He gave me a useful map.",
+                "translation": "Он дал мне полезную карту."
+            },
+            {
+                "level": "B1",
+                "phrase": "The report gives a clear picture of the problem.",
+                "translation": "Отчёт даёт ясное представление о проблеме."
             }
         ],
         "forms": {
             "past_simple": "gave",
-            "past_participle": "given",
-            "present_participle": "giving",
-            "third_person_singular": "gives"
+            "past_participle": "given"
         }
     },
     {
@@ -603,14 +633,23 @@
         "examples": [
             {
                 "phrase": "I can't find my keys.",
-                "translation": "Я не могу найти ключи."
+                "translation": "Я не могу найти ключи.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I found a coin under the table.",
+                "translation": "Я нашёл монету под столом."
+            },
+            {
+                "level": "B1",
+                "phrase": "You can find more information on the official website.",
+                "translation": "Дополнительную информацию можно найти на официальном сайте."
             }
         ],
         "forms": {
             "past_simple": "found",
-            "past_participle": "found",
-            "present_participle": "finding",
-            "third_person_singular": "finds"
+            "past_participle": "found"
         }
     },
     {
@@ -628,14 +667,23 @@
         "examples": [
             {
                 "phrase": "I think you're right.",
-                "translation": "Думаю, ты прав."
+                "translation": "Думаю, ты прав.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I think this film is funny.",
+                "translation": "Я думаю, этот фильм смешной."
+            },
+            {
+                "level": "B1",
+                "phrase": "We need to think carefully before making a decision.",
+                "translation": "Нам нужно тщательно подумать, прежде чем принять решение."
             }
         ],
         "forms": {
             "past_simple": "thought",
-            "past_participle": "thought",
-            "present_participle": "thinking",
-            "third_person_singular": "thinks"
+            "past_participle": "thought"
         }
     },
     {
@@ -652,14 +700,23 @@
         "examples": [
             {
                 "phrase": "Do you know her name?",
-                "translation": "Ты знаешь, как её зовут?"
+                "translation": "Ты знаешь, как её зовут?",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Do you know this place?",
+                "translation": "Ты знаешь это место?"
+            },
+            {
+                "level": "B1",
+                "phrase": "She has known him since they were children.",
+                "translation": "Она знает его с детства."
             }
         ],
         "forms": {
             "past_simple": "knew",
-            "past_participle": "known",
-            "present_participle": "knowing",
-            "third_person_singular": "knows"
+            "past_participle": "known"
         }
     },
     {
@@ -677,14 +734,23 @@
         "examples": [
             {
                 "phrase": "What did you say?",
-                "translation": "Что ты сказал?"
+                "translation": "Что ты сказал?",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "She said hello to the teacher.",
+                "translation": "Она поздоровалась с учителем."
+            },
+            {
+                "level": "B1",
+                "phrase": "He did not say why he had changed his mind.",
+                "translation": "Он не сказал, почему передумал."
             }
         ],
         "forms": {
             "past_simple": "said",
-            "past_participle": "said",
-            "present_participle": "saying",
-            "third_person_singular": "says"
+            "past_participle": "said"
         }
     },
     {
@@ -702,14 +768,23 @@
         "examples": [
             {
                 "phrase": "Tell me the truth.",
-                "translation": "Скажи мне правду."
+                "translation": "Скажи мне правду.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Tell me about your day.",
+                "translation": "Расскажи мне о своём дне."
+            },
+            {
+                "level": "B1",
+                "phrase": "The guide told us how the bridge was built.",
+                "translation": "Гид рассказал нам, как построили мост."
             }
         ],
         "forms": {
             "past_simple": "told",
-            "past_participle": "told",
-            "present_participle": "telling",
-            "third_person_singular": "tells"
+            "past_participle": "told"
         }
     },
     {
@@ -726,15 +801,20 @@
         "examples": [
             {
                 "phrase": "Can I ask you a question?",
-                "translation": "Можно задать тебе вопрос?"
+                "translation": "Можно задать тебе вопрос?",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "He asked me for directions.",
+                "translation": "Он спросил у меня дорогу."
+            },
+            {
+                "level": "B1",
+                "phrase": "You should ask the manager before changing the schedule.",
+                "translation": "Перед изменением расписания следует спросить менеджера."
             }
-        ],
-        "forms": {
-            "past_simple": "asked",
-            "past_participle": "asked",
-            "present_participle": "asking",
-            "third_person_singular": "asks"
-        }
+        ]
     },
     {
         "word": "work",
@@ -750,17 +830,19 @@
         "examples": [
             {
                 "phrase": "I work from home.",
-                "translation": "Я работаю из дома."
+                "translation": "Я работаю из дома.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "My sister works at a hotel.",
+                "translation": "Моя сестра работает в гостинице."
+            },
+            {
+                "level": "B1",
+                "phrase": "They are working together to solve the problem.",
+                "translation": "Они работают вместе, чтобы решить проблему."
             }
-        ],
-        "forms": {
-            "past_simple": "worked",
-            "past_participle": "worked",
-            "present_participle": "working",
-            "third_person_singular": "works"
-        },
-        "topics": [
-            "it-work"
         ]
     },
     {
@@ -777,15 +859,20 @@
         "examples": [
             {
                 "phrase": "The children play outside.",
-                "translation": "Дети играют на улице."
+                "translation": "Дети играют на улице.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We played football after school.",
+                "translation": "Мы играли в футбол после школы."
+            },
+            {
+                "level": "B1",
+                "phrase": "The band will play at the festival next weekend.",
+                "translation": "Группа выступит на фестивале в следующие выходные."
             }
-        ],
-        "forms": {
-            "past_simple": "played",
-            "past_participle": "played",
-            "present_participle": "playing",
-            "third_person_singular": "plays"
-        }
+        ]
     },
     {
         "word": "study",
@@ -801,15 +888,20 @@
         "examples": [
             {
                 "phrase": "She studies English every day.",
-                "translation": "Она изучает английский каждый день."
+                "translation": "Она изучает английский каждый день.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I study English with my friend.",
+                "translation": "Я учу английский вместе с другом."
+            },
+            {
+                "level": "B1",
+                "phrase": "He studied hard because he wanted to pass the final exam.",
+                "translation": "Он усердно занимался, потому что хотел сдать выпускной экзамен."
             }
-        ],
-        "forms": {
-            "past_simple": "studied",
-            "past_participle": "studied",
-            "present_participle": "studying",
-            "third_person_singular": "studies"
-        }
+        ]
     },
     {
         "word": "learn",
@@ -826,15 +918,20 @@
         "examples": [
             {
                 "phrase": "We are learning new words.",
-                "translation": "Мы учим новые слова."
+                "translation": "Мы учим новые слова.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "She learned to drive last year.",
+                "translation": "В прошлом году она научилась водить."
+            },
+            {
+                "level": "B1",
+                "phrase": "Children learn new skills faster when they practise regularly.",
+                "translation": "Дети быстрее осваивают новые навыки, когда регулярно практикуются."
             }
-        ],
-        "forms": {
-            "past_simple": "learned",
-            "past_participle": "learned",
-            "present_participle": "learning",
-            "third_person_singular": "learns"
-        }
+        ]
     },
     {
         "word": "travel",
@@ -850,17 +947,19 @@
         "examples": [
             {
                 "phrase": "They travel by train.",
-                "translation": "Они путешествуют на поезде."
+                "translation": "Они путешествуют на поезде.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We travelled to Spain by train.",
+                "translation": "Мы путешествовали в Испанию на поезде."
+            },
+            {
+                "level": "B1",
+                "phrase": "Travelling alone helped him become more independent.",
+                "translation": "Путешествие в одиночку помогло ему стать самостоятельнее."
             }
-        ],
-        "forms": {
-            "past_simple": "travelled",
-            "past_participle": "travelled",
-            "present_participle": "travelling",
-            "third_person_singular": "travels"
-        },
-        "topics": [
-            "travel"
         ]
     },
     {
@@ -877,14 +976,23 @@
         "examples": [
             {
                 "phrase": "We eat dinner at seven.",
-                "translation": "Мы ужинаем в семь."
+                "translation": "Мы ужинаем в семь.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "He eats fruit every morning.",
+                "translation": "Он ест фрукты каждое утро."
+            },
+            {
+                "level": "B1",
+                "phrase": "We ate outside because the weather was warm.",
+                "translation": "Мы ели на улице, потому что было тепло."
             }
         ],
         "forms": {
             "past_simple": "ate",
-            "past_participle": "eaten",
-            "present_participle": "eating",
-            "third_person_singular": "eats"
+            "past_participle": "eaten"
         }
     },
     {
@@ -901,14 +1009,23 @@
         "examples": [
             {
                 "phrase": "Drink more water.",
-                "translation": "Пей больше воды."
+                "translation": "Пей больше воды.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "She drank a cup of tea.",
+                "translation": "Она выпила чашку чая."
+            },
+            {
+                "level": "B1",
+                "phrase": "You should drink enough water during the journey.",
+                "translation": "Во время поездки нужно пить достаточно воды."
             }
         ],
         "forms": {
             "past_simple": "drank",
-            "past_participle": "drunk",
-            "present_participle": "drinking",
-            "third_person_singular": "drinks"
+            "past_participle": "drunk"
         }
     },
     {
@@ -924,14 +1041,23 @@
         "examples": [
             {
                 "phrase": "The baby is sleeping.",
-                "translation": "Ребёнок спит."
+                "translation": "Ребёнок спит.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "My dog sleeps near the door.",
+                "translation": "Моя собака спит у двери."
+            },
+            {
+                "level": "B1",
+                "phrase": "I could not sleep well because the room was too noisy.",
+                "translation": "Я плохо спал, потому что в комнате было слишком шумно."
             }
         ],
         "forms": {
             "past_simple": "slept",
-            "past_participle": "slept",
-            "present_participle": "sleeping",
-            "third_person_singular": "sleeps"
+            "past_participle": "slept"
         }
     },
     {
@@ -948,14 +1074,23 @@
         "examples": [
             {
                 "phrase": "Please write your name here.",
-                "translation": "Пожалуйста, напиши здесь своё имя."
+                "translation": "Пожалуйста, напиши здесь своё имя.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "He writes emails every morning.",
+                "translation": "Он пишет письма каждое утро."
+            },
+            {
+                "level": "B1",
+                "phrase": "Please write down the address in case your phone battery dies.",
+                "translation": "Запишите адрес на случай, если телефон разрядится."
             }
         ],
         "forms": {
             "past_simple": "wrote",
-            "past_participle": "written",
-            "present_participle": "writing",
-            "third_person_singular": "writes"
+            "past_participle": "written"
         }
     },
     {
@@ -972,14 +1107,23 @@
         "examples": [
             {
                 "phrase": "I read before bed.",
-                "translation": "Я читаю перед сном."
+                "translation": "Я читаю перед сном.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I read a short story yesterday.",
+                "translation": "Вчера я прочитал рассказ."
+            },
+            {
+                "level": "B1",
+                "phrase": "She reads the news online before going to work.",
+                "translation": "Она читает новости в интернете перед работой."
             }
         ],
         "forms": {
             "past_simple": "read",
-            "past_participle": "read",
-            "present_participle": "reading",
-            "third_person_singular": "reads"
+            "past_participle": "read"
         }
     },
     {
@@ -997,14 +1141,23 @@
         "examples": [
             {
                 "phrase": "She speaks three languages.",
-                "translation": "Она говорит на трёх языках."
+                "translation": "Она говорит на трёх языках.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Can you speak slowly, please?",
+                "translation": "Говорите, пожалуйста, медленнее."
+            },
+            {
+                "level": "B1",
+                "phrase": "They spoke about their plans for the summer holiday.",
+                "translation": "Они поговорили о планах на летний отпуск."
             }
         ],
         "forms": {
             "past_simple": "spoke",
-            "past_participle": "spoken",
-            "present_participle": "speaking",
-            "third_person_singular": "speaks"
+            "past_participle": "spoken"
         }
     },
     {
@@ -1021,15 +1174,20 @@
         "examples": [
             {
                 "phrase": "Listen to this song.",
-                "translation": "Послушай эту песню."
+                "translation": "Послушай эту песню.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I listen to music on the bus.",
+                "translation": "Я слушаю музыку в автобусе."
+            },
+            {
+                "level": "B1",
+                "phrase": "She listened carefully and wrote down the main points.",
+                "translation": "Она внимательно слушала и записала основные пункты."
             }
-        ],
-        "forms": {
-            "past_simple": "listened",
-            "past_participle": "listened",
-            "present_participle": "listening",
-            "third_person_singular": "listens"
-        }
+        ]
     },
     {
         "word": "watch",
@@ -1045,15 +1203,20 @@
         "examples": [
             {
                 "phrase": "We watched a film last night.",
-                "translation": "Вчера вечером мы смотрели фильм."
+                "translation": "Вчера вечером мы смотрели фильм.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We watched the game together.",
+                "translation": "Мы вместе смотрели матч."
+            },
+            {
+                "level": "B1",
+                "phrase": "I watched a documentary about life in the Arctic.",
+                "translation": "Я посмотрел документальный фильм о жизни в Арктике."
             }
-        ],
-        "forms": {
-            "past_simple": "watched",
-            "past_participle": "watched",
-            "present_participle": "watching",
-            "third_person_singular": "watches"
-        }
+        ]
     },
     {
         "word": "buy",
@@ -1069,14 +1232,23 @@
         "examples": [
             {
                 "phrase": "I bought a new book.",
-                "translation": "Я купил новую книгу."
+                "translation": "Я купил новую книгу.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "He buys bread at the market.",
+                "translation": "Он покупает хлеб на рынке."
+            },
+            {
+                "level": "B1",
+                "phrase": "They bought a larger table to make room for everyone.",
+                "translation": "Они купили стол побольше, чтобы всем хватило места."
             }
         ],
         "forms": {
             "past_simple": "bought",
-            "past_participle": "bought",
-            "present_participle": "buying",
-            "third_person_singular": "buys"
+            "past_participle": "bought"
         }
     },
     {
@@ -1093,14 +1265,23 @@
         "examples": [
             {
                 "phrase": "Bring your passport.",
-                "translation": "Возьми с собой паспорт."
+                "translation": "Возьми с собой паспорт.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Please bring your notebook tomorrow.",
+                "translation": "Принеси завтра свою тетрадь."
+            },
+            {
+                "level": "B1",
+                "phrase": "The new plan brought several unexpected benefits.",
+                "translation": "Новый план принёс несколько неожиданных преимуществ."
             }
         ],
         "forms": {
             "past_simple": "brought",
-            "past_participle": "brought",
-            "present_participle": "bringing",
-            "third_person_singular": "brings"
+            "past_participle": "brought"
         }
     },
     {
@@ -1118,18 +1299,24 @@
         "examples": [
             {
                 "phrase": "The train leaves at noon.",
-                "translation": "Поезд отправляется в полдень."
+                "translation": "Поезд отправляется в полдень.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We leave the house at eight.",
+                "translation": "Мы выходим из дома в восемь."
+            },
+            {
+                "level": "B1",
+                "phrase": "She left her job after finding a better opportunity.",
+                "translation": "Она ушла с работы, найдя более подходящую возможность."
             }
         ],
         "forms": {
             "past_simple": "left",
-            "past_participle": "left",
-            "present_participle": "leaving",
-            "third_person_singular": "leaves"
-        },
-        "topics": [
-            "travel"
-        ]
+            "past_participle": "left"
+        }
     },
     {
         "word": "arrive",
@@ -1145,17 +1332,19 @@
         "examples": [
             {
                 "phrase": "We arrived in Berlin yesterday.",
-                "translation": "Мы приехали в Берлин вчера."
+                "translation": "Мы приехали в Берлин вчера.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "The bus arrives in ten minutes.",
+                "translation": "Автобус прибудет через десять минут."
+            },
+            {
+                "level": "B1",
+                "phrase": "We arrived early, so we had time to explore the city.",
+                "translation": "Мы приехали рано, поэтому успели погулять по городу."
             }
-        ],
-        "forms": {
-            "past_simple": "arrived",
-            "past_participle": "arrived",
-            "present_participle": "arriving",
-            "third_person_singular": "arrives"
-        },
-        "topics": [
-            "travel"
         ]
     },
     {
@@ -1172,15 +1361,20 @@
         "examples": [
             {
                 "phrase": "Open the window, please.",
-                "translation": "Открой окно, пожалуйста."
+                "translation": "Открой окно, пожалуйста.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Open your book to page ten.",
+                "translation": "Открой книгу на десятой странице."
+            },
+            {
+                "level": "B1",
+                "phrase": "The new library will open to the public next month.",
+                "translation": "Новая библиотека откроется для посетителей в следующем месяце."
             }
-        ],
-        "forms": {
-            "past_simple": "opened",
-            "past_participle": "opened",
-            "present_participle": "opening",
-            "third_person_singular": "opens"
-        }
+        ]
     },
     {
         "word": "close",
@@ -1196,15 +1390,20 @@
         "examples": [
             {
                 "phrase": "The shop closes at six.",
-                "translation": "Магазин закрывается в шесть."
+                "translation": "Магазин закрывается в шесть.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Close the door, please.",
+                "translation": "Закрой дверь, пожалуйста."
+            },
+            {
+                "level": "B1",
+                "phrase": "The restaurant closes earlier during the winter months.",
+                "translation": "Зимой ресторан закрывается раньше."
             }
-        ],
-        "forms": {
-            "past_simple": "closed",
-            "past_participle": "closed",
-            "present_participle": "closing",
-            "third_person_singular": "closes"
-        }
+        ]
     },
     {
         "word": "start",
@@ -1220,15 +1419,20 @@
         "examples": [
             {
                 "phrase": "Let's start the lesson.",
-                "translation": "Давайте начнём урок."
+                "translation": "Давайте начнём урок.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "The lesson starts at nine.",
+                "translation": "Урок начинается в девять."
+            },
+            {
+                "level": "B1",
+                "phrase": "She started learning Spanish to prepare for her trip.",
+                "translation": "Она начала учить испанский, чтобы подготовиться к поездке."
             }
-        ],
-        "forms": {
-            "past_simple": "started",
-            "past_participle": "started",
-            "present_participle": "starting",
-            "third_person_singular": "starts"
-        }
+        ]
     },
     {
         "word": "finish",
@@ -1244,15 +1448,20 @@
         "examples": [
             {
                 "phrase": "I finished my homework.",
-                "translation": "Я закончил домашнее задание."
+                "translation": "Я закончил домашнее задание.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I finished the book last night.",
+                "translation": "Вчера вечером я закончил книгу."
+            },
+            {
+                "level": "B1",
+                "phrase": "After finishing the course, he applied for a new job.",
+                "translation": "После окончания курса он подал заявку на новую работу."
             }
-        ],
-        "forms": {
-            "past_simple": "finished",
-            "past_participle": "finished",
-            "present_participle": "finishing",
-            "third_person_singular": "finishes"
-        }
+        ]
     },
     {
         "word": "help",
@@ -1268,15 +1477,20 @@
         "examples": [
             {
                 "phrase": "Can you help me?",
-                "translation": "Ты можешь мне помочь?"
+                "translation": "Ты можешь мне помочь?",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Can you help me carry this box?",
+                "translation": "Ты поможешь мне донести эту коробку?"
+            },
+            {
+                "level": "B1",
+                "phrase": "The information desk helped us find the right platform.",
+                "translation": "Справочная помогла нам найти нужную платформу."
             }
-        ],
-        "forms": {
-            "past_simple": "helped",
-            "past_participle": "helped",
-            "present_participle": "helping",
-            "third_person_singular": "helps"
-        }
+        ]
     },
     {
         "word": "try",
@@ -1292,15 +1506,20 @@
         "examples": [
             {
                 "phrase": "Try again tomorrow.",
-                "translation": "Попробуй ещё раз завтра."
+                "translation": "Попробуй ещё раз завтра.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "Try this cake.",
+                "translation": "Попробуй этот торт."
+            },
+            {
+                "level": "B1",
+                "phrase": "He tried to explain the problem in simple words.",
+                "translation": "Он попытался объяснить проблему простыми словами."
             }
-        ],
-        "forms": {
-            "past_simple": "tried",
-            "past_participle": "tried",
-            "present_participle": "trying",
-            "third_person_singular": "tries"
-        }
+        ]
     },
     {
         "word": "use",
@@ -1316,17 +1535,19 @@
         "examples": [
             {
                 "phrase": "I use this app every day.",
-                "translation": "Я пользуюсь этим приложением каждый день."
+                "translation": "Я пользуюсь этим приложением каждый день.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "We use this room for meetings.",
+                "translation": "Мы используем эту комнату для встреч."
+            },
+            {
+                "level": "B1",
+                "phrase": "This app is useful when you need to organise your daily tasks.",
+                "translation": "Это приложение полезно, когда нужно организовать повседневные дела."
             }
-        ],
-        "forms": {
-            "past_simple": "used",
-            "past_participle": "used",
-            "present_participle": "using",
-            "third_person_singular": "uses"
-        },
-        "topics": [
-            "it-work"
         ]
     },
     {
@@ -1343,15 +1564,20 @@
         "examples": [
             {
                 "phrase": "We need more time.",
-                "translation": "Нам нужно больше времени."
+                "translation": "Нам нужно больше времени.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I need a new pen.",
+                "translation": "Мне нужна новая ручка."
+            },
+            {
+                "level": "B1",
+                "phrase": "We need to leave soon if we want to catch the last train.",
+                "translation": "Нам скоро нужно выходить, если мы хотим успеть на последний поезд."
             }
-        ],
-        "forms": {
-            "past_simple": "needed",
-            "past_participle": "needed",
-            "present_participle": "needing",
-            "third_person_singular": "needs"
-        }
+        ]
     },
     {
         "word": "want",
@@ -1367,15 +1593,20 @@
         "examples": [
             {
                 "phrase": "I want to learn English.",
-                "translation": "Я хочу выучить английский."
+                "translation": "Я хочу выучить английский.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "She wants a cup of coffee.",
+                "translation": "Она хочет чашку кофе."
+            },
+            {
+                "level": "B1",
+                "phrase": "They want to know how the decision will affect their work.",
+                "translation": "Они хотят знать, как это решение повлияет на их работу."
             }
-        ],
-        "forms": {
-            "past_simple": "wanted",
-            "past_participle": "wanted",
-            "present_participle": "wanting",
-            "third_person_singular": "wants"
-        }
+        ]
     },
     {
         "word": "become",
@@ -1391,14 +1622,23 @@
         "examples": [
             {
                 "phrase": "It became much easier.",
-                "translation": "Это стало намного проще."
+                "translation": "Это стало намного проще.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "It became cold in the evening.",
+                "translation": "Вечером стало холодно."
+            },
+            {
+                "level": "B1",
+                "phrase": "He hopes to become a doctor after university.",
+                "translation": "Он надеется стать врачом после университета."
             }
         ],
         "forms": {
             "past_simple": "became",
-            "past_participle": "become",
-            "present_participle": "becoming",
-            "third_person_singular": "becomes"
+            "past_participle": "become"
         }
     },
     {
@@ -1415,18 +1655,23 @@
         "examples": [
             {
                 "phrase": "I wake up at six.",
-                "translation": "Я просыпаюсь в шесть."
+                "translation": "Я просыпаюсь в шесть.",
+                "level": "A1"
+            },
+            {
+                "level": "A2",
+                "phrase": "I wake up when my alarm rings.",
+                "translation": "Я просыпаюсь, когда звонит будильник."
+            },
+            {
+                "level": "B1",
+                "phrase": "She woke up early to catch the first train.",
+                "translation": "Она проснулась рано, чтобы успеть на первый поезд."
             }
         ],
         "forms": {
             "past_simple": "woke up",
-            "past_participle": "woken up",
-            "present_participle": "waking up",
-            "third_person_singular": "wakes up"
-        },
-        "base_verb": "wake",
-        "particles": [
-            "up"
-        ]
+            "past_participle": "woken up"
+        }
     }
 ]

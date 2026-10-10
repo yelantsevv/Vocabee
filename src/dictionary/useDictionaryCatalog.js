@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import sourceDictionary from '../../dictionary/en-ru.json';
 import germanRussianDictionary from '../../dictionary/de-ru.json';
 import {
@@ -9,6 +9,45 @@ import {
   matchesVerbType,
   normalizeImportedEntries
 } from './dictionaryUtils.js';
+
+const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
+const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
+const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'phrasal'];
+
+function readCatalogFilters() {
+  const defaults = {
+    selectedSourceLanguage: 'en',
+    sourceLevels: ['A1', 'A2', 'B1'],
+    sourceVerbTypes: ['irregular', 'phrasal'],
+    sourceSort: 'popular',
+    sourceSearch: '',
+    progressView: 'all'
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(CATALOG_FILTERS_KEY) || '{}');
+    return {
+      selectedSourceLanguage: ['en', 'de'].includes(saved.selectedSourceLanguage)
+        ? saved.selectedSourceLanguage
+        : defaults.selectedSourceLanguage,
+      sourceLevels: Array.isArray(saved.sourceLevels)
+        ? saved.sourceLevels.filter((level) => AVAILABLE_LEVELS.includes(level))
+        : defaults.sourceLevels,
+      sourceVerbTypes: Array.isArray(saved.sourceVerbTypes)
+        ? saved.sourceVerbTypes.filter((type) => AVAILABLE_VERB_TYPES.includes(type))
+        : defaults.sourceVerbTypes,
+      sourceSort: ['popular', 'alphabetical', 'progress', 'progress-desc'].includes(saved.sourceSort)
+        ? saved.sourceSort
+        : defaults.sourceSort,
+      sourceSearch: typeof saved.sourceSearch === 'string' ? saved.sourceSearch : defaults.sourceSearch,
+      progressView: ['all', 'learning', 'learned'].includes(saved.progressView)
+        ? saved.progressView
+        : defaults.progressView
+    };
+  } catch {
+    return defaults;
+  }
+}
 
 function readStoredObject(key, legacyArrayAsLearned = false) {
   try {
@@ -23,12 +62,13 @@ function readStoredObject(key, legacyArrayAsLearned = false) {
 }
 
 export function useDictionaryCatalog() {
-  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState('en');
-  const [sourceLevels, setSourceLevels] = useState(['A1', 'A2', 'B1']);
-  const [sourceVerbTypes, setSourceVerbTypes] = useState(['irregular', 'phrasal']);
-  const [sourceSort, setSourceSort] = useState('popular');
-  const [sourceSearch, setSourceSearch] = useState('');
-  const [progressView, setProgressView] = useState('all');
+  const [initialFilters] = useState(readCatalogFilters);
+  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(initialFilters.selectedSourceLanguage);
+  const [sourceLevels, setSourceLevels] = useState(initialFilters.sourceLevels);
+  const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
+  const [sourceSort, setSourceSort] = useState(initialFilters.sourceSort);
+  const [sourceSearch, setSourceSearch] = useState(initialFilters.sourceSearch);
+  const [progressView, setProgressView] = useState(initialFilters.progressView);
   const [importStatus, setImportStatus] = useState('');
   const importInputRef = useRef(null);
   const [importedDictionaries, setImportedDictionaries] = useState(() => (
@@ -37,6 +77,21 @@ export function useDictionaryCatalog() {
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readStoredObject(LEARNED_ENTRIES_KEY, true)
   ));
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
+        selectedSourceLanguage,
+        sourceLevels,
+        sourceVerbTypes,
+        sourceSort,
+        sourceSearch,
+        progressView
+      }));
+    } catch (error) {
+      console.warn('Vocabee: unable to save dictionary filters.', error);
+    }
+  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceSort, sourceSearch, progressView]);
 
   const selectedSourceDictionary = useMemo(() => {
     const baseEntries = selectedSourceLanguage === 'de' ? germanRussianDictionary : sourceDictionary;
@@ -139,13 +194,13 @@ export function useDictionaryCatalog() {
     }
   }
 
-  function toggleLearningLevel(entry) {
+  function addToLearning(entry) {
     const key = getLearnedEntryKey(selectedSourceLanguage, entry.word);
     setLearningLevelOverrides((current) => {
       const currentLevel = getEntryLearningLevel(entry, selectedSourceLanguage, current);
-      const nextLevel = currentLevel === 9
-        ? (entry.learning_level === 9 ? 0 : entry.learning_level ?? 0)
-        : 9;
+      if (currentLevel > 0) return current;
+
+      const nextLevel = 1;
       const next = { ...current };
       if (nextLevel === (entry.learning_level ?? 0)) delete next[key];
       else next[key] = nextLevel;
@@ -178,7 +233,7 @@ export function useDictionaryCatalog() {
     selectedLevelEntries,
     levelLearningProgress,
     filteredSourceEntries,
-    toggleLearningLevel
+    addToLearning
   };
 }
 

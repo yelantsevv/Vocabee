@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
@@ -9,7 +10,9 @@ function toggleValue(values, setter, value) {
     : [...values, value]);
 }
 
-export function DictionaryCatalogPanel({ catalog, onSearchChange, onToggleLearningLevel }) {
+export function DictionaryCatalogPanel({ catalog, onSearchChange, onAddToLearning }) {
+  const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
+  const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -31,6 +34,19 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onToggleLearni
     learningLevelOverrides,
     filteredSourceEntries
   } = catalog;
+
+  function revealTranslation(word) {
+    clearTimeout(revealTranslationTimer.current);
+    revealTranslationTimer.current = setTimeout(() => setRevealedTranslationWord(word), 300);
+  }
+
+  function hideTranslation() {
+    clearTimeout(revealTranslationTimer.current);
+    revealTranslationTimer.current = null;
+    setRevealedTranslationWord(null);
+  }
+
+  useEffect(() => () => clearTimeout(revealTranslationTimer.current), []);
 
   return (
     <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
@@ -167,20 +183,78 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onToggleLearni
           {filteredSourceEntries.map((entry) => {
             const learningLevel = getEntryLearningLevel(entry, selectedSourceLanguage, learningLevelOverrides);
             return (
-              <li className={commonStyles.word} key={entry.word}>
-                <div className={commonStyles.wordPair}>
-                  <strong>{entry.word}</strong>
-                  <span>{entry.definitions.join(' · ')}</span>
+              <li className={styles.entryCard} key={entry.word}>
+                <div className={styles.entryHeader}>
+                  <div className={styles.entryMain}>
+                    <div className={styles.entryWordBlock}>
+                      <h2>{entry.word}</h2>
+                      {entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech) && entry.forms?.past_simple && entry.forms?.past_participle && (
+                        <p className={styles.inlineForms}>
+                          {entry.word} - {entry.forms.past_simple} - {entry.forms.past_participle}
+                        </p>
+                      )}
+                    </div>
+                    <div
+                      className={styles.entryTranslationBlock}
+                      onMouseLeave={hideTranslation}
+                      onFocus={() => revealTranslation(entry.word)}
+                      onBlur={hideTranslation}
+                    >
+                      <p
+                        className={clsx(styles.entryTranslation, revealedTranslationWord === entry.word && styles.entryTranslationVisible)}
+                        aria-hidden={revealedTranslationWord !== entry.word}
+                      >{entry.definitions.join(' · ')}</p>
+                      {learningLevel === 0 ? (
+                        <button
+                          className={styles.addToLearningButton}
+                          type="button"
+                          aria-label={`Добавить «${entry.word}» в обучение`}
+                          data-translation-trigger=""
+                          onPointerEnter={() => revealTranslation(entry.word)}
+                          onClick={() => onAddToLearning(entry)}
+                        ><span aria-hidden="true">+</span></button>
+                      ) : learningLevel === 9 ? (
+                        <span className={styles.learnedMark} aria-label="Слово выучено" data-translation-trigger="" onPointerEnter={() => revealTranslation(entry.word)}>✓</span>
+                      ) : (
+                        <div
+                          className={styles.progressCircle}
+                          role="progressbar"
+                          aria-label={`Уровень знания слова «${entry.word}»: ${learningLevel} из 9`}
+                          data-translation-trigger=""
+                          aria-valuemin={0}
+                          aria-valuemax={9}
+                          aria-valuenow={learningLevel}
+                          style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
+                          onPointerEnter={() => revealTranslation(entry.word)}
+                        ><span>{learningLevel}/9</span></div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {entry.examples?.[0] && (
-                  <small>{entry.examples[0].phrase} — {entry.examples[0].translation}</small>
+
+                {entry.examples?.length > 0 && (
+                  <section className={styles.entrySection} aria-label="Примеры">
+                    <ul className={styles.exampleList}>
+                      {entry.examples.map((example, index) => (
+                        <li key={`${example.phrase}-${index}`}>
+                          <span>{example.phrase}</span>
+                          <span
+                            className={clsx(styles.exampleTranslation, revealedTranslationWord === entry.word && styles.exampleTranslationVisible)}
+                            aria-hidden={revealedTranslationWord !== entry.word}
+                          >{example.translation}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
                 )}
-                <button
-                  className={clsx(styles.learnedButton, learningLevel === 9 && styles.learned)}
-                  type="button"
-                  aria-pressed={learningLevel === 9}
-                  onClick={() => onToggleLearningLevel(entry)}
-                >{learningLevel === 9 ? '✓ Изучено · 9/9' : `Отметить изученным · ${learningLevel}/9`}</button>
+
+                {(entry.synonyms?.length > 0 || entry.antonyms?.length > 0) && (
+                  <div className={styles.wordRelations}>
+                    {entry.synonyms?.length > 0 && <p><strong>Синонимы:</strong> {entry.synonyms.join(', ')}</p>}
+                    {entry.antonyms?.length > 0 && <p><strong>Антонимы:</strong> {entry.antonyms.join(', ')}</p>}
+                  </div>
+                )}
+
               </li>
             );
           })}

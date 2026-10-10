@@ -184,7 +184,7 @@ export function DictionaryPage() {
           : <DictionaryCatalogPanel
               catalog={catalog}
               onSearchChange={catalog.setSourceSearch}
-              onToggleLearningLevel={catalog.toggleLearningLevel}
+              onAddToLearning={catalog.addToLearning}
             />
       ) : (
         <SettingsPanel
