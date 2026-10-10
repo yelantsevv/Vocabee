@@ -4,7 +4,6 @@ const SEARCH_PLACEHOLDER = 'Поиск слова или перевода';
 
 export function DictionarySearch({
   activeView,
-  activePhraseSection,
   selectedSourceLanguage,
   savedWordsSearch,
   onSavedWordsSearchChange,
@@ -13,7 +12,6 @@ export function DictionarySearch({
 }) {
   const isSavedWordsView = activeView === 'dictionary';
   const isCatalogView = activeView === 'dictionaries'
-    && !activePhraseSection
     && Boolean(selectedSourceLanguage);
 
   if (!isSavedWordsView && !isCatalogView) return null;

@@ -2,8 +2,7 @@ export const dictionaryQuickActions = [
   { id: 'words-en', label: 'Загрузить EN → RU' },
   { id: 'words-de', label: 'Загрузить DE → RU' },
   { id: 'phrase-everyday', label: 'Повседневные фразы' },
-  { id: 'phrase-travel', label: 'Фразы для путешествий' },
-  { id: 'phrase-work', label: 'Фразы для работы' }
+  { id: 'phrase-travel', label: 'Фразы для путешествий' }
 ];
 
 export function openDictionaryQuickAction(id) {

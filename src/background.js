@@ -230,7 +230,7 @@ async function listIndexedDatabases() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === 'OPEN_DICTIONARY_QUICK_ACTION') {
     const validActions = new Set([
-      'words-en', 'words-de', 'phrase-everyday', 'phrase-travel', 'phrase-work'
+      'words-en', 'words-de', 'phrase-everyday', 'phrase-travel'
     ]);
     if (sender.id !== chrome.runtime.id || !validActions.has(message.id)) {
       sendResponse({ ok: false, error: 'Неизвестный раздел словаря.' });
@@ -269,6 +269,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       LEGACY_DICTIONARY_DATABASE,
       'en-ru-vocabee',
       'de-ru-vocabee',
+      'en-ru-everyday-phrases-vocabee',
+      'en-ru-travel-phrases-vocabee',
       'vocabee-catalog'
     ]);
     if (!allowedDatabaseNames.has(message.databaseName)) {

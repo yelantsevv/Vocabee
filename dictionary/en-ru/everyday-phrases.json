@@ -1,0 +1,31 @@
+{
+  "language": "en-ru",
+  "title": "Повседневные фразы",
+  "entries": [
+    { "word": "How are you?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 1, "definitions": ["Как дела?"] },
+    { "word": "I'm fine, thank you.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 2, "definitions": ["У меня всё хорошо, спасибо."] },
+    { "word": "Nice to meet you.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 3, "definitions": ["Приятно познакомиться."] },
+    { "word": "See you later.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 4, "definitions": ["Увидимся позже."] },
+    { "word": "Have a nice day!", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 5, "definitions": ["Хорошего дня!"] },
+    { "word": "Could you help me, please?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 6, "definitions": ["Не могли бы вы мне помочь?"] },
+    { "word": "Could I have some water?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 7, "definitions": ["Можно мне воды?"] },
+    { "word": "Where is the bathroom?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 8, "definitions": ["Где туалет?"] },
+    { "word": "I don't understand.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 9, "definitions": ["Я не понимаю."] },
+    { "word": "Could you say that again?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 10, "definitions": ["Не могли бы вы повторить?"] },
+    { "word": "What do you mean?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 11, "definitions": ["Что вы имеете в виду?"] },
+    { "word": "That sounds good to me.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 12, "definitions": ["Мне это подходит."] },
+    { "word": "Give me a moment, please.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 13, "definitions": ["Дайте мне минутку, пожалуйста."] },
+    { "word": "I'm not sure yet.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 14, "definitions": ["Я пока не уверен."] },
+    { "word": "I'll get back to you later.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 15, "definitions": ["Я отвечу вам позже."] },
+    { "word": "Thanks for letting me know.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 16, "definitions": ["Спасибо, что сообщили."] },
+    { "word": "Would you mind opening the window?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 17, "definitions": ["Не могли бы вы открыть окно?"] },
+    { "word": "I completely forgot about it.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 18, "definitions": ["Я совсем об этом забыл."] },
+    { "word": "It depends on the weather.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 19, "definitions": ["Это зависит от погоды."] },
+    { "word": "I see what you mean.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 20, "definitions": ["Я понимаю, что вы имеете в виду."] },
+    { "word": "To be honest, I haven't decided yet.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 21, "definitions": ["Честно говоря, я ещё не решил."] },
+    { "word": "I didn't mean to upset you.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 22, "definitions": ["Я не хотел тебя расстраивать."] },
+    { "word": "Let's keep in touch.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 23, "definitions": ["Давай будем на связи."] },
+    { "word": "Could you give me a hand with this?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 24, "definitions": ["Не мог бы ты помочь мне с этим?"] },
+    { "word": "I'm looking forward to seeing you.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 25, "definitions": ["С нетерпением жду встречи с тобой."] }
+  ]
+}

@@ -8,3 +8,26 @@
 .count strong {
   color: #e4ddff;
 }
+
+.savedWordsList.wordList {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.savedWordsList.wordList ul {
+  padding: 0 22px;
+}
+
+.savedWordCard {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .savedWordsList.wordList ul {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+}

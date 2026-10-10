@@ -8,7 +8,8 @@ export type PartOfSpeech =
   | 'preposition'
   | 'pronoun'
   | 'conjunction'
-  | 'particle';
+  | 'particle'
+  | 'phrase';
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export type LearningLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;

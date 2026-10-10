@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
+import cardStyles from '../shared/DictionaryEntryHeader.module.css';
 import { getEntryLearningLevel } from './dictionaryUtils.js';
+import { DictionaryEntryHeader } from '../shared/DictionaryEntryHeader.jsx';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -16,7 +18,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
-    availableSourceLanguages,
+    availableSources,
     catalogLoading,
     catalogError,
     sourceLevels,
@@ -73,8 +75,9 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
                 onChange={(event) => setSelectedSourceLanguage(event.target.value)}
               >
                 <option value="all">🌐 Все словари</option>
-                {availableSourceLanguages.includes('en') && <option value="en">🇬🇧 EN → RU</option>}
-                {availableSourceLanguages.includes('de') && <option value="de">🇩🇪 DE → RU</option>}
+                {availableSources.map((source) => (
+                  <option key={source.id} value={source.id}>{source.label}</option>
+                ))}
               </select>
             </label>
             <label className={styles.filterField}>
@@ -183,58 +186,24 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
           {filteredSourceEntries.map((entry) => {
             const learningLevel = getEntryLearningLevel(
               entry,
-              entry._catalogLanguage || selectedSourceLanguage,
+              entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
               learningLevelOverrides
             );
             return (
-              <li className={styles.entryCard} key={`${entry._catalogLanguage}:${entry.word}`}>
-                <div className={styles.entryHeader}>
-                  <div className={styles.entryMain}>
-                    <div className={styles.entryWordBlock}>
-                      <h2>{entry.word}</h2>
-                      {entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech) && entry.forms?.past_simple && entry.forms?.past_participle && (
-                        <p className={styles.inlineForms}>
-                          {entry.word} - {entry.forms.past_simple} - {entry.forms.past_participle}
-                        </p>
-                      )}
-                    </div>
-                    <div
-                      className={styles.entryTranslationBlock}
-                      onMouseLeave={hideTranslation}
-                      onFocus={() => revealTranslation(entry.word)}
-                      onBlur={hideTranslation}
-                    >
-                      <p
-                        className={clsx(styles.entryTranslation, revealedTranslationWord === entry.word && styles.entryTranslationVisible)}
-                        aria-hidden={revealedTranslationWord !== entry.word}
-                      >{entry.definitions.join(' · ')}</p>
-                      {learningLevel === 0 ? (
-                        <button
-                          className={styles.addToLearningButton}
-                          type="button"
-                          aria-label={`Добавить «${entry.word}» в обучение`}
-                          data-translation-trigger=""
-                          onPointerEnter={() => revealTranslation(entry.word)}
-                          onClick={() => onAddToLearning(entry)}
-                        ><span aria-hidden="true">+</span></button>
-                      ) : learningLevel === 9 ? (
-                        <span className={styles.learnedMark} aria-label="Слово выучено" data-translation-trigger="" onPointerEnter={() => revealTranslation(entry.word)}>✓</span>
-                      ) : (
-                        <div
-                          className={styles.progressCircle}
-                          role="progressbar"
-                          aria-label={`Уровень знания слова «${entry.word}»: ${learningLevel} из 9`}
-                          data-translation-trigger=""
-                          aria-valuemin={0}
-                          aria-valuemax={9}
-                          aria-valuenow={learningLevel}
-                          style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
-                          onPointerEnter={() => revealTranslation(entry.word)}
-                        ><span>{learningLevel}/9</span></div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              <li className={cardStyles.entryCard} key={`${entry._catalogId || entry._catalogLanguage}:${entry.word}`}>
+                <DictionaryEntryHeader
+                  word={entry.word}
+                  translation={entry.definitions.join(' · ')}
+                  learningLevel={learningLevel}
+                  forms={entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech)
+                    && entry.forms?.past_simple && entry.forms?.past_participle
+                    ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
+                    : undefined}
+                  translationVisible={revealedTranslationWord === entry.word}
+                  onAddToLearning={() => onAddToLearning(entry)}
+                  onRevealTranslation={() => revealTranslation(entry.word)}
+                  onHideTranslation={hideTranslation}
+                />
 
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">

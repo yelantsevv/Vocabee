@@ -29,14 +29,25 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, 
   );
 }
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, onLoadPhraseSection }) {
+export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, onLoadPhraseDictionary }) {
+  const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const quickLoadActions = [
-    ...dictionaryQuickActions.map((action) => ({
-      label: action.label,
-      onClick: () => action.id.startsWith('words-')
-        ? onLoadDictionary(action.id.slice('words-'.length))
-        : onLoadPhraseSection(action.id.slice('phrase-'.length))
-    }))
+    ...dictionaryQuickActions.map((action) => {
+      const sourceId = action.id.startsWith('words-')
+        ? action.id.slice('words-'.length)
+        : action.id.slice('phrase-'.length);
+      const checked = loadedSources.has(sourceId);
+      return {
+        label: action.label,
+        checked,
+        disabled: catalog.catalogLoading,
+        onClick: () => {
+          if (checked) return;
+          if (action.id.startsWith('words-')) onLoadDictionary(sourceId);
+          else onLoadPhraseDictionary(sourceId);
+        }
+      };
+    })
   ];
 
   return (

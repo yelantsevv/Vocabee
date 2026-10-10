@@ -17,8 +17,6 @@ import { SavedWordsPanel } from './SavedWordsPanel.jsx';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
 import { SettingsPanel } from './SettingsPanel.jsx';
 import { useDictionaryCatalog } from './useDictionaryCatalog.js';
-import { phraseSections } from './phraseSections.js';
-import { PhraseSectionPanel } from './PhraseSectionPanel.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
 
 const DEFAULT_SETTINGS = {
@@ -34,20 +32,16 @@ export function DictionaryPage() {
   const [status, setStatus] = useState('Загружаю словарь…');
   const [connection, setConnection] = useState({ source: 'loading', warning: '' });
   const [activeView, setActiveView] = useState('dictionary');
-  const [activePhraseSection, setActivePhraseSection] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
   const catalog = useDictionaryCatalog();
 
   async function loadBuiltinDictionary(language) {
     await catalog.loadBuiltinDictionary(language);
-    setActivePhraseSection(null);
-    setActiveView('dictionaries');
   }
 
-  function loadPhraseSection(sectionKey) {
-    setActivePhraseSection(phraseSections[sectionKey]);
-    setActiveView('dictionaries');
+  async function loadPhraseDictionary(sectionKey) {
+    await catalog.loadPhraseDictionary(sectionKey);
   }
 
   useEffect(() => {
@@ -60,11 +54,18 @@ export function DictionaryPage() {
       window.history.replaceState(window.history.state, '', cleanUrl);
     }
 
-    if (requestedPreset === 'words-en') loadBuiltinDictionary('en');
-    if (requestedPreset === 'words-de') loadBuiltinDictionary('de');
+    if (requestedPreset === 'words-en') {
+      setActiveView('dictionaries');
+      loadBuiltinDictionary('en');
+    }
+    if (requestedPreset === 'words-de') {
+      setActiveView('dictionaries');
+      loadBuiltinDictionary('de');
+    }
     if (requestedPreset?.startsWith('phrase-')) {
       const sectionKey = requestedPreset.slice('phrase-'.length);
-      if (phraseSections[sectionKey]) loadPhraseSection(sectionKey);
+      setActiveView('dictionaries');
+      loadPhraseDictionary(sectionKey);
     }
   }, []);
 
@@ -179,7 +180,6 @@ export function DictionaryPage() {
         </nav>
         <DictionarySearch
           activeView={activeView}
-          activePhraseSection={activePhraseSection}
           selectedSourceLanguage={catalog.selectedSourceLanguage}
           savedWordsSearch={search}
           onSavedWordsSearchChange={setSearch}
@@ -195,15 +195,13 @@ export function DictionaryPage() {
       )}
 
       {activeView === 'dictionary' ? (
-        <SavedWordsPanel words={words} search={search} status={status} />
+        <SavedWordsPanel words={words} search={search} status={status} catalog={catalog} />
       ) : activeView === 'dictionaries' ? (
-        activePhraseSection
-          ? <PhraseSectionPanel section={activePhraseSection} onBack={() => setActivePhraseSection(null)} />
-          : <DictionaryCatalogPanel
-              catalog={catalog}
-              onAddToLearning={catalog.addToLearning}
-              onOpenSettings={() => setActiveView('settings')}
-            />
+        <DictionaryCatalogPanel
+          catalog={catalog}
+          onAddToLearning={catalog.addToLearning}
+          onOpenSettings={() => setActiveView('settings')}
+        />
       ) : (
         <SettingsPanel
           settings={settings}
@@ -211,7 +209,7 @@ export function DictionaryPage() {
           settingsStatus={settingsStatus}
           catalog={catalog}
           onLoadDictionary={loadBuiltinDictionary}
-          onLoadPhraseSection={loadPhraseSection}
+          onLoadPhraseDictionary={loadPhraseDictionary}
         />
       )}
 

@@ -1,8 +1,10 @@
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SavedWordsPanel.module.css';
-import { formatAddedDate, getLanguagePairs } from './dictionaryUtils.js';
+import { getEntryLearningLevel, getLanguagePairs } from './dictionaryUtils.js';
+import { DictionaryEntryHeader } from '../shared/DictionaryEntryHeader.jsx';
+import cardStyles from '../shared/DictionaryEntryHeader.module.css';
 
-export function SavedWordsPanel({ words, search, status }) {
+export function SavedWordsPanel({ words, search, status, catalog }) {
   const query = search.trim().toLocaleLowerCase();
   const languagePairs = getLanguagePairs(words);
   const filteredWords = query
@@ -20,20 +22,39 @@ export function SavedWordsPanel({ words, search, status }) {
         <p className={panelStyles.count}>Сохранено слов: <strong>{words.length}</strong></p>
       </div>
 
-      <section className={styles.wordList} aria-label="Сохранённые слова" aria-live="polite">
+      <section className={`${styles.wordList} ${panelStyles.savedWordsList}`} aria-label="Сохранённые слова" aria-live="polite">
         {status ? (
           <p className={styles.message} role="status">{status}</p>
         ) : filteredWords.length ? (
           <ul>
-            {filteredWords.map((word) => (
-              <li className={styles.word} key={word.id}>
-                <div className={styles.wordPair}>
-                  <strong>{word.sourceText}</strong>
-                  <span>{word.translatedText}</span>
-                </div>
-                <small>{formatAddedDate(word.addedAt)}</small>
-              </li>
-            ))}
+            {filteredWords.map((word) => {
+              const entry = catalog.selectedSourceDictionary.find((item) => (
+                item._catalogLanguage === word.sourceLang
+                && item.word.toLocaleLowerCase() === word.sourceText.toLocaleLowerCase()
+              )) || {
+                word: word.sourceText,
+                _catalogLanguage: word.sourceLang,
+                learning_level: 0
+              };
+              const learningSource = entry._catalogId || entry._catalogLanguage;
+              const learningLevel = getEntryLearningLevel(
+                entry,
+                learningSource,
+                catalog.learningLevelOverrides
+              );
+
+              return (
+                <li className={`${cardStyles.entryCard} ${panelStyles.savedWordCard}`} key={word.id}>
+                  <DictionaryEntryHeader
+                    word={word.sourceText}
+                    translation={word.translatedText}
+                    learningLevel={learningLevel}
+                    translationVisible
+                    onAddToLearning={() => catalog.addToLearning(entry)}
+                  />
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className={styles.message}>

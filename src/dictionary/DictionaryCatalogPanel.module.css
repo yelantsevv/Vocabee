@@ -237,148 +237,6 @@
   font-size: 13px;
 }
 
-.entryCard {
-  display: grid;
-  gap: 18px;
-  border: 1px solid rgba(173, 183, 220, 0.14);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.025);
-  margin: 12px 0;
-  padding: 18px;
-}
-
-.entryHeader {
-  display: grid;
-  gap: 14px;
-}
-
-.entryMain {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: start;
-  gap: 24px;
-}
-
-.entryWordBlock {
-  display: flex;
-  min-width: 0;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 7px 22px;
-}
-
-.entryWordBlock h2 {
-  margin: 0;
-  color: #f3f4fc;
-  font-size: clamp(22px, 2.6vw, 30px);
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.inlineForms {
-  margin: 0;
-  color: #aeb5cb;
-  font-size: 14px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.entryTranslation {
-  min-width: 0;
-  flex: 1 1 auto;
-  margin: 0;
-  color: #d2c4ff;
-  font-size: 18px;
-  line-height: 1.5;
-  text-align: right;
-  overflow-wrap: anywhere;
-  opacity: 0;
-  transform: translateX(8px);
-  visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
-}
-
-.entryTranslationVisible {
-  opacity: 1;
-  transform: translateX(0);
-  visibility: visible;
-  transition-delay: 0s;
-}
-
-.entryTranslationBlock {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.addToLearningButton {
-  position: relative;
-  display: grid;
-  width: 58px;
-  height: 58px;
-  flex: 0 0 58px;
-  place-items: center;
-  border: 1px solid rgba(169, 91, 255, 0.5);
-  border-radius: 50%;
-  background: rgba(119, 82, 255, 0.15);
-  color: #e2d8ff;
-  cursor: pointer;
-  padding: 0;
-  transition: background 0.16s ease, border-color 0.16s ease;
-}
-
-.addToLearningButton span {
-  font-size: 28px;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.addToLearningButton:hover {
-  border-color: rgba(169, 91, 255, 0.85);
-  background: rgba(119, 82, 255, 0.28);
-}
-
-.learnedMark {
-  display: grid;
-  width: 58px;
-  height: 58px;
-  flex: 0 0 58px;
-  place-items: center;
-  border: 1px solid rgba(83, 211, 161, 0.4);
-  border-radius: 50%;
-  background: rgba(83, 211, 161, 0.13);
-  color: #78e2ae;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.progressCircle {
-  display: grid;
-  width: 58px;
-  height: 58px;
-  flex: 0 0 58px;
-  place-items: center;
-  border-radius: 50%;
-  background: conic-gradient(#8b5cf6 var(--progress-angle), rgba(173, 183, 220, 0.15) 0);
-  cursor: pointer;
-}
-
-.progressCircle span {
-  display: grid;
-  width: 46px;
-  height: 46px;
-  place-items: center;
-  border-radius: 50%;
-  background: #171b30;
-  color: #e2d8ff;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 .entrySection {
   display: grid;
   gap: 9px;
@@ -409,6 +267,8 @@
   border-left: 2px solid rgba(67, 213, 176, 0.55);
   padding: 3px 0 3px 10px;
   font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .exampleList li span:first-child {
@@ -465,23 +325,13 @@
     width: auto;
   }
 
-  .entryCard {
-    gap: 15px;
-    margin: 10px 0;
-    padding: 14px;
-  }
-
-  .entryHeader {
-    gap: 14px;
-  }
-
-  .entryMain {
+  .exampleList li {
     grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
+    gap: 3px;
   }
 
-  .entryTranslationBlock {
-    justify-content: flex-start;
+  .exampleTranslation {
+    text-align: left;
   }
 }
 

@@ -13,7 +13,7 @@ export const IMPORTED_DICTIONARIES_KEY = 'vocabee-imported-dictionaries-v1';
 
 const VALID_PARTS_OF_SPEECH = new Set([
   'noun', 'verb', 'phrasal_verb', 'separable_verb', 'adjective', 'adverb', 'preposition',
-  'pronoun', 'conjunction', 'particle'
+  'pronoun', 'conjunction', 'particle', 'phrase'
 ]);
 const VALID_CEFR_LEVELS = new Set(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']);
 

@@ -1,18 +1,36 @@
-const DATABASES_BY_LANGUAGE = {
-  en: 'en-ru-vocabee',
-  de: 'de-ru-vocabee'
+export const CATALOG_SOURCES = {
+  en: {
+    databaseName: 'en-ru-vocabee',
+    language: 'en',
+    label: '🇬🇧 EN → RU'
+  },
+  de: {
+    databaseName: 'de-ru-vocabee',
+    language: 'de',
+    label: '🇩🇪 DE → RU'
+  },
+  everyday: {
+    databaseName: 'en-ru-everyday-phrases-vocabee',
+    language: 'en',
+    label: '🇬🇧 EN → RU · Повседневные фразы'
+  },
+  travel: {
+    databaseName: 'en-ru-travel-phrases-vocabee',
+    language: 'en',
+    label: '🇬🇧 EN → RU · Путешествия'
+  }
 };
+
 const LEGACY_DATABASE_NAME = 'vocabee-catalog';
 const STORE_NAME = 'dictionaries';
-
 let legacyMigration;
 
-function openCatalogDatabase(language) {
-  const databaseName = DATABASES_BY_LANGUAGE[language];
-  if (!databaseName) return Promise.reject(new Error('Неизвестный язык словаря.'));
+function openCatalogDatabase(sourceId) {
+  const source = CATALOG_SOURCES[sourceId];
+  if (!source) return Promise.reject(new Error('Неизвестная база словаря.'));
 
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(databaseName, 1);
+    const request = indexedDB.open(source.databaseName, 1);
     request.onupgradeneeded = () => {
       const database = request.result;
       if (!database.objectStoreNames.contains(STORE_NAME)) {
@@ -52,8 +70,8 @@ function readLegacyRecords() {
   });
 }
 
-async function writeRecord(language, record) {
-  const database = await openCatalogDatabase(language);
+async function writeRecord(sourceId, record) {
+  const database = await openCatalogDatabase(sourceId);
   try {
     await new Promise((resolve, reject) => {
       const transaction = database.transaction(STORE_NAME, 'readwrite');
@@ -76,8 +94,12 @@ async function migrateLegacyCatalog() {
 
     const records = await readLegacyRecords();
     for (const record of records) {
-      if (DATABASES_BY_LANGUAGE[record?.language] && Array.isArray(record.entries)) {
-        await writeRecord(record.language, record);
+      if (['en', 'de'].includes(record?.language) && Array.isArray(record.entries)) {
+        await writeRecord(record.language, {
+          ...record,
+          catalogId: record.language,
+          title: CATALOG_SOURCES[record.language].label
+        });
       }
     }
 
@@ -94,34 +116,64 @@ async function migrateLegacyCatalog() {
   return legacyMigration;
 }
 
+async function readSourceRecord(sourceId) {
+  const source = CATALOG_SOURCES[sourceId];
+  const database = await openCatalogDatabase(sourceId);
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = database.transaction(STORE_NAME, 'readonly');
+      const request = transaction.objectStore(STORE_NAME).get(source.language);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(new Error(
+        `Не удалось прочитать базу словарей: ${request.error?.message || 'ошибка IndexedDB'}`
+      ));
+      transaction.onabort = () => reject(new Error(
+        `Чтение базы отменено: ${transaction.error?.message || 'ошибка IndexedDB'}`
+      ));
+    });
+  } finally {
+    database.close();
+  }
+}
+
 export async function readCatalogDictionaries() {
   await migrateLegacyCatalog();
   const knownDatabases = indexedDB.databases ? await indexedDB.databases() : [];
   const installedNames = new Set(knownDatabases.map(({ name }) => name));
-  const records = await Promise.all(Object.entries(DATABASES_BY_LANGUAGE)
-    .filter(([, databaseName]) => installedNames.has(databaseName))
-    .map(async ([language]) => {
-    const database = await openCatalogDatabase(language);
-    try {
-      return await new Promise((resolve, reject) => {
-        const transaction = database.transaction(STORE_NAME, 'readonly');
-        const request = transaction.objectStore(STORE_NAME).get(language);
-        request.onsuccess = () => resolve(request.result ? [request.result] : []);
-        request.onerror = () => reject(new Error(
-          `Не удалось прочитать базу словарей: ${request.error?.message || 'ошибка IndexedDB'}`
-        ));
-        transaction.onabort = () => reject(new Error(
-          `Чтение базы отменено: ${transaction.error?.message || 'ошибка IndexedDB'}`
-        ));
-      });
-    } finally {
-      database.close();
-    }
-    }));
-  return records.flat();
+  const sourceIds = Object.entries(CATALOG_SOURCES)
+    .filter(([, source]) => installedNames.has(source.databaseName))
+    .map(([sourceId]) => sourceId);
+  const records = await Promise.all(sourceIds.map((sourceId) => readSourceRecord(sourceId)));
+  return records.filter(Boolean).map((record) => ({
+    ...record,
+    catalogId: record.catalogId || record.language
+  }));
 }
 
 export async function writeCatalogDictionary(language, entries) {
   await migrateLegacyCatalog();
-  await writeRecord(language, { language, entries, updatedAt: Date.now() });
+  const source = CATALOG_SOURCES[language];
+  if (!source) throw new Error('Неизвестный язык словаря.');
+  await writeRecord(language, {
+    language,
+    catalogId: language,
+    title: source.label,
+    entries,
+    updatedAt: Date.now()
+  });
+}
+
+export async function writePhraseDictionary(sourceId, dictionary) {
+  await migrateLegacyCatalog();
+  const source = CATALOG_SOURCES[sourceId];
+  if (!source || !['everyday', 'travel'].includes(sourceId)) {
+    throw new Error('Неизвестный тематический словарь.');
+  }
+  await writeRecord(sourceId, {
+    language: source.language,
+    catalogId: sourceId,
+    title: dictionary.title,
+    entries: dictionary.entries,
+    updatedAt: Date.now()
+  });
 }
