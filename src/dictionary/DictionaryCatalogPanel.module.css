@@ -209,15 +209,6 @@
   color: #f3f4fc;
 }
 
-.filterBottomRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.dictionarySearch {
-  min-width: 0;
-}
-
 .dictionaryCount {
   margin: 12px 2px 0;
   color: #929bb7;
@@ -446,11 +437,6 @@
 
   .filterTopRow {
     grid-template-columns: 1fr;
-  }
-
-  .filterBottomRow {
-    grid-template-columns: 1fr;
-    gap: 10px;
   }
 
   .typeChip {

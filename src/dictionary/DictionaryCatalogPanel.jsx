@@ -10,7 +10,7 @@ function toggleValue(values, setter, value) {
     : [...values, value]);
 }
 
-export function DictionaryCatalogPanel({ catalog, onSearchChange, onAddToLearning }) {
+export function DictionaryCatalogPanel({ catalog, onAddToLearning }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
   const revealTranslationTimer = useRef(null);
   const {
@@ -22,7 +22,6 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onAddToLearnin
     setSourceVerbTypes,
     sourceSort,
     setSourceSort,
-    sourceSearch,
     progressView,
     setProgressView,
     overallDictionaryProgress,
@@ -161,18 +160,6 @@ export function DictionaryCatalogPanel({ catalog, onSearchChange, onAddToLearnin
           </fieldset>
         </div>
 
-        <div className={styles.filterBottomRow}>
-          <label className={clsx(commonStyles.search, styles.dictionarySearch)}>
-            <span className={commonStyles.searchIcon} aria-hidden="true">⌕</span>
-            <input
-              type="search"
-              value={sourceSearch}
-              onChange={(event) => onSearchChange(event.target.value)}
-              placeholder="Поиск слова, фразы или перевода…"
-              aria-label="Поиск слова, фразы или перевода"
-            />
-          </label>
-        </div>
       </section>
 
       <p className={styles.dictionaryCount}>

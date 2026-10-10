@@ -2,7 +2,7 @@ import styles from './DictionaryPage.module.css';
 import panelStyles from './SavedWordsPanel.module.css';
 import { formatAddedDate, getLanguagePairs } from './dictionaryUtils.js';
 
-export function SavedWordsPanel({ words, search, onSearchChange, status }) {
+export function SavedWordsPanel({ words, search, status }) {
   const query = search.trim().toLocaleLowerCase();
   const languagePairs = getLanguagePairs(words);
   const filteredWords = query
@@ -10,27 +10,15 @@ export function SavedWordsPanel({ words, search, onSearchChange, status }) {
     : words;
 
   return (
-    <section className={styles.content} aria-labelledby="dictionary-title">
+    <section className={styles.content} aria-label="Сохранённые слова">
       <div className={styles.titleRow}>
         <div>
-          <h1 id="dictionary-title">Мой словарь</h1>
           {languagePairs.length > 0 && (
             <p className={styles.languagePair}>{languagePairs.join(' · ')}</p>
           )}
         </div>
         <p className={panelStyles.count}>Сохранено слов: <strong>{words.length}</strong></p>
       </div>
-
-      <label className={styles.search}>
-        <span className={styles.searchIcon} aria-hidden="true">⌕</span>
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Найти слово или перевод"
-          aria-label="Найти слово или перевод"
-        />
-      </label>
 
       <section className={styles.wordList} aria-label="Сохранённые слова" aria-live="polite">
         {status ? (

@@ -36,7 +36,6 @@ export function DictionaryPage() {
   const [activePhraseSection, setActivePhraseSection] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
-  const [loadVersion, setLoadVersion] = useState(0);
   const catalog = useDictionaryCatalog();
 
   function loadBuiltinDictionary(language) {
@@ -74,7 +73,7 @@ export function DictionaryPage() {
 
   useEffect(() => {
     loadDictionary();
-  }, [loadDictionary, loadVersion]);
+  }, [loadDictionary]);
 
   useEffect(() => {
     let active = true;
@@ -120,6 +119,13 @@ export function DictionaryPage() {
     '--vocabee-ui-font-scale': settings.interfaceFontScale / 100,
     '--vocabee-dictionary-font-size': `${settings.dictionaryFontSize}px`
   };
+  const showHeaderSearch = activeView === 'dictionary'
+    || (activeView === 'dictionaries' && !activePhraseSection);
+  const headerSearchValue = activeView === 'dictionary' ? search : catalog.sourceSearch;
+  const updateHeaderSearch = activeView === 'dictionary' ? setSearch : catalog.setSourceSearch;
+  const headerSearchLabel = activeView === 'dictionary'
+    ? 'Найти слово или перевод'
+    : 'Поиск слова, фразы или перевода';
 
   return (
     <main className={styles.page} style={pageStyle}>
@@ -128,15 +134,6 @@ export function DictionaryPage() {
           <span className={styles.logo} aria-hidden="true">V</span>
           <span>Vocabee</span>
         </a>
-        {activeView === 'dictionary' && (
-          <button
-            className={styles.navButton}
-            type="button"
-            aria-label="Обновить словарь"
-            title="Обновить словарь"
-            onClick={() => setLoadVersion((version) => version + 1)}
-          >↻</button>
-        )}
         <nav className={styles.navigation} aria-label="Разделы Vocabee">
           <button
             className={clsx(styles.navButton, activeView === 'dictionary' && styles.active)}
@@ -168,6 +165,18 @@ export function DictionaryPage() {
             onClick={() => setActiveView('settings')}
           >⚙</button>
         </nav>
+        {showHeaderSearch && (
+          <label className={clsx(styles.search, styles.headerSearch)}>
+            <span className={styles.searchIcon} aria-hidden="true">⌕</span>
+            <input
+              type="search"
+              value={headerSearchValue}
+              onChange={(event) => updateHeaderSearch(event.target.value)}
+              placeholder={headerSearchLabel}
+              aria-label={headerSearchLabel}
+            />
+          </label>
+        )}
       </header>
 
       {connection.warning && (
@@ -177,13 +186,12 @@ export function DictionaryPage() {
       )}
 
       {activeView === 'dictionary' ? (
-        <SavedWordsPanel words={words} search={search} onSearchChange={setSearch} status={status} />
+        <SavedWordsPanel words={words} search={search} status={status} />
       ) : activeView === 'dictionaries' ? (
         activePhraseSection
           ? <PhraseSectionPanel section={activePhraseSection} onBack={() => setActivePhraseSection(null)} />
           : <DictionaryCatalogPanel
               catalog={catalog}
-              onSearchChange={catalog.setSourceSearch}
               onAddToLearning={catalog.addToLearning}
             />
       ) : (
