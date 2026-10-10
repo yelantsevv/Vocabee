@@ -4,65 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vocabee</title>
-    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <div class="popup">
-      <header class="brand">
-        <img class="brand-icon" src="../icons/vocabee.svg" alt="" />
-        <div class="brand-copy">
-          <h1>Vocabee</h1>
-          <p>Слова, которые остаются с тобой</p>
-        </div>
-        <span class="free-badge">FREE</span>
-      </header>
-
-      <section class="settings-card" aria-label="Настройки перевода">
-        <label class="setting-row toggle-row" for="enabled">
-          <span class="setting-copy">
-            <strong>Перевод</strong>
-            <small>Слова и фразы на YouTube</small>
-          </span>
-          <input type="checkbox" id="enabled" checked />
-          <span class="toggle" aria-hidden="true"></span>
-        </label>
-
-        <div class="setting-row language-row">
-          <span class="setting-copy">
-            <strong>Язык субтитров</strong>
-            <small>Определяется автоматически</small>
-          </span>
-          <span class="language-value" id="source-language">Определяется…</span>
-        </div>
-
-        <label class="setting-row target-row" for="lang">
-          <span class="setting-copy">
-            <strong>Переводить на</strong>
-          </span>
-          <select id="lang" aria-label="Язык перевода">
-            <option value="ru">Русский</option>
-            <option value="en">English</option>
-            <option value="uk">Українська</option>
-            <option value="de">Deutsch</option>
-          </select>
-        </label>
-      </section>
-
-      <button class="dictionary-button" id="dictionary-button" type="button">
-        <span class="dictionary-icon" aria-hidden="true">✦</span>
-        <span>Мой словарь</span>
-        <span class="button-arrow" aria-hidden="true">→</span>
-      </button>
-      <p class="dictionary-message" id="dictionary-message" role="status" hidden>
-        Открой YouTube и нажми значок Vocabee, чтобы посмотреть словарь.
-      </p>
-
-      <div class="footer">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span>Поддерживаются английские и немецкие субтитры</span>
-      </div>
-    </div>
-
-    <script type="module" src="popup.js"></script>
+    <div id="root"></div>
+    <script type="module" src="popup.jsx"></script>
   </body>
 </html>

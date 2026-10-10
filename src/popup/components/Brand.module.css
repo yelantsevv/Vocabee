@@ -1,0 +1,43 @@
+.brand {
+display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.brandIcon {
+display: block;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 6px 15px rgba(133, 93, 255, 0.35));
+}
+
+.brandCopy {
+min-width: 0;
+}
+
+.brandCopy h1 {
+margin: 0;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+}
+
+.brandCopy p {
+margin: 3px 0 0;
+  color: #a5acc4;
+  font-size: 11px;
+}
+
+.freeBadge {
+margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(167, 139, 250, 0.32);
+  border-radius: 999px;
+  background: rgba(124, 91, 255, 0.14);
+  color: #c9baff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}

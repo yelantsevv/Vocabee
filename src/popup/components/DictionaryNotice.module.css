@@ -1,0 +1,53 @@
+.dictionaryButton:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+
+.dictionaryButton {
+display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  border: 1px solid rgba(178, 156, 255, 0.35);
+  border-radius: 13px;
+  background: linear-gradient(105deg, rgba(126, 91, 255, 0.23), rgba(61, 202, 227, 0.1));
+  color: #f5f2ff;
+  cursor: pointer;
+  padding: 0 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 650;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.dictionaryButton:hover {
+transform: translateY(-1px);
+  border-color: rgba(195, 177, 255, 0.72);
+  background: linear-gradient(105deg, rgba(126, 91, 255, 0.34), rgba(61, 202, 227, 0.16));
+}
+
+.dictionaryIcon {
+display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #b29aff, #8262ff);
+  color: #fff;
+  font-size: 15px;
+}
+
+.buttonArrow {
+margin-left: auto;
+  color: #c6b8ff;
+  font-size: 17px;
+}
+
+.dictionaryMessage {
+margin: 9px 2px 0;
+  color: #b7bfd7;
+  font-size: 10px;
+  line-height: 1.5;
+}

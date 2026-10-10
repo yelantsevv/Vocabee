@@ -1,0 +1,67 @@
+.floatingPanel {
+  position: fixed;
+  z-index: 2147483645;
+  top: 92px;
+  left: 24px;
+  width: min(320px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow: hidden;
+  border: 1px solid rgba(173, 183, 220, 0.16);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(112, 77, 255, 0.23), transparent 48%),
+    radial-gradient(ellipse at 100% 42%, rgba(34, 211, 238, 0.1), transparent 42%),
+    #101426;
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.44);
+  color: #f6f7ff;
+  color-scheme: dark;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
+  isolation: isolate;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.floatingPanel[hidden],
+.hasCustomSize[hidden] {
+  display: none !important;
+}
+
+.hasCustomSize {
+  display: flex;
+  flex-direction: column;
+}
+
+.floatingContent {
+  min-height: 0;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.hasCustomSize .floatingContent {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  max-height: none;
+}
+
+.resizeHandle {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, transparent 55%, rgba(190, 198, 229, 0.35) 56% 62%, transparent 63% 72%, rgba(190, 198, 229, 0.55) 73% 79%, transparent 80%);
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.minimized .resizeHandle {
+  display: none;
+}
+
+.minimized .floatingContent {
+  display: none;
+}

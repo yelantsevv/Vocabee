@@ -1,13 +1,7 @@
 (function (app) {
   function getSelectionScope(node) {
     const element = node instanceof Element ? node : node?.parentElement;
-    return element?.closest([
-      '.ytp-caption-segment',
-      'ytd-comment-renderer #content-text',
-      'ytd-comment-thread-renderer #content-text',
-      'ytd-comment-renderer #comment-content',
-      'ytd-comment-thread-renderer #comment-content'
-    ].join(', ')) || null;
+    return element?.closest('#ytp-caption-window-container .ytp-caption-segment') || null;
   }
 
   app.getSelectedTextInfo = function () {
@@ -76,7 +70,7 @@
   document.addEventListener('pointerdown', (event) => {
     if (!(event.target instanceof Element)) return;
     if (event.target.closest('#vocabee-tooltip')) return;
-    if (event.target.closest('.vocabee-floating-panel')) return;
+    if (event.target.closest('#vocabee-react-panel-root')) return;
     if (getSelectionScope(event.target)) return;
 
     app.hideTooltip(true);
@@ -157,7 +151,7 @@
     textNode.parentNode.replaceChild(fragment, textNode);
   }
 
-  app.decorateCommentNode = function (node) {
+  app.decorateCaptionNode = function (node) {
     if (!node || node.closest('.vocabee-word')) return;
 
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, {

@@ -1,0 +1,107 @@
+.dictionaryRoot {
+  display: flex;
+  flex-direction: column;
+}
+
+.fill {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 2px;
+  margin: 0 2px 10px;
+}
+
+.title {
+  margin: 0;
+  color: #f3f4fc;
+  font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 700;
+}
+
+.languagePair {
+  margin: 0;
+  color: #a5acc4;
+  font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
+  line-height: 1.4;
+}
+
+.dictionary {
+  max-height: min(220px, 35vh);
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid rgba(173, 183, 220, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 9px;
+}
+
+.fill .dictionary {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.status {
+  margin: 0;
+  color: #a5acc4;
+  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * 0.75 * var(--vocabee-ui-font-scale, 1));
+  line-height: 1.5;
+}
+
+.list {
+  display: grid;
+  gap: 7px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid rgba(173, 183, 220, 0.1);
+  padding: 8px 2px 2px;
+}
+
+.pair {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 16px;
+  row-gap: 2px;
+}
+
+.source,
+.translation {
+  min-width: 0;
+  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
+  overflow-wrap: anywhere;
+}
+
+.source {
+  color: #f3f4fc;
+  font-weight: 650;
+}
+
+.translation {
+  color: #c9baff;
+}
+
+.details {
+  color: #929bb7;
+  font-size: calc(9px * var(--vocabee-ui-font-scale, 1));
+}
+
+.hint {
+  margin: 9px 2px 0;
+  color: #929bb7;
+  font-size: calc(10px * var(--vocabee-ui-font-scale, 1));
+  line-height: 1.5;
+}

@@ -12,7 +12,11 @@ chrome.action.onClicked.addListener(() => {
 
     chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_VOCABEE_PANEL' }, () => {
       if (chrome.runtime.lastError) {
-        console.info('Vocabee: the panel is available on YouTube pages only.');
+        chrome.tabs.create({ url: chrome.runtime.getURL('dictionary.html') }, () => {
+          if (chrome.runtime.lastError) {
+            console.error('Vocabee: could not open dictionary page', chrome.runtime.lastError.message);
+          }
+        });
       }
     });
   });

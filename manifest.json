@@ -27,16 +27,20 @@
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
-      "css": ["src/content/content.css"],
+      "css": ["src/content/content.css", "dist/content/content-app.css"],
       "js": [
         "src/content/content-core.js",
-        "src/content/translation-ui.js",
         "src/content/caption-language.js",
         "src/content/video-pause.js",
-        "src/content/floating-panel.js",
-        "src/content/main.js"
+        "src/content/main.js",
+        "dist/content/content-app.js"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://localhost/*", "http://127.0.0.1/*"],
+      "js": ["src/content/dev-bridge.js"],
+      "run_at": "document_start"
     }
   ]
 }

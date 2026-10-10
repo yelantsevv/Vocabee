@@ -1,0 +1,118 @@
+.settingsCard {
+overflow: hidden;
+  border: 1px solid rgba(173, 183, 220, 0.12);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 12px 30px rgba(3, 6, 18, 0.2);
+}
+
+.settingRow {
+display: flex;
+  min-height: 66px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 15px;
+}
+
+.settingRow + .settingRow {
+border-top: 1px solid rgba(173, 183, 220, 0.1);
+}
+
+.settingCopy {
+display: grid;
+  gap: 4px;
+}
+
+.settingCopy strong {
+color: #f3f4fc;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.settingCopy small {
+color: #929bb7;
+  font-size: 10px;
+}
+
+.languageValue {
+max-width: 125px;
+  overflow: hidden;
+  color: #d7d9eb;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.targetRow {
+min-height: 60px;
+}
+
+.settingRow select {
+min-width: 116px;
+  border: 1px solid rgba(176, 186, 222, 0.2);
+  border-radius: 10px;
+  outline: none;
+  background: #202640;
+  color: #f6f7ff;
+  cursor: pointer;
+  padding: 8px 30px 8px 10px;
+  font-size: 11px;
+}
+
+.settingRow select:focus-visible {
+outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+
+.toggleRow {
+position: relative;
+  cursor: pointer;
+}
+
+.toggleRow input {
+position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.toggle {
+position: relative;
+  width: 38px;
+  height: 22px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(182, 191, 224, 0.22);
+  border-radius: 99px;
+  background: #353d59;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.toggle::after {
+position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #d8dcef;
+  content: "";
+  transition: transform 0.18s ease;
+}
+
+.toggleRow input:checked + .toggle {
+border-color: #8e6cff;
+  background: linear-gradient(110deg, #7b5cff, #a64dff);
+}
+
+.toggleRow input:checked + .toggle::after {
+transform: translateX(16px);
+  background: #fff;
+}
+
+.toggleRow input:focus-visible + .toggle {
+outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}

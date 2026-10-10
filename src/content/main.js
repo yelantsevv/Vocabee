@@ -1,26 +1,16 @@
 (function (app) {
-  function findCommentNodes() {
-    const selectors = [
-      'ytd-comment-renderer #content-text',
-      'ytd-comment-thread-renderer #content-text',
-      '#content-text',
-      '#comment-content',
-      'ytd-comment-renderer #comment-content',
-      'ytd-comment-thread-renderer #comment-content',
-      '.ytp-caption-segment'
-    ];
-
-    return [...new Set(Array.from(document.querySelectorAll(selectors.join(', '))))].filter((node) => {
+  function findCaptionNodes() {
+    return [...new Set(Array.from(document.querySelectorAll('#ytp-caption-window-container .ytp-caption-segment')))].filter((node) => {
       const text = (node.textContent || '').trim();
       return text.length > 0 && /\p{Script=Latin}/u.test(text);
     });
   }
 
-  function processComments() {
+  function processCaptions() {
     app.makeCaptionTextSelectable();
     app.updateDetectedSourceLanguage();
     app.refreshFloatingPanelLanguage?.();
-    findCommentNodes().forEach(app.decorateCommentNode);
+    findCaptionNodes().forEach(app.decorateCaptionNode);
   }
 
   function loadSettings() {
@@ -31,7 +21,7 @@
   }
 
   function observePage() {
-    const observer = new MutationObserver(processComments);
+    const observer = new MutationObserver(processCaptions);
     observer.observe(document.body || document.documentElement, {
       childList: true,
       subtree: true,
@@ -42,14 +32,11 @@
   }
 
   loadSettings();
-  processComments();
+  processCaptions();
   observePage();
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') app.hideTooltip(true);
   });
 
-  window.addEventListener('beforeunload', () => {
-    document.getElementById('vocabee-tooltip')?.remove();
-  });
 })(globalThis.Vocabee);

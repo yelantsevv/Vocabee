@@ -1,0 +1,91 @@
+.headerRoot {
+  display: flex;
+  height: 48px;
+  flex: 0 0 48px;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid rgba(173, 183, 220, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: grab;
+  padding: 0 12px;
+  touch-action: none;
+  user-select: none;
+}
+
+.headerRoot:active {
+  cursor: grabbing;
+}
+
+.homeButton {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+}
+
+.homeButton:hover .brand {
+  color: #fff;
+}
+
+.brandMark {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #a15cff, #35c9e8);
+  color: #fff;
+  font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 800;
+}
+
+.brand {
+  color: #f6f7ff;
+  font-size: calc(14px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 750;
+}
+
+.control {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(176, 186, 222, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #d6daf0;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-size: calc(17px * var(--vocabee-ui-font-scale, 1));
+  line-height: 1;
+}
+
+.control:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sectionSwitch:nth-of-type(2) {
+  margin-left: auto;
+}
+
+.sectionSwitch svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.sectionSwitch[aria-pressed="true"] {
+  border-color: rgba(161, 92, 255, 0.55);
+  background: rgba(161, 92, 255, 0.2);
+  color: #fff;
+}

@@ -1,6 +1,7 @@
 import { cpSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
@@ -35,8 +36,10 @@ function copyExtensionRuntime() {
       );
       manifest.content_scripts = manifest.content_scripts.map((contentScript) => ({
         ...contentScript,
-        css: contentScript.css.map((file) => file.replace(/^src\//, '')),
-        js: contentScript.js.map((file) => file.replace(/^src\//, ''))
+        ...(contentScript.css ? {
+          css: contentScript.css.map((file) => file.replace(/^src\//, '').replace(/^dist\//, ''))
+        } : {}),
+        js: contentScript.js.map((file) => file.replace(/^src\//, '').replace(/^dist\//, ''))
       }));
       writeFileSync(
         resolve(outputDirectory, 'manifest.json'),
@@ -50,12 +53,15 @@ export default defineConfig({
   root: sourceDirectory,
   base: './',
   publicDir: false,
-  plugins: [copyExtensionRuntime()],
+  plugins: [react(), copyExtensionRuntime()],
   build: {
     outDir: outputDirectory,
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(sourceDirectory, 'popup/popup.html')
+      input: {
+        popup: resolve(sourceDirectory, 'popup/popup.html'),
+        dictionary: resolve(sourceDirectory, 'dictionary.html')
+      }
     }
   }
 });

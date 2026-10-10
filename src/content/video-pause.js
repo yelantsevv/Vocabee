@@ -8,7 +8,7 @@
     if (!(target instanceof Element)) return null;
 
     const tooltip = target.closest('#vocabee-tooltip');
-    if (tooltip) return tooltip.classList.contains('visible') ? tooltip : null;
+    if (tooltip) return tooltip.dataset.visible === 'true' ? tooltip : null;
 
     const caption = target.closest('.ytp-caption-segment');
     return caption && app.isVisibleCaption(caption) ? caption : null;
