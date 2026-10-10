@@ -103,6 +103,16 @@
   font-size: 23px;
 }
 
+.navButton svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
 .navButton:hover,
 .navButton.active {
   border-color: rgba(169, 91, 255, 0.75);
@@ -124,6 +134,10 @@
   align-self: center;
   padding: 38px clamp(20px, 5vw, 64px) 24px;
   font-size: calc(1rem * var(--vocabee-ui-font-scale, 1));
+}
+
+.dictionaryContent {
+  padding-top: 24px;
 }
 
 .titleRow {
@@ -189,6 +203,289 @@
 
 .search input::placeholder {
   color: #838ba6;
+}
+
+.dictionaryFilters {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  border: 1px solid rgba(173, 183, 220, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 18px;
+}
+
+.overallProgress {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background: rgba(173, 183, 220, 0.16);
+}
+
+.overallProgress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b5cf6, #43d5b0);
+  transition: width 0.2s ease;
+}
+
+.overallProgressValue {
+  position: absolute;
+  top: 9px;
+  right: 18px;
+  color: #aeb5cb;
+  font-size: 10px;
+}
+
+.filterTopRow {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(205px, 1.1fr) minmax(300px, 1.5fr);
+  align-items: stretch;
+  gap: 10px;
+}
+
+.sourceControls {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.filterStack {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.sourcePickerGroup {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+
+.filterField {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+  color: #a5acc4;
+  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
+}
+
+.filterField select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(176, 186, 222, 0.2);
+  border-radius: 10px;
+  background: #202640;
+  color: #f6f7ff;
+  cursor: pointer;
+  padding: 0 11px;
+  font: inherit;
+  font-size: 14px;
+}
+
+.importControl {
+  display: grid;
+  align-content: start;
+  padding-top: 0;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.importButton {
+  display: flex;
+  width: 40px;
+  height: 46px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid rgba(169, 91, 255, 0.4);
+  border-radius: 10px;
+  background: rgba(119, 82, 255, 0.13);
+  color: #e4ddff;
+  cursor: pointer;
+  padding: 0;
+}
+
+.importButton:hover {
+  border-color: rgba(169, 91, 255, 0.78);
+  background: rgba(119, 82, 255, 0.24);
+}
+
+.importButton svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.filterGroup {
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.levelProgress {
+  display: grid;
+  gap: 6px;
+}
+
+.levelProgressLabel {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #dce0f1;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.levelProgressTrack {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(173, 183, 220, 0.16);
+}
+
+.levelProgressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b5cf6, #43d5b0);
+  transition: width 0.2s ease;
+}
+
+.levelProgressHint {
+  color: #8f98b3;
+  font-size: 10px;
+}
+
+.filterChip {
+  min-height: 40px;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #aeb5cb;
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 12px;
+  line-height: 1.25;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.filterChip:hover,
+.filterChip.selected {
+  border-color: rgba(169, 91, 255, 0.72);
+  background: rgba(119, 82, 255, 0.2);
+  color: #f3f4fc;
+}
+
+.typeChip {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 5px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.verbTypeChips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.verbTypeGroup {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.progressFilters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.progressButton {
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #aeb5cb;
+  cursor: pointer;
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.progressButton:hover,
+.progressButton.selected {
+  border-color: rgba(169, 91, 255, 0.72);
+  background: rgba(119, 82, 255, 0.2);
+  color: #f3f4fc;
+}
+
+.filterBottomRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dictionarySearch {
+  min-width: 0;
+}
+
+.dictionaryCount {
+  margin: 12px 2px 0;
+  color: #929bb7;
+  font-size: 13px;
+}
+
+.importStatus {
+  margin: 0;
+  color: #c9baff;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.learnedButton {
+  justify-self: start;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #aeb5cb;
+  cursor: pointer;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.learnedButton:hover,
+.learnedButton.learned {
+  border-color: rgba(83, 211, 161, 0.4);
+  background: rgba(83, 211, 161, 0.1);
+  color: #a4ebca;
 }
 
 .wordList {
@@ -477,7 +774,30 @@
     padding: 8px 16px;
   }
 
+  .dictionaryFilters {
+    padding: 14px;
+  }
+
+  .filterTopRow {
+    grid-template-columns: 1fr;
+  }
+
+  .filterBottomRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .typeChip {
+    width: auto;
+  }
+
   .settingRow {
     gap: 12px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1100px) {
+  .filterTopRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

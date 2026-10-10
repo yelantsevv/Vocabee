@@ -1,0 +1,1432 @@
+[
+    {
+        "word": "give up",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 310,
+        "is_irregular": true,
+        "base_verb": "give",
+        "particles": [
+            "up"
+        ],
+        "info": "transitive/intransitive",
+        "definitions": [
+            "сдаваться",
+            "бросать (привычку)",
+            "прекращать попытки"
+        ],
+        "synonyms": [
+            "quit",
+            "stop",
+            "surrender"
+        ],
+        "antonyms": [
+            "continue",
+            "keep going",
+            "persist"
+        ],
+        "examples": [
+            {
+                "phrase": "Never give up.",
+                "translation": "Никогда не сдавайся."
+            },
+            {
+                "phrase": "Give up smoking.",
+                "translation": "Брось курить."
+            }
+        ],
+        "forms": {
+            "past_simple": "gave up",
+            "past_participle": "given up",
+            "present_participle": "giving up",
+            "third_person_singular": "gives up"
+        },
+        "learning_level": 3
+    },
+    {
+        "word": "look after",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 520,
+        "is_irregular": false,
+        "base_verb": "look",
+        "particles": [
+            "after"
+        ],
+        "info": "transitive; separable: no",
+        "definitions": [
+            "заботиться о",
+            "присматривать за"
+        ],
+        "synonyms": [
+            "care for",
+            "take care of",
+            "watch"
+        ],
+        "antonyms": [
+            "neglect",
+            "ignore"
+        ],
+        "examples": [
+            {
+                "phrase": "Look after Anna.",
+                "translation": "Присмотри за Анной."
+            },
+            {
+                "phrase": "Look after him.",
+                "translation": "Позаботься о нём."
+            }
+        ],
+        "forms": {
+            "past_simple": "looked after",
+            "past_participle": "looked after",
+            "present_participle": "looking after",
+            "third_person_singular": "looks after"
+        },
+        "learning_level": 5
+    },
+    {
+        "word": "get up",
+        "part_of_speech": "phrasal_verb",
+        "level": "A1",
+        "frequency_rank": 95,
+        "is_irregular": true,
+        "base_verb": "get",
+        "particles": [
+            "up"
+        ],
+        "info": "intransitive; separable: no",
+        "definitions": [
+            "вставать с кровати",
+            "подниматься"
+        ],
+        "synonyms": [
+            "rise",
+            "stand up"
+        ],
+        "antonyms": [
+            "lie down",
+            "go to bed"
+        ],
+        "examples": [
+            {
+                "phrase": "Get up early.",
+                "translation": "Вставай рано."
+            },
+            {
+                "phrase": "I got up.",
+                "translation": "Я встал."
+            }
+        ],
+        "forms": {
+            "past_simple": "got up",
+            "past_participle": "got up",
+            "present_participle": "getting up",
+            "third_person_singular": "gets up"
+        },
+        "learning_level": 9
+    },
+    {
+        "word": "take off",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 180,
+        "topics": [
+            "travel"
+        ],
+        "is_irregular": true,
+        "base_verb": "take",
+        "particles": [
+            "off"
+        ],
+        "info": "transitive/intransitive; separable when transitive",
+        "definitions": [
+            "снимать (одежду)",
+            "взлетать (о самолёте)",
+            "быстро становиться популярным"
+        ],
+        "synonyms": [
+            "remove",
+            "depart",
+            "become popular"
+        ],
+        "antonyms": [
+            "put on",
+            "land"
+        ],
+        "examples": [
+            {
+                "phrase": "Take off your coat.",
+                "translation": "Сними пальто."
+            },
+            {
+                "phrase": "The plane took off.",
+                "translation": "Самолёт взлетел."
+            }
+        ],
+        "forms": {
+            "past_simple": "took off",
+            "past_participle": "taken off",
+            "present_participle": "taking off",
+            "third_person_singular": "takes off"
+        },
+        "learning_level": 2
+    },
+    {
+        "word": "find out",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 145,
+        "is_irregular": true,
+        "base_verb": "find",
+        "particles": [
+            "out"
+        ],
+        "info": "transitive; separable",
+        "definitions": [
+            "выяснять",
+            "узнавать",
+            "обнаруживать"
+        ],
+        "synonyms": [
+            "discover",
+            "learn",
+            "work out"
+        ],
+        "antonyms": [
+            "overlook",
+            "miss"
+        ],
+        "examples": [
+            {
+                "phrase": "Find out why.",
+                "translation": "Выясни почему."
+            },
+            {
+                "phrase": "She found out.",
+                "translation": "Она выяснила."
+            }
+        ],
+        "forms": {
+            "past_simple": "found out",
+            "past_participle": "found out",
+            "present_participle": "finding out",
+            "third_person_singular": "finds out"
+        },
+        "learning_level": 6
+    },
+    {
+        "word": "put on",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 205,
+        "is_irregular": true,
+        "base_verb": "put",
+        "particles": [
+            "on"
+        ],
+        "info": "transitive; separable",
+        "definitions": [
+            "надевать",
+            "включать (устройство)",
+            "набирать (вес)"
+        ],
+        "synonyms": [
+            "wear",
+            "switch on",
+            "gain"
+        ],
+        "antonyms": [
+            "take off",
+            "switch off",
+            "lose"
+        ],
+        "examples": [
+            {
+                "phrase": "Put on your coat.",
+                "translation": "Надень пальто."
+            },
+            {
+                "phrase": "Put it on.",
+                "translation": "Надень это."
+            }
+        ],
+        "forms": {
+            "past_simple": "put on",
+            "past_participle": "put on",
+            "present_participle": "putting on",
+            "third_person_singular": "puts on"
+        },
+        "learning_level": 1
+    },
+    {
+        "word": "turn off",
+        "part_of_speech": "phrasal_verb",
+        "level": "A1",
+        "frequency_rank": 72,
+        "topics": [
+            "it-work"
+        ],
+        "is_irregular": false,
+        "base_verb": "turn",
+        "particles": [
+            "off"
+        ],
+        "info": "transitive; separable",
+        "definitions": [
+            "выключать",
+            "отталкивать (вызывать неприязнь)"
+        ],
+        "synonyms": [
+            "switch off",
+            "shut off",
+            "repel"
+        ],
+        "antonyms": [
+            "turn on",
+            "switch on",
+            "attract"
+        ],
+        "examples": [
+            {
+                "phrase": "Turn off lights.",
+                "translation": "Выключи свет."
+            },
+            {
+                "phrase": "Turn it off.",
+                "translation": "Выключи это."
+            }
+        ],
+        "forms": {
+            "past_simple": "turned off",
+            "past_participle": "turned off",
+            "present_participle": "turning off",
+            "third_person_singular": "turns off"
+        },
+        "learning_level": 8
+    },
+    {
+        "word": "carry on",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 260,
+        "topics": [
+            "it-work"
+        ],
+        "is_irregular": false,
+        "base_verb": "carry",
+        "particles": [
+            "on"
+        ],
+        "info": "intransitive; often followed by with + noun or verb-ing",
+        "definitions": [
+            "продолжать",
+            "не прекращать"
+        ],
+        "synonyms": [
+            "continue",
+            "keep going",
+            "persist"
+        ],
+        "antonyms": [
+            "stop",
+            "give up",
+            "quit"
+        ],
+        "examples": [
+            {
+                "phrase": "Carry on working.",
+                "translation": "Продолжай работать."
+            },
+            {
+                "phrase": "Carry on with it.",
+                "translation": "Продолжай это."
+            }
+        ],
+        "forms": {
+            "past_simple": "carried on",
+            "past_participle": "carried on",
+            "present_participle": "carrying on",
+            "third_person_singular": "carries on"
+        },
+        "learning_level": 4
+    },
+    {
+        "word": "run out",
+        "part_of_speech": "phrasal_verb",
+        "level": "A2",
+        "frequency_rank": 115,
+        "is_irregular": true,
+        "base_verb": "run",
+        "particles": [
+            "out"
+        ],
+        "info": "intransitive; often followed by of + noun",
+        "definitions": [
+            "заканчиваться (о запасах)",
+            "исчерпываться"
+        ],
+        "synonyms": [
+            "be used up",
+            "be exhausted",
+            "run low"
+        ],
+        "antonyms": [
+            "stock up",
+            "replenish",
+            "renew"
+        ],
+        "examples": [
+            {
+                "phrase": "We ran out.",
+                "translation": "У нас закончилось."
+            },
+            {
+                "phrase": "Run out of milk.",
+                "translation": "Молоко закончилось."
+            }
+        ],
+        "forms": {
+            "past_simple": "ran out",
+            "past_participle": "run out",
+            "present_participle": "running out",
+            "third_person_singular": "runs out"
+        },
+        "learning_level": 0
+    },
+    {
+        "word": "break down",
+        "part_of_speech": "phrasal_verb",
+        "level": "B1",
+        "frequency_rank": 330,
+        "topics": [
+            "it-work"
+        ],
+        "is_irregular": true,
+        "base_verb": "break",
+        "particles": [
+            "down"
+        ],
+        "info": "intransitive (machine/emotional); transitive and separable (analyze into parts)",
+        "definitions": [
+            "ломаться (о машине или устройстве)",
+            "терять самообладание",
+            "разбирать на части или этапы"
+        ],
+        "synonyms": [
+            "stop working",
+            "collapse",
+            "analyze"
+        ],
+        "antonyms": [
+            "work",
+            "function",
+            "hold together"
+        ],
+        "examples": [
+            {
+                "phrase": "The car broke down.",
+                "translation": "Машина сломалась."
+            },
+            {
+                "phrase": "Don't break down.",
+                "translation": "Не сдавайся."
+            }
+        ],
+        "forms": {
+            "past_simple": "broke down",
+            "past_participle": "broken down",
+            "present_participle": "breaking down",
+            "third_person_singular": "breaks down"
+        },
+        "learning_level": 7
+    },
+    {
+        "word": "go",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 0,
+        "frequency_rank": 1,
+        "is_irregular": true,
+        "definitions": [
+            "идти",
+            "ехать",
+            "уходить"
+        ],
+        "examples": [
+            {
+                "phrase": "I go to work by bus.",
+                "translation": "Я езжу на работу на автобусе."
+            }
+        ],
+        "forms": {
+            "past_simple": "went",
+            "past_participle": "gone",
+            "present_participle": "going",
+            "third_person_singular": "goes"
+        }
+    },
+    {
+        "word": "come",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 5,
+        "frequency_rank": 2,
+        "is_irregular": true,
+        "definitions": [
+            "приходить",
+            "приезжать"
+        ],
+        "examples": [
+            {
+                "phrase": "Come here, please.",
+                "translation": "Подойди сюда, пожалуйста."
+            }
+        ],
+        "forms": {
+            "past_simple": "came",
+            "past_participle": "come",
+            "present_participle": "coming",
+            "third_person_singular": "comes"
+        }
+    },
+    {
+        "word": "get",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 3,
+        "frequency_rank": 3,
+        "is_irregular": true,
+        "definitions": [
+            "получать",
+            "становиться",
+            "добираться"
+        ],
+        "examples": [
+            {
+                "phrase": "I got your message.",
+                "translation": "Я получил твоё сообщение."
+            }
+        ],
+        "forms": {
+            "past_simple": "got",
+            "past_participle": "got",
+            "present_participle": "getting",
+            "third_person_singular": "gets"
+        }
+    },
+    {
+        "word": "make",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 2,
+        "frequency_rank": 4,
+        "is_irregular": true,
+        "definitions": [
+            "делать",
+            "создавать",
+            "заставлять"
+        ],
+        "examples": [
+            {
+                "phrase": "She makes great coffee.",
+                "translation": "Она готовит отличный кофе."
+            }
+        ],
+        "forms": {
+            "past_simple": "made",
+            "past_participle": "made",
+            "present_participle": "making",
+            "third_person_singular": "makes"
+        }
+    },
+    {
+        "word": "take",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 6,
+        "frequency_rank": 5,
+        "is_irregular": true,
+        "definitions": [
+            "брать",
+            "взять",
+            "занимать (время)"
+        ],
+        "examples": [
+            {
+                "phrase": "Take an umbrella with you.",
+                "translation": "Возьми с собой зонт."
+            }
+        ],
+        "forms": {
+            "past_simple": "took",
+            "past_participle": "taken",
+            "present_participle": "taking",
+            "third_person_singular": "takes"
+        }
+    },
+    {
+        "word": "give",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 4,
+        "frequency_rank": 6,
+        "is_irregular": true,
+        "definitions": [
+            "давать",
+            "передавать"
+        ],
+        "examples": [
+            {
+                "phrase": "Give me a minute.",
+                "translation": "Дай мне минуту."
+            }
+        ],
+        "forms": {
+            "past_simple": "gave",
+            "past_participle": "given",
+            "present_participle": "giving",
+            "third_person_singular": "gives"
+        }
+    },
+    {
+        "word": "find",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 7,
+        "frequency_rank": 7,
+        "is_irregular": true,
+        "definitions": [
+            "находить",
+            "обнаруживать"
+        ],
+        "examples": [
+            {
+                "phrase": "I can't find my keys.",
+                "translation": "Я не могу найти ключи."
+            }
+        ],
+        "forms": {
+            "past_simple": "found",
+            "past_participle": "found",
+            "present_participle": "finding",
+            "third_person_singular": "finds"
+        }
+    },
+    {
+        "word": "think",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 1,
+        "frequency_rank": 8,
+        "is_irregular": true,
+        "definitions": [
+            "думать",
+            "считать",
+            "обдумывать"
+        ],
+        "examples": [
+            {
+                "phrase": "I think you're right.",
+                "translation": "Думаю, ты прав."
+            }
+        ],
+        "forms": {
+            "past_simple": "thought",
+            "past_participle": "thought",
+            "present_participle": "thinking",
+            "third_person_singular": "thinks"
+        }
+    },
+    {
+        "word": "know",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 8,
+        "frequency_rank": 9,
+        "is_irregular": true,
+        "definitions": [
+            "знать",
+            "быть знакомым"
+        ],
+        "examples": [
+            {
+                "phrase": "Do you know her name?",
+                "translation": "Ты знаешь, как её зовут?"
+            }
+        ],
+        "forms": {
+            "past_simple": "knew",
+            "past_participle": "known",
+            "present_participle": "knowing",
+            "third_person_singular": "knows"
+        }
+    },
+    {
+        "word": "say",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 5,
+        "frequency_rank": 10,
+        "is_irregular": true,
+        "definitions": [
+            "говорить",
+            "сказать",
+            "произносить"
+        ],
+        "examples": [
+            {
+                "phrase": "What did you say?",
+                "translation": "Что ты сказал?"
+            }
+        ],
+        "forms": {
+            "past_simple": "said",
+            "past_participle": "said",
+            "present_participle": "saying",
+            "third_person_singular": "says"
+        }
+    },
+    {
+        "word": "tell",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 2,
+        "frequency_rank": 11,
+        "is_irregular": true,
+        "definitions": [
+            "рассказывать",
+            "сообщать",
+            "говорить кому-либо"
+        ],
+        "examples": [
+            {
+                "phrase": "Tell me the truth.",
+                "translation": "Скажи мне правду."
+            }
+        ],
+        "forms": {
+            "past_simple": "told",
+            "past_participle": "told",
+            "present_participle": "telling",
+            "third_person_singular": "tells"
+        }
+    },
+    {
+        "word": "ask",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 9,
+        "frequency_rank": 12,
+        "is_irregular": false,
+        "definitions": [
+            "спрашивать",
+            "просить"
+        ],
+        "examples": [
+            {
+                "phrase": "Can I ask you a question?",
+                "translation": "Можно задать тебе вопрос?"
+            }
+        ],
+        "forms": {
+            "past_simple": "asked",
+            "past_participle": "asked",
+            "present_participle": "asking",
+            "third_person_singular": "asks"
+        }
+    },
+    {
+        "word": "work",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 4,
+        "frequency_rank": 13,
+        "is_irregular": false,
+        "definitions": [
+            "работать",
+            "действовать"
+        ],
+        "examples": [
+            {
+                "phrase": "I work from home.",
+                "translation": "Я работаю из дома."
+            }
+        ],
+        "forms": {
+            "past_simple": "worked",
+            "past_participle": "worked",
+            "present_participle": "working",
+            "third_person_singular": "works"
+        },
+        "topics": [
+            "it-work"
+        ]
+    },
+    {
+        "word": "play",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 0,
+        "frequency_rank": 14,
+        "is_irregular": false,
+        "definitions": [
+            "играть",
+            "исполнять (музыку)"
+        ],
+        "examples": [
+            {
+                "phrase": "The children play outside.",
+                "translation": "Дети играют на улице."
+            }
+        ],
+        "forms": {
+            "past_simple": "played",
+            "past_participle": "played",
+            "present_participle": "playing",
+            "third_person_singular": "plays"
+        }
+    },
+    {
+        "word": "study",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 6,
+        "frequency_rank": 15,
+        "is_irregular": false,
+        "definitions": [
+            "учиться",
+            "изучать"
+        ],
+        "examples": [
+            {
+                "phrase": "She studies English every day.",
+                "translation": "Она изучает английский каждый день."
+            }
+        ],
+        "forms": {
+            "past_simple": "studied",
+            "past_participle": "studied",
+            "present_participle": "studying",
+            "third_person_singular": "studies"
+        }
+    },
+    {
+        "word": "learn",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 3,
+        "frequency_rank": 16,
+        "is_irregular": false,
+        "definitions": [
+            "учить",
+            "изучать",
+            "узнавать"
+        ],
+        "examples": [
+            {
+                "phrase": "We are learning new words.",
+                "translation": "Мы учим новые слова."
+            }
+        ],
+        "forms": {
+            "past_simple": "learned",
+            "past_participle": "learned",
+            "present_participle": "learning",
+            "third_person_singular": "learns"
+        }
+    },
+    {
+        "word": "travel",
+        "part_of_speech": "verb",
+        "level": "A2",
+        "learning_level": 7,
+        "frequency_rank": 17,
+        "is_irregular": false,
+        "definitions": [
+            "путешествовать",
+            "ездить"
+        ],
+        "examples": [
+            {
+                "phrase": "They travel by train.",
+                "translation": "Они путешествуют на поезде."
+            }
+        ],
+        "forms": {
+            "past_simple": "travelled",
+            "past_participle": "travelled",
+            "present_participle": "travelling",
+            "third_person_singular": "travels"
+        },
+        "topics": [
+            "travel"
+        ]
+    },
+    {
+        "word": "eat",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 1,
+        "frequency_rank": 18,
+        "is_irregular": true,
+        "definitions": [
+            "есть",
+            "принимать пищу"
+        ],
+        "examples": [
+            {
+                "phrase": "We eat dinner at seven.",
+                "translation": "Мы ужинаем в семь."
+            }
+        ],
+        "forms": {
+            "past_simple": "ate",
+            "past_participle": "eaten",
+            "present_participle": "eating",
+            "third_person_singular": "eats"
+        }
+    },
+    {
+        "word": "drink",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 8,
+        "frequency_rank": 19,
+        "is_irregular": true,
+        "definitions": [
+            "пить",
+            "выпивать"
+        ],
+        "examples": [
+            {
+                "phrase": "Drink more water.",
+                "translation": "Пей больше воды."
+            }
+        ],
+        "forms": {
+            "past_simple": "drank",
+            "past_participle": "drunk",
+            "present_participle": "drinking",
+            "third_person_singular": "drinks"
+        }
+    },
+    {
+        "word": "sleep",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 5,
+        "frequency_rank": 20,
+        "is_irregular": true,
+        "definitions": [
+            "спать"
+        ],
+        "examples": [
+            {
+                "phrase": "The baby is sleeping.",
+                "translation": "Ребёнок спит."
+            }
+        ],
+        "forms": {
+            "past_simple": "slept",
+            "past_participle": "slept",
+            "present_participle": "sleeping",
+            "third_person_singular": "sleeps"
+        }
+    },
+    {
+        "word": "write",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 2,
+        "frequency_rank": 21,
+        "is_irregular": true,
+        "definitions": [
+            "писать",
+            "записывать"
+        ],
+        "examples": [
+            {
+                "phrase": "Please write your name here.",
+                "translation": "Пожалуйста, напиши здесь своё имя."
+            }
+        ],
+        "forms": {
+            "past_simple": "wrote",
+            "past_participle": "written",
+            "present_participle": "writing",
+            "third_person_singular": "writes"
+        }
+    },
+    {
+        "word": "read",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 9,
+        "frequency_rank": 22,
+        "is_irregular": true,
+        "definitions": [
+            "читать",
+            "прочитать"
+        ],
+        "examples": [
+            {
+                "phrase": "I read before bed.",
+                "translation": "Я читаю перед сном."
+            }
+        ],
+        "forms": {
+            "past_simple": "read",
+            "past_participle": "read",
+            "present_participle": "reading",
+            "third_person_singular": "reads"
+        }
+    },
+    {
+        "word": "speak",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 4,
+        "frequency_rank": 23,
+        "is_irregular": true,
+        "definitions": [
+            "говорить",
+            "разговаривать",
+            "выступать"
+        ],
+        "examples": [
+            {
+                "phrase": "She speaks three languages.",
+                "translation": "Она говорит на трёх языках."
+            }
+        ],
+        "forms": {
+            "past_simple": "spoke",
+            "past_participle": "spoken",
+            "present_participle": "speaking",
+            "third_person_singular": "speaks"
+        }
+    },
+    {
+        "word": "listen",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 0,
+        "frequency_rank": 24,
+        "is_irregular": false,
+        "definitions": [
+            "слушать",
+            "прислушиваться"
+        ],
+        "examples": [
+            {
+                "phrase": "Listen to this song.",
+                "translation": "Послушай эту песню."
+            }
+        ],
+        "forms": {
+            "past_simple": "listened",
+            "past_participle": "listened",
+            "present_participle": "listening",
+            "third_person_singular": "listens"
+        }
+    },
+    {
+        "word": "watch",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 6,
+        "frequency_rank": 25,
+        "is_irregular": false,
+        "definitions": [
+            "смотреть",
+            "наблюдать"
+        ],
+        "examples": [
+            {
+                "phrase": "We watched a film last night.",
+                "translation": "Вчера вечером мы смотрели фильм."
+            }
+        ],
+        "forms": {
+            "past_simple": "watched",
+            "past_participle": "watched",
+            "present_participle": "watching",
+            "third_person_singular": "watches"
+        }
+    },
+    {
+        "word": "buy",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 3,
+        "frequency_rank": 26,
+        "is_irregular": true,
+        "definitions": [
+            "покупать",
+            "приобретать"
+        ],
+        "examples": [
+            {
+                "phrase": "I bought a new book.",
+                "translation": "Я купил новую книгу."
+            }
+        ],
+        "forms": {
+            "past_simple": "bought",
+            "past_participle": "bought",
+            "present_participle": "buying",
+            "third_person_singular": "buys"
+        }
+    },
+    {
+        "word": "bring",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 7,
+        "frequency_rank": 27,
+        "is_irregular": true,
+        "definitions": [
+            "приносить",
+            "привозить"
+        ],
+        "examples": [
+            {
+                "phrase": "Bring your passport.",
+                "translation": "Возьми с собой паспорт."
+            }
+        ],
+        "forms": {
+            "past_simple": "brought",
+            "past_participle": "brought",
+            "present_participle": "bringing",
+            "third_person_singular": "brings"
+        }
+    },
+    {
+        "word": "leave",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 1,
+        "frequency_rank": 28,
+        "is_irregular": true,
+        "definitions": [
+            "уходить",
+            "уезжать",
+            "оставлять"
+        ],
+        "examples": [
+            {
+                "phrase": "The train leaves at noon.",
+                "translation": "Поезд отправляется в полдень."
+            }
+        ],
+        "forms": {
+            "past_simple": "left",
+            "past_participle": "left",
+            "present_participle": "leaving",
+            "third_person_singular": "leaves"
+        },
+        "topics": [
+            "travel"
+        ]
+    },
+    {
+        "word": "arrive",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 8,
+        "frequency_rank": 29,
+        "is_irregular": false,
+        "definitions": [
+            "прибывать",
+            "приезжать"
+        ],
+        "examples": [
+            {
+                "phrase": "We arrived in Berlin yesterday.",
+                "translation": "Мы приехали в Берлин вчера."
+            }
+        ],
+        "forms": {
+            "past_simple": "arrived",
+            "past_participle": "arrived",
+            "present_participle": "arriving",
+            "third_person_singular": "arrives"
+        },
+        "topics": [
+            "travel"
+        ]
+    },
+    {
+        "word": "open",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 5,
+        "frequency_rank": 30,
+        "is_irregular": false,
+        "definitions": [
+            "открывать",
+            "открываться"
+        ],
+        "examples": [
+            {
+                "phrase": "Open the window, please.",
+                "translation": "Открой окно, пожалуйста."
+            }
+        ],
+        "forms": {
+            "past_simple": "opened",
+            "past_participle": "opened",
+            "present_participle": "opening",
+            "third_person_singular": "opens"
+        }
+    },
+    {
+        "word": "close",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 2,
+        "frequency_rank": 31,
+        "is_irregular": false,
+        "definitions": [
+            "закрывать",
+            "закрываться"
+        ],
+        "examples": [
+            {
+                "phrase": "The shop closes at six.",
+                "translation": "Магазин закрывается в шесть."
+            }
+        ],
+        "forms": {
+            "past_simple": "closed",
+            "past_participle": "closed",
+            "present_participle": "closing",
+            "third_person_singular": "closes"
+        }
+    },
+    {
+        "word": "start",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 9,
+        "frequency_rank": 32,
+        "is_irregular": false,
+        "definitions": [
+            "начинать",
+            "запускать"
+        ],
+        "examples": [
+            {
+                "phrase": "Let's start the lesson.",
+                "translation": "Давайте начнём урок."
+            }
+        ],
+        "forms": {
+            "past_simple": "started",
+            "past_participle": "started",
+            "present_participle": "starting",
+            "third_person_singular": "starts"
+        }
+    },
+    {
+        "word": "finish",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 4,
+        "frequency_rank": 33,
+        "is_irregular": false,
+        "definitions": [
+            "заканчивать",
+            "завершать"
+        ],
+        "examples": [
+            {
+                "phrase": "I finished my homework.",
+                "translation": "Я закончил домашнее задание."
+            }
+        ],
+        "forms": {
+            "past_simple": "finished",
+            "past_participle": "finished",
+            "present_participle": "finishing",
+            "third_person_singular": "finishes"
+        }
+    },
+    {
+        "word": "help",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 0,
+        "frequency_rank": 34,
+        "is_irregular": false,
+        "definitions": [
+            "помогать",
+            "содействовать"
+        ],
+        "examples": [
+            {
+                "phrase": "Can you help me?",
+                "translation": "Ты можешь мне помочь?"
+            }
+        ],
+        "forms": {
+            "past_simple": "helped",
+            "past_participle": "helped",
+            "present_participle": "helping",
+            "third_person_singular": "helps"
+        }
+    },
+    {
+        "word": "try",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 6,
+        "frequency_rank": 35,
+        "is_irregular": false,
+        "definitions": [
+            "пробовать",
+            "пытаться"
+        ],
+        "examples": [
+            {
+                "phrase": "Try again tomorrow.",
+                "translation": "Попробуй ещё раз завтра."
+            }
+        ],
+        "forms": {
+            "past_simple": "tried",
+            "past_participle": "tried",
+            "present_participle": "trying",
+            "third_person_singular": "tries"
+        }
+    },
+    {
+        "word": "use",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 3,
+        "frequency_rank": 36,
+        "is_irregular": false,
+        "definitions": [
+            "использовать",
+            "пользоваться"
+        ],
+        "examples": [
+            {
+                "phrase": "I use this app every day.",
+                "translation": "Я пользуюсь этим приложением каждый день."
+            }
+        ],
+        "forms": {
+            "past_simple": "used",
+            "past_participle": "used",
+            "present_participle": "using",
+            "third_person_singular": "uses"
+        },
+        "topics": [
+            "it-work"
+        ]
+    },
+    {
+        "word": "need",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 7,
+        "frequency_rank": 37,
+        "is_irregular": false,
+        "definitions": [
+            "нуждаться",
+            "требоваться"
+        ],
+        "examples": [
+            {
+                "phrase": "We need more time.",
+                "translation": "Нам нужно больше времени."
+            }
+        ],
+        "forms": {
+            "past_simple": "needed",
+            "past_participle": "needed",
+            "present_participle": "needing",
+            "third_person_singular": "needs"
+        }
+    },
+    {
+        "word": "want",
+        "part_of_speech": "verb",
+        "level": "A1",
+        "learning_level": 1,
+        "frequency_rank": 38,
+        "is_irregular": false,
+        "definitions": [
+            "хотеть",
+            "желать"
+        ],
+        "examples": [
+            {
+                "phrase": "I want to learn English.",
+                "translation": "Я хочу выучить английский."
+            }
+        ],
+        "forms": {
+            "past_simple": "wanted",
+            "past_participle": "wanted",
+            "present_participle": "wanting",
+            "third_person_singular": "wants"
+        }
+    },
+    {
+        "word": "become",
+        "part_of_speech": "verb",
+        "level": "A2",
+        "learning_level": 8,
+        "frequency_rank": 39,
+        "is_irregular": true,
+        "definitions": [
+            "становиться",
+            "делаться"
+        ],
+        "examples": [
+            {
+                "phrase": "It became much easier.",
+                "translation": "Это стало намного проще."
+            }
+        ],
+        "forms": {
+            "past_simple": "became",
+            "past_participle": "become",
+            "present_participle": "becoming",
+            "third_person_singular": "becomes"
+        }
+    },
+    {
+        "word": "wake up",
+        "part_of_speech": "phrasal_verb",
+        "level": "A1",
+        "learning_level": 5,
+        "frequency_rank": 40,
+        "is_irregular": true,
+        "definitions": [
+            "просыпаться",
+            "будить"
+        ],
+        "examples": [
+            {
+                "phrase": "I wake up at six.",
+                "translation": "Я просыпаюсь в шесть."
+            }
+        ],
+        "forms": {
+            "past_simple": "woke up",
+            "past_participle": "woken up",
+            "present_participle": "waking up",
+            "third_person_singular": "wakes up"
+        },
+        "base_verb": "wake",
+        "particles": [
+            "up"
+        ]
+    }
+]
