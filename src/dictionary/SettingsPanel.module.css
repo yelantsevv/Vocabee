@@ -48,7 +48,27 @@
   font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
 }
 
-.settingsFooter,
+.batchSizeSetting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
+  color: #f3f4fc;
+  padding: 20px 2px;
+  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
+}
+
+.batchSizeSetting select {
+  min-height: 40px;
+  border: 1px solid rgba(176, 186, 222, 0.2);
+  border-radius: 9px;
+  background: #202640;
+  color: #f6f7ff;
+  padding: 0 10px;
+  font: inherit;
+}
+
 .settingsStatus {
   margin: 14px 2px 0;
   color: #a5acc4;

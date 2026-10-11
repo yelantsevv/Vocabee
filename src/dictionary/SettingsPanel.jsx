@@ -29,26 +29,20 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, 
   );
 }
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, onLoadPhraseDictionary }) {
+export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary }) {
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
-  const quickLoadActions = [
-    ...dictionaryQuickActions.map((action) => {
-      const sourceId = action.id.startsWith('words-')
-        ? action.id.slice('words-'.length)
-        : action.id.slice('phrase-'.length);
-      const checked = loadedSources.has(sourceId);
-      return {
-        label: action.label,
-        checked,
-        disabled: catalog.catalogLoading,
-        onClick: () => {
-          if (checked) return;
-          if (action.id.startsWith('words-')) onLoadDictionary(sourceId);
-          else onLoadPhraseDictionary(sourceId);
-        }
-      };
-    })
-  ];
+  const quickLoadActions = dictionaryQuickActions.map((action) => {
+    const sourceId = action.id.slice('words-'.length);
+    const checked = loadedSources.has(sourceId);
+    return {
+      label: action.label,
+      checked,
+      disabled: catalog.catalogLoading,
+      onClick: () => {
+        if (!checked) onLoadDictionary(sourceId);
+      }
+    };
+  });
 
   return (
     <section className={styles.content} aria-label="Настройки">
@@ -88,7 +82,18 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
           dictionaryPreview
           onChange={(value) => updateSetting('dictionaryFontSize', value)}
         />
-        <p className={panelStyles.settingsFooter}>Поддерживаются английские и немецкие субтитры</p>
+        <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
+          <span>Карточек за загрузку</span>
+          <select
+            id="cards-per-load"
+            value={settings.cardsPerLoad}
+            onChange={(event) => updateSetting('cardsPerLoad', event.target.value)}
+          >
+            {[5, 10, 20, 30, 50, 100, 200].map((count) => (
+              <option key={count} value={count}>{count}</option>
+            ))}
+          </select>
+        </label>
         {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
         <DatabaseManager />
       </section>

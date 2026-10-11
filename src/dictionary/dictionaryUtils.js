@@ -12,7 +12,7 @@ export const LEARNED_ENTRIES_KEY = 'vocabee-learned-source-entries';
 export const IMPORTED_DICTIONARIES_KEY = 'vocabee-imported-dictionaries-v1';
 
 const VALID_PARTS_OF_SPEECH = new Set([
-  'noun', 'verb', 'phrasal_verb', 'separable_verb', 'adjective', 'adverb', 'preposition',
+  'noun', 'verb', 'phrasal_verb', 'phrasal-verb', 'separable_verb', 'adjective', 'adverb', 'preposition',
   'pronoun', 'conjunction', 'particle', 'phrase'
 ]);
 const VALID_CEFR_LEVELS = new Set(['A1', 'A2', 'B1', 'B2', 'C1', 'C2']);
@@ -46,7 +46,11 @@ export function normalizeImportedEntries(payload) {
 
     return {
       word: entry.word.trim(),
-      part_of_speech: VALID_PARTS_OF_SPEECH.has(entry.part_of_speech) ? entry.part_of_speech : 'verb',
+      part_of_speech: entry.part_of_speech === 'phrasal-verb'
+        ? 'phrasal_verb'
+        : VALID_PARTS_OF_SPEECH.has(entry.part_of_speech)
+          ? entry.part_of_speech
+          : 'verb',
       level: VALID_CEFR_LEVELS.has(entry.level) ? entry.level : 'A1',
       learning_level: entry.learning_level ?? 0,
       frequency_rank: Number.isFinite(entry.frequency_rank) ? entry.frequency_rank : 10000 + index,
@@ -61,10 +65,10 @@ export function normalizeImportedEntries(payload) {
 }
 
 export function matchesVerbType(entry, type, language) {
-  if (type === 'regular') return entry.is_irregular === false;
-  if (type === 'irregular') return entry.is_irregular === true;
+  if (type === 'regular') return entry.part_of_speech === 'verb' && entry.is_irregular === false;
+  if (type === 'irregular') return entry.part_of_speech === 'verb' && entry.is_irregular === true;
   if (type === 'phrasal') {
-    return entry.part_of_speech === 'phrasal_verb'
+    return ['phrasal_verb', 'phrasal-verb'].includes(entry.part_of_speech)
       || (language === 'de' && entry.part_of_speech === 'separable_verb');
   }
   return false;

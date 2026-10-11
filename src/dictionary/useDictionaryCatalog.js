@@ -22,6 +22,7 @@ const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
 const CATALOG_FILTERS_VERSION = 4;
 const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
 const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'phrasal'];
+const PROGRESS_VIEWS = ['learning', 'learned', 'remaining'];
 
 function readCatalogFilters() {
   const defaults = {
@@ -30,7 +31,7 @@ function readCatalogFilters() {
     sourceVerbTypes: ['irregular', 'phrasal'],
     sourceSort: 'popular',
     sourceSearch: '',
-    progressView: 'all'
+    progressViews: PROGRESS_VIEWS
   };
 
   try {
@@ -52,9 +53,13 @@ function readCatalogFilters() {
         ? saved.sourceSort
         : defaults.sourceSort,
       sourceSearch: typeof saved.sourceSearch === 'string' ? saved.sourceSearch : defaults.sourceSearch,
-      progressView: ['all', 'learning', 'learned'].includes(saved.progressView)
-        ? saved.progressView
-        : defaults.progressView
+      progressViews: Array.isArray(saved.progressViews)
+        ? saved.progressViews.filter((view) => PROGRESS_VIEWS.includes(view))
+        : saved.progressView === 'all'
+          ? PROGRESS_VIEWS
+          : PROGRESS_VIEWS.includes(saved.progressView)
+            ? [saved.progressView]
+            : defaults.progressViews
     };
   } catch {
     return defaults;
@@ -112,7 +117,7 @@ export function useDictionaryCatalog() {
   const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
   const [sourceSort, setSourceSort] = useState(initialFilters.sourceSort);
   const [sourceSearch, setSourceSearch] = useState(initialFilters.sourceSearch);
-  const [progressView, setProgressView] = useState(initialFilters.progressView);
+  const [progressViews, setProgressViews] = useState(initialFilters.progressViews);
   const [importStatus, setImportStatus] = useState('');
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
   const importInputRef = useRef(null);
@@ -170,8 +175,8 @@ export function useDictionaryCatalog() {
         setSelectedSourceLanguage(preferredLanguage === 'all' && records.length
           ? 'all'
           : dictionaries[preferredLanguage]
-          ? preferredLanguage
-          : records.length > 1 ? 'all' : records[0]?.catalogId || records[0]?.language || null);
+            ? preferredLanguage
+            : records.length > 1 ? 'all' : records[0]?.catalogId || records[0]?.language || null);
       } catch (error) {
         if (active) setCatalogError(error.message || 'Не удалось прочитать базу словарей.');
       } finally {
@@ -241,12 +246,12 @@ export function useDictionaryCatalog() {
         sourceVerbTypes,
         sourceSort,
         sourceSearch,
-        progressView
+        progressViews
       }));
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
     }
-  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceSort, sourceSearch, progressView]);
+  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceSort, sourceSearch, progressViews]);
 
   const availableSources = useMemo(() => Object.keys(importedDictionaries)
     .filter((sourceId) => sourceMetadata[sourceId])
@@ -274,6 +279,9 @@ export function useDictionaryCatalog() {
     const level = getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
     return level > 0 && level < 9;
   }).length;
+  const remainingCount = selectedSourceDictionary.filter((entry) => (
+    getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides) === 0
+  )).length;
   const overallDictionaryProgress = getAverageProgress(
     selectedSourceDictionary,
     selectedSourceLanguage,
@@ -309,10 +317,12 @@ export function useDictionaryCatalog() {
         || entry.part_of_speech === 'phrase'
         || sourceVerbTypes.length === 0
         || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
-      const matchesProgress = progressView === 'all'
-        || (progressView === 'learning' && learningLevel > 0 && learningLevel < 9)
-        || (progressView === 'learned' && learningLevel === 9);
-
+      const progressCategory = learningLevel === 9
+        ? 'learned'
+        : learningLevel > 0
+          ? 'learning'
+          : 'remaining';
+      const matchesProgress = progressViews.includes(progressCategory);
       return matchesLevel && matchesType && (!query || searchableText.includes(query)) && matchesProgress;
     });
 
@@ -330,7 +340,7 @@ export function useDictionaryCatalog() {
     return entries.sort((a, b) => (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity));
   }, [
     learningLevelOverrides,
-    progressView,
+    progressViews,
     selectedSourceDictionary,
     selectedSourceLanguage,
     sourceSearch,
@@ -419,23 +429,6 @@ export function useDictionaryCatalog() {
     }
   }
 
-  async function loadPhraseDictionary(sectionKey) {
-    const dictionary = phraseDictionaries[sectionKey];
-    if (!dictionary) return false;
-
-    try {
-      catalogMutationRef.current += 1;
-      await writePhraseDictionary(sectionKey, dictionary);
-      setImportedDictionaries((current) => ({ ...current, [sectionKey]: dictionary.entries }));
-      setSelectedSourceLanguage(sectionKey);
-      setImportStatus('');
-      return true;
-    } catch (error) {
-      setImportStatus(error.message || 'Не удалось загрузить набор фраз.');
-      return false;
-    }
-  }
-
   async function createCustomDictionary(details) {
     try {
       catalogMutationRef.current += 1;
@@ -486,7 +479,6 @@ export function useDictionaryCatalog() {
     catalogLoading,
     catalogError,
     loadBuiltinDictionary,
-    loadPhraseDictionary,
     sourceLevels,
     setSourceLevels,
     sourceVerbTypes,
@@ -495,8 +487,8 @@ export function useDictionaryCatalog() {
     setSourceSort,
     sourceSearch,
     setSourceSearch,
-    progressView,
-    setProgressView,
+    progressViews,
+    setProgressViews,
     importStatus,
     sourceMetadata,
     createCustomDictionary,
@@ -506,6 +498,7 @@ export function useDictionaryCatalog() {
     selectedSourceDictionary,
     learnedCount,
     inProgressCount,
+    remainingCount,
     overallDictionaryProgress,
     selectedLevelEntries,
     levelLearningProgress,

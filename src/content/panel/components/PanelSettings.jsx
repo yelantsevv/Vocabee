@@ -30,7 +30,6 @@ export function PanelSettings({ preferences, dictionaryFontSize, interfaceFontSc
       />
       <FontSizeSetting id="vocabee-interface-font-scale" label="Размер текста интерфейса" value={interfaceFontScale} unit="%" min="80" max="140" step="5" previewText="интерфейса" onChange={onInterfaceFontScaleChange} />
       <FontSizeSetting id="vocabee-dictionary-font-size" label="Размер текста словаря" value={dictionaryFontSize} unit=" px" min="12" max="24" step="1" previewText="словаря" dictionaryPreview onChange={onDictionaryFontSizeChange} />
-      <p className={styles.settingsFooter}>Поддерживаются английские и немецкие субтитры</p>
     </section>
   );
 }

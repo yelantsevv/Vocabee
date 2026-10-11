@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
@@ -11,8 +11,24 @@ function toggleValue(values, setter, value) {
     : [...values, value]);
 }
 
-export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSettings }) {
+function shuffleEntries(entries) {
+  const shuffled = [...entries];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+export function DictionaryCatalogPanel({
+  catalog,
+  onAddToLearning,
+  onOpenSettings,
+  cardsPerLoad,
+  refreshVersion
+}) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
+  const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
   const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
@@ -26,17 +42,26 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
     setSourceVerbTypes,
     sourceSort,
     setSourceSort,
-    progressView,
-    setProgressView,
+    progressViews,
+    setProgressViews,
     overallDictionaryProgress,
     selectedSourceDictionary,
     selectedLevelEntries,
     levelLearningProgress,
     learnedCount,
     inProgressCount,
+    remainingCount,
     learningLevelOverrides,
     filteredSourceEntries
   } = catalog;
+  const shuffledEntries = useMemo(
+    () => shuffleEntries(filteredSourceEntries),
+    [filteredSourceEntries, refreshVersion]
+  );
+
+  useEffect(() => {
+    setDisplayedCardCount(cardsPerLoad);
+  }, [cardsPerLoad, filteredSourceEntries, refreshVersion]);
 
   function revealTranslation(word) {
     clearTimeout(revealTranslationTimer.current);
@@ -54,7 +79,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
   return (
     <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
       {selectedSourceLanguage && <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
-        {selectedSourceLanguage && <div
+        <div
           className={styles.overallProgress}
           role="progressbar"
           aria-label={`Общий прогресс изучения выбранного словаря: ${overallDictionaryProgress}%`}
@@ -64,7 +89,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
           title={`Весь словарь: ${overallDictionaryProgress}%`}
         >
           <span style={{ width: `${overallDictionaryProgress}%` }} />
-        </div>}
+        </div>
         <div className={styles.filterTopRow}>
           <div className={styles.sourceControls}>
             <label className={styles.filterField}>
@@ -149,14 +174,14 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
               {[
                 ['learning', `В изучении · ${inProgressCount}`],
                 ['learned', `Изученные · ${learnedCount}`],
-                ['all', 'Все слова']
+                ['remaining', `Все слова · ${remainingCount}`]
               ].map(([view, label]) => (
                 <button
-                  className={clsx(styles.progressButton, progressView === view && styles.selected)}
+                  className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
                   key={view}
                   type="button"
-                  aria-pressed={progressView === view}
-                  onClick={() => setProgressView(view)}
+                  aria-pressed={progressViews.includes(view)}
+                  onClick={() => toggleValue(progressViews, setProgressViews, view)}
                 >{label}</button>
               ))}
             </div>
@@ -178,11 +203,11 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
         </div>
       ) : <>
       <p className={styles.dictionaryCount}>
-        Показано {filteredSourceEntries.length} из {selectedSourceDictionary.length} слов
+        Показано {Math.min(displayedCardCount, shuffledEntries.length)} из {shuffledEntries.length} слов
       </p>
       <section className={commonStyles.wordList} aria-label="Записи выбранного словаря">
         <ul>
-          {filteredSourceEntries.map((entry) => {
+          {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
             const learningLevel = getEntryLearningLevel(
               entry,
               entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
@@ -194,7 +219,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
                 word={entry.word}
                 translation={entry.definitions.join(' · ')}
                 learningLevel={learningLevel}
-                forms={entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech)
+                forms={entry.is_irregular && ['verb', 'phrasal_verb', 'phrasal-verb'].includes(entry.part_of_speech)
                   && entry.forms?.past_simple && entry.forms?.past_participle
                   ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
                   : undefined}
@@ -203,7 +228,6 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
                 onRevealTranslation={() => revealTranslation(entry.word)}
                 onHideTranslation={hideTranslation}
               >
-
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">
                     <ul className={styles.exampleList}>
@@ -235,6 +259,15 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
           <p className={commonStyles.message}>Ничего не найдено. Измените фильтры или поисковый запрос.</p>
         )}
       </section>
+      {displayedCardCount < shuffledEntries.length && (
+        <button
+          className={styles.loadMoreButton}
+          type="button"
+          onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
+        >
+          Показать ещё {cardsPerLoad}
+        </button>
+      )}
       </>}
     </section>
   );

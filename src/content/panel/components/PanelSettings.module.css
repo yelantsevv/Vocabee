@@ -42,10 +42,3 @@
 .dictionaryFontPreview {
   font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
 }
-
-.settingsFooter {
-  margin: 9px 2px 0;
-  color: #a5acc4;
-  font-size: calc(10px * var(--vocabee-ui-font-scale, 1));
-  line-height: 1.5;
-}

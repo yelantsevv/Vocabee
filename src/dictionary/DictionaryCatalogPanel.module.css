@@ -237,6 +237,25 @@
   font-size: 13px;
 }
 
+.loadMoreButton {
+  min-height: 44px;
+  align-self: center;
+  margin: 16px 0 4px;
+  border: 1px solid rgba(169, 91, 255, 0.55);
+  border-radius: 10px;
+  background: rgba(119, 82, 255, 0.18);
+  color: #f3f4fc;
+  cursor: pointer;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.loadMoreButton:hover {
+  border-color: rgba(169, 91, 255, 0.85);
+  background: rgba(119, 82, 255, 0.3);
+}
+
 .entrySection {
   display: grid;
   gap: 9px;

@@ -23,7 +23,8 @@ const DEFAULT_SETTINGS = {
   enabled: true,
   lang: 'ru',
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
-  interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE
+  interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
+  cardsPerLoad: 20
 };
 
 export function DictionaryPage() {
@@ -34,14 +35,11 @@ export function DictionaryPage() {
   const [activeView, setActiveView] = useState('dictionary');
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
+  const [cardRefreshVersion, setCardRefreshVersion] = useState(0);
   const catalog = useDictionaryCatalog();
 
   async function loadBuiltinDictionary(language) {
     await catalog.loadBuiltinDictionary(language);
-  }
-
-  async function loadPhraseDictionary(sectionKey) {
-    await catalog.loadPhraseDictionary(sectionKey);
   }
 
   useEffect(() => {
@@ -61,11 +59,6 @@ export function DictionaryPage() {
     if (requestedPreset === 'words-de') {
       setActiveView('dictionaries');
       loadBuiltinDictionary('de');
-    }
-    if (requestedPreset?.startsWith('phrase-')) {
-      const sectionKey = requestedPreset.slice('phrase-'.length);
-      setActiveView('dictionaries');
-      loadPhraseDictionary(sectionKey);
     }
   }, []);
 
@@ -104,7 +97,10 @@ export function DictionaryPage() {
         enabled: Boolean(result.enabled),
         lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
-        interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale)
+        interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
+        cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
+          ? result.cardsPerLoad
+          : DEFAULT_SETTINGS.cardsPerLoad
       });
       if (result.source === 'website') {
         setSettingsStatus('Настройки расширения недоступны: изменения сохраняются только на этом сайте.');
@@ -118,7 +114,8 @@ export function DictionaryPage() {
   async function updateSetting(key, value) {
     const normalizers = {
       dictionaryFontSize: normalizeDictionaryFontSize,
-      interfaceFontScale: normalizeInterfaceFontScale
+      interfaceFontScale: normalizeInterfaceFontScale,
+      cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
     };
     const nextValue = normalizers[key] ? normalizers[key](value) : value;
     const nextSettings = { ...settings, [key]: nextValue };
@@ -177,6 +174,21 @@ export function DictionaryPage() {
             title="Настройки"
             onClick={() => setActiveView('settings')}
           >⚙</button>
+          <button
+            className={styles.navButton}
+            type="button"
+            aria-label="Обновить список карточек"
+            title="Обновить список карточек"
+            onClick={() => {
+              setActiveView('dictionaries');
+              setCardRefreshVersion((version) => version + 1);
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 7v5h-5M4 17v-5h5" />
+              <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
+            </svg>
+          </button>
         </nav>
         <DictionarySearch
           activeView={activeView}
@@ -201,6 +213,8 @@ export function DictionaryPage() {
           catalog={catalog}
           onAddToLearning={catalog.addToLearning}
           onOpenSettings={() => setActiveView('settings')}
+          cardsPerLoad={settings.cardsPerLoad}
+          refreshVersion={cardRefreshVersion}
         />
       ) : (
         <SettingsPanel
@@ -209,7 +223,6 @@ export function DictionaryPage() {
           settingsStatus={settingsStatus}
           catalog={catalog}
           onLoadDictionary={loadBuiltinDictionary}
-          onLoadPhraseDictionary={loadPhraseDictionary}
         />
       )}
 

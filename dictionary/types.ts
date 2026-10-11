@@ -2,6 +2,7 @@ export type PartOfSpeech =
   | 'noun'
   | 'verb'
   | 'phrasal_verb'
+  | 'phrasal-verb'
   | 'separable_verb'
   | 'adjective'
   | 'adverb'
