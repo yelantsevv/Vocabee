@@ -26,6 +26,34 @@
       return;
     }
 
+    if (message.action === 'GET_MY_VOCABEE_DICTIONARY') {
+      chrome.runtime.sendMessage({ type: 'GET_MY_VOCABEE_DICTIONARY' }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? response.entries : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
+    if (message.action === 'OPEN_EXTENSION_SETTINGS') {
+      chrome.runtime.sendMessage({ type: 'OPEN_EXTENSION_SETTINGS' }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? true : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
     if (message.action === 'DELETE_INDEXED_DATABASE' && typeof message.databaseName === 'string') {
       chrome.runtime.sendMessage({
         type: 'DELETE_INDEXED_DATABASE',
@@ -80,6 +108,17 @@
           error: chrome.runtime.lastError?.message
         }, window.location.origin);
       });
+      return;
+    }
+
+  });
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type === 'MY_DICTIONARY_UPDATED') {
+      window.postMessage({
+        channel: CHANNEL,
+        type: 'MY_DICTIONARY_UPDATED'
+      }, window.location.origin);
     }
   });
 

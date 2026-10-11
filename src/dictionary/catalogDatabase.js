@@ -71,52 +71,6 @@ function openNamedCatalogDatabase(databaseName) {
   });
 }
 
-async function ensureMyDictionary() {
-  const database = await openNamedCatalogDatabase(MY_DICTIONARY_DATABASE);
-  let records;
-  try {
-    records = await new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readonly');
-      const request = transaction.objectStore(STORE_NAME).getAll();
-      request.onsuccess = () => resolve(request.result || []);
-      request.onerror = () => reject(request.error || new Error('Не удалось прочитать «Мой словарь».'));
-    });
-  } finally {
-    database.close();
-  }
-
-  if (!records.length) {
-    const record = {
-      catalogId: MY_DICTIONARY_DATABASE,
-      databaseName: MY_DICTIONARY_DATABASE,
-      title: 'Мой словарь',
-      language: 'en',
-      targetLanguage: 'ru',
-      isCustom: true,
-      entries: [],
-      updatedAt: Date.now()
-    };
-    await writeNamedRecord(MY_DICTIONARY_DATABASE, record);
-    records = [record];
-  }
-
-  const firstRecord = records[0];
-  return {
-    ...firstRecord,
-    catalogId: MY_DICTIONARY_DATABASE,
-    databaseName: MY_DICTIONARY_DATABASE,
-    title: 'Мой словарь',
-    language: firstRecord.language || 'en',
-    targetLanguage: firstRecord.targetLanguage || 'ru',
-    isCustom: true,
-    entries: records.flatMap((record) => (record.entries || []).map((entry) => ({
-      ...entry,
-      source_language: entry.source_language || record.language || 'en',
-      target_language: entry.target_language || record.targetLanguage || 'ru'
-    })))
-  };
-}
-
 function readLegacyRecords() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(LEGACY_DATABASE_NAME, 1);
@@ -172,6 +126,44 @@ async function writeNamedRecord(databaseName, record) {
   }
 }
 
+async function removeEmptyPageMyDictionary() {
+  if (!indexedDB.databases) return;
+  const databases = await indexedDB.databases();
+  if (!databases.some(({ name }) => name === MY_DICTIONARY_DATABASE)) return;
+
+  const database = await new Promise((resolve, reject) => {
+    const request = indexedDB.open(MY_DICTIONARY_DATABASE);
+    request.onupgradeneeded = () => request.transaction.abort();
+    request.onerror = () => {
+      if (request.error?.name === 'AbortError') resolve(null);
+      else reject(request.error || new Error('Не удалось проверить старую базу «Мой словарь».'));
+    };
+    request.onsuccess = () => resolve(request.result);
+  });
+  if (!database) return;
+
+  let records = [];
+  try {
+    if (database.objectStoreNames.contains(STORE_NAME)) {
+      records = await new Promise((resolve, reject) => {
+        const request = database.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error || new Error('Не удалось проверить старую базу «Мой словарь».'));
+      });
+    }
+  } finally {
+    database.close();
+  }
+
+  if (records.some((record) => (record.entries || []).length > 0)) return;
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(MY_DICTIONARY_DATABASE);
+    request.onsuccess = resolve;
+    request.onerror = () => reject(request.error || new Error('Не удалось удалить пустую копию «Мой словарь».'));
+    request.onblocked = () => reject(new Error('Удаление пустой копии словаря заблокировано другой вкладкой.'));
+  });
+}
+
 async function migrateLegacyCatalog() {
   if (legacyMigration) return legacyMigration;
   legacyMigration = (async () => {
@@ -225,7 +217,7 @@ async function readSourceRecord(sourceId) {
 
 export async function readCatalogDictionaries() {
   await migrateLegacyCatalog();
-  const myDictionary = await ensureMyDictionary();
+  await removeEmptyPageMyDictionary();
   const knownDatabases = indexedDB.databases ? await indexedDB.databases() : [];
   const installedNames = new Set(knownDatabases.map(({ name }) => name));
   const sourceIds = Object.entries(CATALOG_SOURCES)
@@ -248,7 +240,7 @@ export async function readCatalogDictionaries() {
       database.close();
     }
   }));
-  return [myDictionary, ...records, ...customRecords.flat()].filter(Boolean).map((record) => ({
+  return [...records, ...customRecords.flat()].filter(Boolean).map((record) => ({
     ...record,
     catalogId: record.catalogId || record.language
   }));

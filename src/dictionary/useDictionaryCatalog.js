@@ -9,6 +9,7 @@ import {
   writeCustomDictionary,
   writeCatalogDictionary
 } from './catalogDatabase.js';
+import { getMyVocabularyEntries } from './storage.js';
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
@@ -37,6 +38,19 @@ function isAvailableSortOption(sort) {
 function getSelectedCategory(sort) {
   if (!sort.startsWith(CATEGORY_SORT_PREFIX)) return null;
   return sort.slice(CATEGORY_SORT_PREFIX.length);
+}
+
+function createMyDictionaryRecord(entries) {
+  if (!entries.length) return null;
+  return {
+    catalogId: 'my-vocabee',
+    databaseName: 'my-vocabee',
+    title: 'Мой словарь',
+    language: entries[0].source_language || 'en',
+    targetLanguage: entries[0].target_language || 'ru',
+    isCustom: true,
+    entries
+  };
 }
 
 function readSourceConnections() {
@@ -139,6 +153,12 @@ export function useDictionaryCatalog() {
     async function loadCatalogFromDatabase() {
       try {
         let records = await readCatalogDictionaries();
+        try {
+          const myDictionary = createMyDictionaryRecord(await getMyVocabularyEntries());
+          if (myDictionary) records.push(myDictionary);
+        } catch (error) {
+          console.info('Vocabee: extension my-dictionary database is unavailable.', error);
+        }
         const legacyDictionaries = readStoredObject('vocabee-imported-dictionaries-v1');
         const existingLanguages = new Set(records.map(({ catalogId, language }) => catalogId || language));
         const legacyRecords = await Promise.all(Object.entries(legacyDictionaries)
@@ -230,18 +250,48 @@ export function useDictionaryCatalog() {
 
   useEffect(() => {
     const runtime = globalThis.chrome?.runtime;
-    if (!runtime?.onMessage) return undefined;
-    const handleRuntimeMessage = (message) => {
-      if (message?.type !== 'MY_DICTIONARY_UPDATED') return;
-      readCatalogDictionaries().then((records) => {
-        const myDictionary = records.find((record) => record.catalogId === 'my-vocabee');
-        if (myDictionary) {
-          setImportedDictionaries((current) => ({ ...current, 'my-vocabee': myDictionary.entries }));
+    const refreshMyDictionary = () => {
+      getMyVocabularyEntries().then((entries) => {
+        const record = createMyDictionaryRecord(entries);
+        setImportedDictionaries((current) => {
+          const next = { ...current };
+          if (record) next['my-vocabee'] = record.entries;
+          else delete next['my-vocabee'];
+          return next;
+        });
+        if (record) {
+          setSourceMetadata((current) => ({
+            ...current,
+            'my-vocabee': {
+              id: 'my-vocabee',
+              databaseName: 'my-vocabee',
+              language: record.language,
+              targetLanguage: record.targetLanguage,
+              title: 'Мой словарь',
+              label: '📘 Мой словарь',
+              isCustom: true
+            }
+          }));
         }
       }).catch((error) => console.warn('Vocabee: failed to refresh my dictionary.', error));
     };
-    runtime.onMessage.addListener(handleRuntimeMessage);
-    return () => runtime.onMessage.removeListener(handleRuntimeMessage);
+    const handleRuntimeMessage = (message) => {
+      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary();
+    };
+    const handleWindowMessage = (event) => {
+      if (event.source === window
+        && event.origin === window.location.origin
+        && event.data?.channel === 'VOCABEE_LOCAL_DICTIONARY'
+        && event.data?.type === 'MY_DICTIONARY_UPDATED') {
+        refreshMyDictionary();
+      }
+    };
+    runtime?.onMessage?.addListener(handleRuntimeMessage);
+    window.addEventListener('message', handleWindowMessage);
+    return () => {
+      runtime?.onMessage?.removeListener(handleRuntimeMessage);
+      window.removeEventListener('message', handleWindowMessage);
+    };
   }, []);
 
   useEffect(() => {

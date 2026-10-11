@@ -73,14 +73,3 @@ export function matchesVerbType(entry, type, language) {
   }
   return false;
 }
-
-export function getLanguagePairs(words) {
-  return [...new Set(words.map((word) =>
-    `${languageNames[word.sourceLang] || word.sourceLang} → ${languageNames[word.targetLang] || word.targetLang}`
-  ))];
-}
-
-export function formatAddedDate(timestamp) {
-  return new Intl.DateTimeFormat('ru', { day: 'numeric', month: 'short' })
-    .format(new Date(timestamp));
-}

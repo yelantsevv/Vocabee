@@ -1,60 +1,7 @@
-const DATABASE_NAME = 'learn-vocabee';
-const PREVIOUS_DATABASE_NAME = 'my-words-vocabee';
-const LEGACY_DATABASE_NAME = 'vocabee-dictionary';
-const STORE_NAME = 'words';
 const CHANNEL = 'VOCABEE_LOCAL_DICTIONARY';
 const SETTINGS_KEY = 'vocabee-settings';
 
 let nextRequestId = 0;
-let localMigration;
-
-function migrateLocalDictionary(database) {
-  if (localMigration) return localMigration;
-  localMigration = (async () => {
-    if (!indexedDB.databases) return;
-    const knownDatabases = await indexedDB.databases();
-    for (const databaseName of [PREVIOUS_DATABASE_NAME, LEGACY_DATABASE_NAME]) {
-      if (!knownDatabases.some(({ name }) => name === databaseName)) continue;
-      const legacy = await new Promise((resolve, reject) => {
-        const request = indexedDB.open(databaseName);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error || new Error('Не удалось открыть старую базу слов.'));
-        request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
-      });
-      let words = [];
-      if (legacy.objectStoreNames.contains(STORE_NAME)) {
-        words = await new Promise((resolve, reject) => {
-          const request = legacy.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).getAll();
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error || new Error('Не удалось прочитать старые слова.'));
-        });
-      }
-      legacy.close();
-
-      if (words.length) {
-        await new Promise((resolve, reject) => {
-          const transaction = database.transaction(STORE_NAME, 'readwrite');
-          const store = transaction.objectStore(STORE_NAME);
-          words.forEach((word) => store.put(word));
-          transaction.oncomplete = resolve;
-          transaction.onerror = () => reject(transaction.error || new Error('Не удалось перенести старые слова.'));
-          transaction.onabort = () => reject(transaction.error || new Error('Перенос старых слов отменён.'));
-        });
-      }
-
-      await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(databaseName);
-        request.onsuccess = resolve;
-        request.onerror = () => reject(request.error || new Error('Не удалось удалить старую базу слов.'));
-        request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
-      });
-    }
-  })().catch((error) => {
-    localMigration = undefined;
-    throw error;
-  });
-  return localMigration;
-}
 
 function requestExtension(action, payload = {}, timeout = 1500) {
   return new Promise((resolve, reject) => {
@@ -82,88 +29,19 @@ function requestExtension(action, payload = {}, timeout = 1500) {
   });
 }
 
-function openLocalDatabase() {
+function sendExtensionMessage(message) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DATABASE_NAME, 1);
-
-    request.onupgradeneeded = () => {
-      const database = request.result;
-      if (database.objectStoreNames.contains(STORE_NAME)) return;
-
-      const store = database.createObjectStore(STORE_NAME, { keyPath: 'id' });
-      store.createIndex('addedAt', 'addedAt');
-      store.createIndex('sourceLang', 'sourceLang');
-      store.createIndex('targetLang', 'targetLang');
-    };
-    request.onerror = () => reject(new Error(
-      `Не удалось открыть локальный словарь: ${request.error?.message || 'ошибка IndexedDB'}`
-    ));
-    request.onblocked = () => reject(new Error(
-      'База словаря занята другой вкладкой. Закройте её и попробуйте снова.'
-    ));
-    request.onsuccess = () => {
-      const database = request.result;
-      migrateLocalDictionary(database).then(() => resolve(database)).catch((error) => {
-        database.close();
-        reject(error);
-      });
-    };
-  });
-}
-
-async function getLocalWords() {
-  const database = await openLocalDatabase();
-
-  try {
-    return await new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readonly');
-      const request = transaction.objectStore(STORE_NAME).getAll();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(new Error(
-        `Не удалось загрузить локальный словарь: ${request.error?.message || 'ошибка IndexedDB'}`
-      ));
-      transaction.onabort = () => reject(new Error(
-        `Чтение словаря отменено: ${transaction.error?.message || 'ошибка IndexedDB'}`
-      ));
+    chrome.runtime.sendMessage(message, (response) => {
+      const error = chrome.runtime.lastError;
+      if (error) {
+        reject(new Error(error.message));
+      } else if (!response?.ok) {
+        reject(new Error(response?.error || 'Расширение не выполнило запрос.'));
+      } else {
+        resolve(response);
+      }
     });
-  } finally {
-    database.close();
-  }
-}
-
-export async function getDictionaryData() {
-  if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
-    try {
-      const response = await new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ type: 'GET_DICTIONARY_WORDS' }, (result) => {
-          const error = chrome.runtime.lastError;
-          if (error) reject(new Error(error.message));
-          else if (!result?.ok) reject(new Error(result?.error || 'Не удалось загрузить словарь.'));
-          else resolve(result.words);
-        });
-      });
-      return { words: response, source: 'extension' };
-    } catch (error) {
-      console.error('Vocabee: extension dictionary request failed; using local IndexedDB.', error);
-    }
-  }
-
-  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-    try {
-      const words = await requestExtension('GET_DICTIONARY_WORDS');
-      return { words, source: 'extension' };
-    } catch (error) {
-      console.info('Vocabee: using the website IndexedDB because the extension bridge is unavailable.', error);
-    }
-  }
-
-  const words = await getLocalWords();
-  return {
-    words,
-    source: 'website',
-    warning: 'Нет соединения с базой расширения. Показаны только данные этого сайта.'
-  };
+  });
 }
 
 export async function deleteExtensionIndexedDatabase(databaseName) {
@@ -172,6 +50,37 @@ export async function deleteExtensionIndexedDatabase(databaseName) {
 
 export async function getExtensionIndexedDatabases() {
   return requestExtension('LIST_INDEXED_DATABASES', {}, 5000);
+}
+
+export async function getMyVocabularyEntries() {
+  if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
+    const response = await sendExtensionMessage({ type: 'GET_MY_VOCABEE_DICTIONARY' });
+    return response.entries;
+  }
+  return requestExtension('GET_MY_VOCABEE_DICTIONARY', {}, 5000);
+}
+
+export async function openBrowserExtensionSettings() {
+  if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
+    await sendExtensionMessage({ type: 'OPEN_EXTENSION_SETTINGS' });
+    return;
+  }
+
+  let bridgeError;
+  if (['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+    try {
+      await requestExtension('OPEN_EXTENSION_SETTINGS', {}, 2000);
+      return;
+    } catch (error) {
+      bridgeError = error;
+    }
+  }
+
+  const settingsWindow = window.open('chrome://extensions/', '_blank');
+  if (!settingsWindow) {
+    throw new Error(`Не удалось открыть настройки расширений браузера.${bridgeError ? ` ${bridgeError.message}` : ''}`);
+  }
+  settingsWindow.opener = null;
 }
 
 export async function getDictionarySettings(defaults) {

@@ -101,12 +101,12 @@ export function useTranslationTooltip(app) {
       }
       if (messageType === 'START_DICTIONARY_WORD_LEARNING') {
         const status = response.alreadyLearned
-          ? 'Уже выучено ✓'
-          : response.alreadyLearning ? 'Уже изучается ✓' : 'Добавлено в обучение ✓';
+          ? 'Уже в моём словаре ✓'
+          : response.alreadyLearning ? 'Уже добавлено ✓' : 'Добавлено в мой словарь ✓';
         setActionStatus(status);
         setFeedback(response.alreadyLearned
-          ? 'Это слово уже выучено.'
-          : response.alreadyLearning ? 'Слово уже добавлено в обучение.' : 'Слово добавлено в обучение.');
+          ? 'Это слово уже сохранено в моём словаре.'
+          : response.alreadyLearning ? 'Слово уже есть в моём словаре.' : 'Слово добавлено в мой словарь и отмечено для изучения.');
       } else {
         setActionStatus(response.duplicate ? 'Уже в словаре ✓' : 'Добавлено ✓');
         setFeedback(response.duplicate ? 'Это слово уже сохранено.' : 'Слово сохранено.');
@@ -116,7 +116,7 @@ export function useTranslationTooltip(app) {
   }
 
   function startLearning() {
-    saveWord('START_DICTIONARY_WORD_LEARNING', setStudyStatus, 'Добавляю…', 'Изучать');
+    saveWord('START_DICTIONARY_WORD_LEARNING', setStudyStatus, 'Добавляю…', 'Добавить в мой словарь');
   }
 
   function addToDictionary() {

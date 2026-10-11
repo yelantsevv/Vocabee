@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
 import { getEntryLearningLevel } from './dictionaryUtils.js';
+import { openBrowserExtensionSettings } from './storage.js';
 import phraseCategories from '../../dictionary/phrase-categories.json';
 import { DictionaryWordCard } from '../shared/DictionaryWordCard.jsx';
 
@@ -29,6 +30,7 @@ export function DictionaryCatalogPanel({
   refreshVersion
 }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
+  const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
@@ -110,6 +112,15 @@ export function DictionaryCatalogPanel({
     clearTimeout(revealTranslationTimer.current);
     revealTranslationTimer.current = null;
     setRevealedTranslationWord(null);
+  }
+
+  async function openExtensionSettings() {
+    setExtensionSettingsError('');
+    try {
+      await openBrowserExtensionSettings();
+    } catch (error) {
+      setExtensionSettingsError(error.message || 'Не удалось открыть настройки расширений.');
+    }
   }
 
   useEffect(() => () => clearTimeout(revealTranslationTimer.current), []);
@@ -275,8 +286,12 @@ export function DictionaryCatalogPanel({
             <p>Оба источника отключены. Включите нужный словарь кнопками выше.</p>
           ) : (
             <>
-              <p>База словарей пока не загружена.</p>
-              <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+              <p>База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.</p>
+              <div className={styles.emptyCatalogActions}>
+                <button type="button" onClick={openExtensionSettings}>Установить расширение</button>
+                <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+              </div>
+              {extensionSettingsError && <p role="alert">{extensionSettingsError}</p>}
             </>
           )}
         </div>

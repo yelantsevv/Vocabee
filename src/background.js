@@ -7,62 +7,20 @@ const CUSTOM_DICTIONARY_DATABASE_PREFIX = 'vocabee-custom-dictionary-';
 const SOURCE_LANGUAGES = ['en', 'de'];
 const TARGET_LANGUAGES = ['en', 'ru', 'uk', 'de'];
 
-let dictionaryDatabase;
 let myVocabularyDatabase;
 let legacyDictionaryMigration;
 
-function migrateLegacyDictionary(database) {
-  if (legacyDictionaryMigration) return legacyDictionaryMigration;
-
-  legacyDictionaryMigration = (async () => {
-    if (!indexedDB.databases) return;
-    const knownDatabases = await indexedDB.databases();
-    const migrationSources = [PREVIOUS_DICTIONARY_DATABASE, LEGACY_DICTIONARY_DATABASE];
-    for (const databaseName of migrationSources) {
-      if (!knownDatabases.some(({ name }) => name === databaseName)) continue;
-      const legacy = await new Promise((resolve, reject) => {
-        const request = indexedDB.open(databaseName);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error || new Error('Не удалось прочитать старую базу слов.'));
-        request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
-      });
-
-      let words = [];
-      if (legacy.objectStoreNames.contains(DICTIONARY_STORE)) {
-        words = await new Promise((resolve, reject) => {
-          const request = legacy.transaction(DICTIONARY_STORE, 'readonly')
-            .objectStore(DICTIONARY_STORE)
-            .getAll();
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error || new Error('Не удалось перенести старые слова.'));
-        });
-      }
-      legacy.close();
-
-      if (words.length) {
-        await new Promise((resolve, reject) => {
-          const transaction = database.transaction(DICTIONARY_STORE, 'readwrite');
-          const store = transaction.objectStore(DICTIONARY_STORE);
-          words.forEach((word) => store.put(word));
-          transaction.oncomplete = resolve;
-          transaction.onerror = () => reject(transaction.error || new Error('Не удалось сохранить перенесённые слова.'));
-          transaction.onabort = () => reject(transaction.error || new Error('Перенос слов отменён.'));
-        });
-      }
-
-      await new Promise((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(databaseName);
-        request.onsuccess = resolve;
-        request.onerror = () => reject(request.error || new Error('Не удалось удалить старую базу слов.'));
-        request.onblocked = () => reject(new Error('Старая база слов занята другой вкладкой.'));
-      });
-    }
-  })().catch((error) => {
-    legacyDictionaryMigration = undefined;
-    throw error;
+function openExistingDatabase(databaseName) {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(databaseName);
+    request.onupgradeneeded = () => request.transaction.abort();
+    request.onerror = () => {
+      if (request.error?.name === 'AbortError') resolve(null);
+      else reject(request.error || new Error(`Не удалось открыть старую базу «${databaseName}».`));
+    };
+    request.onblocked = () => reject(new Error(`Старая база «${databaseName}» занята другой вкладкой.`));
+    request.onsuccess = () => resolve(request.result);
   });
-
-  return legacyDictionaryMigration;
 }
 
 chrome.action.onClicked.addListener(() => {
@@ -82,45 +40,112 @@ chrome.action.onClicked.addListener(() => {
   });
 });
 
-function openDictionary() {
-  if (dictionaryDatabase) return dictionaryDatabase;
+async function migrateLearningWordsToMyDictionary(database, legacyDatabase, databaseName) {
+  if (!legacyDatabase.objectStoreNames.contains(DICTIONARY_STORE)) {
+    legacyDatabase.close();
+    return;
+  }
 
-  dictionaryDatabase = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DICTIONARY_DATABASE, 1);
-
-    request.onupgradeneeded = () => {
-      const database = request.result;
-      if (database.objectStoreNames.contains(DICTIONARY_STORE)) return;
-
-      const store = database.createObjectStore(DICTIONARY_STORE, { keyPath: 'id' });
-      store.createIndex('addedAt', 'addedAt');
-      store.createIndex('sourceLang', 'sourceLang');
-      store.createIndex('targetLang', 'targetLang');
+  const words = await new Promise((resolve, reject) => {
+    const request = legacyDatabase.transaction(DICTIONARY_STORE, 'readonly')
+      .objectStore(DICTIONARY_STORE)
+      .getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error || new Error('Не удалось прочитать старые карточки.'));
+  });
+  const importedEntries = words.map((word, index) => {
+    const sourceLanguage = SOURCE_LANGUAGES.includes(word.sourceLang) ? word.sourceLang : null;
+    const targetLanguage = TARGET_LANGUAGES.includes(word.targetLang) ? word.targetLang : 'ru';
+    if (!sourceLanguage || !word.sourceText || !word.translatedText) {
+      throw new Error('В старом словаре найдена некорректная карточка. Данные сохранены в исходной базе.');
+    }
+    return {
+      sourceLanguage,
+      targetLanguage,
+      entry: {
+        word: word.sourceText,
+        definitions: [word.translatedText],
+        part_of_speech: /\s/.test(word.sourceText) ? 'phrase' : 'noun',
+        level: 'A1',
+        learning_level: Math.max(0, Math.min(Number.isInteger(word.learning_level) ? word.learning_level : 0, 9)),
+        frequency_rank: Number.isFinite(word.addedAt) ? word.addedAt : index + 1,
+        source_language: sourceLanguage,
+        target_language: targetLanguage
+      }
     };
-
-    request.onerror = () => {
-      reject(new Error(`Не удалось открыть словарь: ${request.error?.message || 'ошибка IndexedDB'}`));
-    };
-    request.onblocked = () => {
-      reject(new Error('База словаря занята другой вкладкой. Закройте её и попробуйте снова.'));
-    };
-    request.onsuccess = () => {
-      const database = request.result;
-      database.onversionchange = () => {
-        database.close();
-        dictionaryDatabase = undefined;
-      };
-      resolve(database);
-    };
-  }).then(async (database) => {
-    await migrateLegacyDictionary(database);
-    return database;
-  }).catch((error) => {
-    dictionaryDatabase = undefined;
-    throw error;
   });
 
-  return dictionaryDatabase;
+  if (importedEntries.length) {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('dictionaries', 'readwrite');
+      const store = transaction.objectStore('dictionaries');
+      const request = store.getAll();
+      request.onsuccess = () => {
+        const records = new Map(request.result.map((record) => [record.language, record]));
+        importedEntries.forEach(({ sourceLanguage, targetLanguage, entry }) => {
+          const record = records.get(sourceLanguage) || {
+            catalogId: MY_VOCABEE_DATABASE,
+            databaseName: MY_VOCABEE_DATABASE,
+            title: 'Мой словарь',
+            language: sourceLanguage,
+            targetLanguage,
+            isCustom: true,
+            entries: []
+          };
+          const normalizedWord = entry.word.toLocaleLowerCase(sourceLanguage);
+          const existingIndex = record.entries.findIndex((current) => (
+            current.word.toLocaleLowerCase(sourceLanguage) === normalizedWord
+            && (current.target_language || record.targetLanguage || 'ru') === targetLanguage
+          ));
+          if (existingIndex === -1) {
+            record.entries.push(entry);
+          } else {
+            const current = record.entries[existingIndex];
+            record.entries[existingIndex] = {
+              ...current,
+              definitions: [...new Set([...(current.definitions || []), ...entry.definitions])],
+              learning_level: Math.max(current.learning_level || 0, entry.learning_level)
+            };
+          }
+          record.updatedAt = Date.now();
+          records.set(sourceLanguage, record);
+        });
+        records.forEach((record) => store.put(record));
+      };
+      request.onerror = () => transaction.abort();
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error || new Error('Не удалось перенести карточки в «Мой словарь».'));
+      transaction.onabort = () => reject(transaction.error || new Error('Перенос карточек отменён.'));
+    });
+  }
+
+  legacyDatabase.close();
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(databaseName);
+    request.onsuccess = resolve;
+    request.onerror = () => reject(request.error || new Error('Не удалось удалить старую базу карточек.'));
+    request.onblocked = () => reject(new Error('Перенос выполнен, но удаление старой базы заблокировано другой вкладкой.'));
+  });
+}
+
+function migrateLegacyLearningDictionaries(database) {
+  if (legacyDictionaryMigration) return legacyDictionaryMigration;
+  legacyDictionaryMigration = (async () => {
+    if (!indexedDB.databases) return;
+    const databases = await indexedDB.databases();
+    const sourceNames = [DICTIONARY_DATABASE, PREVIOUS_DICTIONARY_DATABASE, LEGACY_DICTIONARY_DATABASE];
+    for (const databaseName of sourceNames) {
+      if (!databases.some(({ name }) => name === databaseName)) continue;
+      const legacyDatabase = await openExistingDatabase(databaseName);
+      if (legacyDatabase) {
+        await migrateLearningWordsToMyDictionary(database, legacyDatabase, databaseName);
+      }
+    }
+  })().catch((error) => {
+    legacyDictionaryMigration = undefined;
+    throw error;
+  });
+  return legacyDictionaryMigration;
 }
 
 function openMyVocabularyDatabase() {
@@ -144,7 +169,13 @@ function openMyVocabularyDatabase() {
         database.close();
         myVocabularyDatabase = undefined;
       };
-      resolve(database);
+      migrateLegacyLearningDictionaries(database).then(() => {
+        resolve(database);
+      }).catch((error) => {
+        database.close();
+        myVocabularyDatabase = undefined;
+        reject(error);
+      });
     };
   }).catch((error) => {
     myVocabularyDatabase = undefined;
@@ -152,6 +183,34 @@ function openMyVocabularyDatabase() {
   });
 
   return myVocabularyDatabase;
+}
+
+async function getMyVocabularyEntries() {
+  if (!indexedDB.databases) {
+    throw new Error('Браузер не поддерживает проверку базы «Мой словарь».');
+  }
+  const databases = await indexedDB.databases();
+  const hasMyDictionary = databases.some(({ name }) => name === MY_VOCABEE_DATABASE);
+  const hasLegacyDictionary = [
+    DICTIONARY_DATABASE,
+    PREVIOUS_DICTIONARY_DATABASE,
+    LEGACY_DICTIONARY_DATABASE
+  ].some((name) => databases.some((database) => database.name === name));
+  if (!hasMyDictionary && !hasLegacyDictionary) return [];
+
+  const database = await openMyVocabularyDatabase();
+  const records = await new Promise((resolve, reject) => {
+    const request = database.transaction('dictionaries', 'readonly')
+      .objectStore('dictionaries')
+      .getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error || new Error('Не удалось прочитать «Мой словарь».'));
+  });
+  return records.flatMap((record) => (record.entries || []).map((entry) => ({
+    ...entry,
+    source_language: entry.source_language || record.language || 'en',
+    target_language: entry.target_language || record.targetLanguage || 'ru'
+  })));
 }
 
 function normalizeWordPayload(payload, learningLevel = 0) {
@@ -184,48 +243,8 @@ function normalizeWordPayload(payload, learningLevel = 0) {
   };
 }
 
-async function addWordToDictionary(payload, { startLearning = false } = {}) {
+async function addWordToMyDictionary(payload, { startLearning = false } = {}) {
   const word = normalizeWordPayload(payload, startLearning ? 1 : 0);
-  const database = await openDictionary();
-
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(DICTIONARY_STORE, 'readwrite');
-    const store = transaction.objectStore(DICTIONARY_STORE);
-    let result;
-
-    transaction.oncomplete = () => resolve(result);
-    transaction.onerror = () => reject(
-      new Error(`Не удалось сохранить слово: ${transaction.error?.message || 'ошибка IndexedDB'}`)
-    );
-    transaction.onabort = () => reject(
-      new Error(`Сохранение отменено: ${transaction.error?.message || 'ошибка IndexedDB'}`)
-    );
-
-    const lookup = store.get(word.id);
-    lookup.onsuccess = () => {
-      if (lookup.result) {
-        const currentLearningLevel = lookup.result.learning_level || 0;
-        if (startLearning && currentLearningLevel === 0) {
-          store.put({ ...lookup.result, learning_level: 1 });
-          result = { duplicate: true, learningStarted: true };
-        } else {
-          result = {
-            duplicate: true,
-            alreadyLearning: startLearning && currentLearningLevel > 0 && currentLearningLevel < 9,
-            alreadyLearned: startLearning && currentLearningLevel === 9
-          };
-        }
-        return;
-      }
-
-      store.add(word);
-      result = { duplicate: false, learningStarted: startLearning };
-    };
-  });
-}
-
-async function addWordToMyDictionary(payload) {
-  const word = normalizeWordPayload(payload);
   const database = await openMyVocabularyDatabase();
 
   return new Promise((resolve, reject) => {
@@ -253,12 +272,24 @@ async function addWordToMyDictionary(payload) {
       };
       const entries = current.entries || [];
       const normalizedText = word.sourceText.toLocaleLowerCase(word.sourceLang);
-      const duplicate = entries.some((entry) => (
+      const duplicateIndex = entries.findIndex((entry) => (
         entry.word.toLocaleLowerCase(word.sourceLang) === normalizedText
         && (entry.target_language || current.targetLanguage || 'ru') === word.targetLang
       ));
-      if (duplicate) {
-        result = { duplicate: true };
+      if (duplicateIndex >= 0) {
+        const existingEntry = entries[duplicateIndex];
+        const currentLearningLevel = existingEntry.learning_level || 0;
+        if (startLearning && currentLearningLevel === 0) {
+          entries[duplicateIndex] = { ...existingEntry, learning_level: 1 };
+          store.put({ ...current, entries, updatedAt: Date.now() });
+          result = { duplicate: true, learningStarted: true };
+        } else {
+          result = {
+            duplicate: true,
+            alreadyLearning: startLearning && currentLearningLevel > 0 && currentLearningLevel < 9,
+            alreadyLearned: startLearning && currentLearningLevel === 9
+          };
+        }
         return;
       }
 
@@ -267,7 +298,7 @@ async function addWordToMyDictionary(payload) {
         definitions: [word.translatedText],
         part_of_speech: /\s/.test(word.sourceText) ? 'phrase' : 'noun',
         level: 'A1',
-        learning_level: 0,
+        learning_level: word.learning_level,
         frequency_rank: entries.length + 1,
         source_language: word.sourceLang,
         target_language: word.targetLang
@@ -290,33 +321,26 @@ async function addWordToMyDictionary(payload) {
 }
 
 async function getDictionaryWords() {
-  const database = await openDictionary();
-
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(DICTIONARY_STORE, 'readonly');
-    const request = transaction.objectStore(DICTIONARY_STORE).getAll();
-
-    request.onsuccess = () => {
-      resolve(request.result.sort((first, second) => second.addedAt - first.addedAt));
-    };
-    request.onerror = () => reject(
-      new Error(`Не удалось загрузить словарь: ${request.error?.message || 'ошибка IndexedDB'}`)
-    );
-  });
+  const entries = await getMyVocabularyEntries();
+  return entries.map((entry, index) => ({
+    id: JSON.stringify([
+      entry.source_language,
+      entry.target_language,
+      entry.word.toLocaleLowerCase(entry.source_language)
+    ]),
+    sourceText: entry.word,
+    translatedText: entry.definitions[0] || '',
+    sourceLang: entry.source_language,
+    targetLang: entry.target_language,
+    learning_level: entry.learning_level || 0,
+    addedAt: entry.frequency_rank || index
+  }));
 }
 
 async function deleteIndexedDatabase(databaseName) {
-  if (databaseName === DICTIONARY_DATABASE) {
-    const openRequest = dictionaryDatabase;
-    dictionaryDatabase = undefined;
+  if ([DICTIONARY_DATABASE, PREVIOUS_DICTIONARY_DATABASE, LEGACY_DICTIONARY_DATABASE, MY_VOCABEE_DATABASE]
+    .includes(databaseName)) {
     legacyDictionaryMigration = undefined;
-    if (openRequest) {
-      try {
-        (await openRequest).close();
-      } catch {
-        // It may already be closed or failed to open.
-      }
-    }
   }
   if (databaseName === MY_VOCABEE_DATABASE) {
     const openRequest = myVocabularyDatabase;
@@ -352,6 +376,21 @@ async function listIndexedDatabases() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === 'OPEN_EXTENSION_SETTINGS') {
+    if (sender.id !== chrome.runtime.id) {
+      sendResponse({ ok: false, error: 'Запрос на открытие настроек отклонён.' });
+      return false;
+    }
+    chrome.tabs.create({ url: 'chrome://extensions/' }, () => {
+      if (chrome.runtime.lastError) {
+        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
+        return;
+      }
+      sendResponse({ ok: true });
+    });
+    return true;
+  }
+
   if (message?.type === 'OPEN_DICTIONARY_QUICK_ACTION') {
     const validActions = new Set([
       'words-en', 'words-de'
@@ -377,6 +416,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     'ADD_DICTIONARY_WORD',
     'START_DICTIONARY_WORD_LEARNING',
     'GET_DICTIONARY_WORDS',
+    'GET_MY_VOCABEE_DICTIONARY',
     'DELETE_INDEXED_DATABASE',
     'LIST_INDEXED_DATABASES'
   ].includes(message?.type)) {
@@ -428,17 +468,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  const saveRequest = message.type === 'ADD_DICTIONARY_WORD'
-    ? addWordToMyDictionary(message.word)
-    : addWordToDictionary(message.word, { startLearning: true });
+  if (message.type === 'GET_MY_VOCABEE_DICTIONARY') {
+    getMyVocabularyEntries()
+      .then((entries) => sendResponse({ ok: true, entries }))
+      .catch((error) => {
+        console.error('Vocabee: could not load my vocabulary database', error);
+        sendResponse({ ok: false, error: error.message });
+      });
+    return true;
+  }
+
+  const saveRequest = addWordToMyDictionary(message.word, {
+    startLearning: message.type === 'START_DICTIONARY_WORD_LEARNING'
+  });
   saveRequest
     .then((result) => {
       sendResponse({ ok: true, ...result });
-      if (message.type === 'ADD_DICTIONARY_WORD') {
-        chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
-          void chrome.runtime.lastError;
-        });
-      }
+      chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
+        void chrome.runtime.lastError;
+      });
     })
     .catch((error) => {
       console.error('Vocabee: could not add word to dictionary', error);
