@@ -1,13 +1,3 @@
-.entryCard {
-  display: grid;
-  gap: 18px;
-  border: 1px solid rgba(173, 183, 220, 0.14);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.025);
-  margin: 12px 0;
-  padding: 18px;
-}
-
 .entryHeader {
   display: grid;
   gap: 14px;
@@ -142,12 +132,6 @@
 }
 
 @media (max-width: 640px) {
-  .entryCard {
-    gap: 15px;
-    margin: 10px 0;
-    padding: 14px;
-  }
-
   .entryHeader {
     gap: 14px;
   }

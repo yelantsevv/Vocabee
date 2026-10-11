@@ -5,11 +5,11 @@ const initialTooltip = { visible: false, text: '', details: null, loading: false
 export function useTranslationTooltip(app) {
   const [tooltip, setTooltip] = useState(initialTooltip);
   const [feedback, setFeedback] = useState('');
+  const [studyStatus, setStudyStatus] = useState('');
   const [addStatus, setAddStatus] = useState('');
   const hideTimer = useRef(null);
   const activeRequest = useRef(0);
   const pointerInside = useRef(false);
-  const currentUtterance = useRef(null);
 
   const hideTooltip = useCallback((force = false) => {
     if (!force && pointerInside.current) return;
@@ -17,10 +17,6 @@ export function useTranslationTooltip(app) {
     activeRequest.current += 1;
     pointerInside.current = false;
     setTooltip((current) => ({ ...current, visible: false }));
-    if (currentUtterance.current && typeof window.speechSynthesis !== 'undefined') {
-      window.speechSynthesis.cancel();
-      currentUtterance.current = null;
-    }
     document.querySelectorAll('.vocabee-word').forEach((element) => {
       element.dataset.tooltipVisible = 'false';
     });
@@ -41,6 +37,7 @@ export function useTranslationTooltip(app) {
     };
     pointerInside.current = false;
     setFeedback('');
+    setStudyStatus('');
     setAddStatus('');
     setTooltip({ visible: true, text: phrase, details: null, loading: true, anchorRect: safeRect });
     if (anchorElement) anchorElement.dataset.tooltipVisible = 'true';
@@ -77,13 +74,13 @@ export function useTranslationTooltip(app) {
     };
   }, [app, hideTooltip, scheduleTooltipHide, showTranslationPopup, showWordTooltip]);
 
-  function addToDictionary() {
+  function saveWord(messageType, setActionStatus, loadingLabel, idleLabel) {
     const translatedText = tooltip.details?.translated || '';
     if (!translatedText || translatedText === 'Перевод недоступен') return;
-    setAddStatus('Сохраняю…');
+    setActionStatus(loadingLabel);
     setFeedback('');
     chrome.runtime.sendMessage({
-      type: 'ADD_DICTIONARY_WORD',
+      type: messageType,
       word: {
         sourceText: tooltip.text,
         translatedText,
@@ -93,67 +90,51 @@ export function useTranslationTooltip(app) {
     }, (response) => {
       if (chrome.runtime.lastError) {
         console.error('Vocabee: could not send dictionary request', chrome.runtime.lastError.message);
-        setAddStatus('Добавить в словарь');
+        setActionStatus(idleLabel);
         setFeedback('Не удалось связаться с Vocabee. Попробуйте ещё раз.');
         return;
       }
       if (!response?.ok) {
-        setAddStatus('Добавить в словарь');
+        setActionStatus(idleLabel);
         setFeedback(response?.error || 'Не удалось сохранить слово.');
         return;
       }
-      setAddStatus(response.duplicate ? 'Уже в словаре ✓' : 'Добавлено ✓');
-      setFeedback(response.duplicate ? 'Это слово уже сохранено.' : 'Слово сохранено.');
+      if (messageType === 'START_DICTIONARY_WORD_LEARNING') {
+        const status = response.alreadyLearned
+          ? 'Уже выучено ✓'
+          : response.alreadyLearning ? 'Уже изучается ✓' : 'Добавлено в обучение ✓';
+        setActionStatus(status);
+        setFeedback(response.alreadyLearned
+          ? 'Это слово уже выучено.'
+          : response.alreadyLearning ? 'Слово уже добавлено в обучение.' : 'Слово добавлено в обучение.');
+      } else {
+        setActionStatus(response.duplicate ? 'Уже в словаре ✓' : 'Добавлено ✓');
+        setFeedback(response.duplicate ? 'Это слово уже сохранено.' : 'Слово сохранено.');
+      }
       app.refreshDictionaryView?.();
     });
   }
 
-  function changeTargetLanguage(language) {
-    try {
-      app.setTargetLanguage(language);
-      showTranslationPopup(tooltip.text, tooltip.anchorRect);
-    } catch (error) {
-      console.error('Vocabee: could not change target language', error);
-    }
+  function startLearning() {
+    saveWord('START_DICTIONARY_WORD_LEARNING', setStudyStatus, 'Добавляю…', 'Изучать');
   }
 
-  function copyTranslation() {
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(`${tooltip.text} - ${tooltip.details?.translated || ''}`).catch((error) => {
-      console.warn('Vocabee: could not copy translation', error);
-    });
-  }
-
-  function speakText(text, language) {
-    if (typeof window.speechSynthesis === 'undefined' || !text) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    utterance.rate = 0.95;
-    utterance.onerror = (event) => {
-      console.warn('Vocabee: translation speech failed', event.error);
-      currentUtterance.current = null;
-    };
-    utterance.onend = () => {
-      currentUtterance.current = null;
-    };
-    currentUtterance.current = utterance;
-    window.speechSynthesis.speak(utterance);
+  function addToDictionary() {
+    saveWord('ADD_DICTIONARY_WORD', setAddStatus, 'Сохраняю…', 'Добавить в словарь');
   }
 
   return {
     tooltip,
     feedback,
+    studyStatus,
     addStatus,
     pointerInside,
     hideTimer,
     hideTooltip,
     scheduleTooltipHide,
     showTranslationPopup,
+    startLearning,
     addToDictionary,
-    changeTargetLanguage,
-    copyTranslation,
-    speakText,
     setPointerInside: (value) => { pointerInside.current = value; }
   };
 }

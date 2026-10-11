@@ -28,7 +28,7 @@ export function DictionaryEntryHeader({
             className={clsx(styles.entryTranslation, translationVisible && styles.entryTranslationVisible)}
             aria-hidden={!translationVisible}
           >{translation}</p>
-          {learningLevel === 0 ? (
+          {learningLevel === 0 && onAddToLearning ? (
             <button
               className={styles.addToLearningButton}
               type="button"
@@ -44,7 +44,7 @@ export function DictionaryEntryHeader({
               data-translation-trigger=""
               onPointerEnter={onRevealTranslation}
             >✓</span>
-          ) : (
+          ) : Number.isInteger(learningLevel) ? (
             <div
               className={styles.progressCircle}
               role="progressbar"
@@ -56,7 +56,7 @@ export function DictionaryEntryHeader({
               style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
               onPointerEnter={onRevealTranslation}
             ><span>{learningLevel}/9</span></div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

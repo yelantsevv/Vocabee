@@ -21,6 +21,8 @@ export const CATALOG_SOURCES = {
   }
 };
 
+export const CUSTOM_DICTIONARY_DATABASE_PREFIX = 'vocabee-custom-dictionary-';
+export const MY_DICTIONARY_DATABASE = 'my-vocabee';
 const LEGACY_DATABASE_NAME = 'vocabee-catalog';
 const STORE_NAME = 'dictionaries';
 let legacyMigration;
@@ -43,6 +45,76 @@ function openCatalogDatabase(sourceId) {
     request.onblocked = () => reject(new Error('База словарей занята другой вкладкой.'));
     request.onsuccess = () => resolve(request.result);
   });
+}
+
+function openNamedCatalogDatabase(databaseName) {
+  const open = (version) => new Promise((resolve, reject) => {
+    const request = version ? indexedDB.open(databaseName, version) : indexedDB.open(databaseName);
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        database.createObjectStore(STORE_NAME, { keyPath: 'language' });
+      }
+    };
+    request.onerror = () => reject(new Error(
+      `Не удалось открыть пользовательский словарь: ${request.error?.message || 'ошибка IndexedDB'}`
+    ));
+    request.onblocked = () => reject(new Error('Пользовательский словарь занят другой вкладкой.'));
+    request.onsuccess = () => resolve(request.result);
+  });
+
+  return open().then(async (database) => {
+    if (database.objectStoreNames.contains(STORE_NAME)) return database;
+    const nextVersion = database.version + 1;
+    database.close();
+    return open(nextVersion);
+  });
+}
+
+async function ensureMyDictionary() {
+  const database = await openNamedCatalogDatabase(MY_DICTIONARY_DATABASE);
+  let records;
+  try {
+    records = await new Promise((resolve, reject) => {
+      const transaction = database.transaction(STORE_NAME, 'readonly');
+      const request = transaction.objectStore(STORE_NAME).getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error || new Error('Не удалось прочитать «Мой словарь».'));
+    });
+  } finally {
+    database.close();
+  }
+
+  if (!records.length) {
+    const record = {
+      catalogId: MY_DICTIONARY_DATABASE,
+      databaseName: MY_DICTIONARY_DATABASE,
+      title: 'Мой словарь',
+      language: 'en',
+      targetLanguage: 'ru',
+      isCustom: true,
+      entries: [],
+      updatedAt: Date.now()
+    };
+    await writeNamedRecord(MY_DICTIONARY_DATABASE, record);
+    records = [record];
+  }
+
+  const firstRecord = records[0];
+  return {
+    ...firstRecord,
+    catalogId: MY_DICTIONARY_DATABASE,
+    databaseName: MY_DICTIONARY_DATABASE,
+    title: 'Мой словарь',
+    language: firstRecord.language || 'en',
+    targetLanguage: firstRecord.targetLanguage || 'ru',
+    isCustom: true,
+    entries: records.flatMap((record) => (record.entries || []).map((entry) => ({
+      ...entry,
+      source_language: entry.source_language || record.language || 'en',
+      target_language: entry.target_language || record.targetLanguage || 'ru'
+    })))
+  };
 }
 
 function readLegacyRecords() {
@@ -79,6 +151,21 @@ async function writeRecord(sourceId, record) {
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error || new Error('Не удалось сохранить базу словаря.'));
       transaction.onabort = () => reject(transaction.error || new Error('Сохранение базы отменено.'));
+    });
+  } finally {
+    database.close();
+  }
+}
+
+async function writeNamedRecord(databaseName, record) {
+  const database = await openNamedCatalogDatabase(databaseName);
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(STORE_NAME, 'readwrite');
+      transaction.objectStore(STORE_NAME).put(record);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error || new Error('Не удалось сохранить пользовательский словарь.'));
+      transaction.onabort = () => reject(transaction.error || new Error('Сохранение пользовательского словаря отменено.'));
     });
   } finally {
     database.close();
@@ -138,13 +225,30 @@ async function readSourceRecord(sourceId) {
 
 export async function readCatalogDictionaries() {
   await migrateLegacyCatalog();
+  const myDictionary = await ensureMyDictionary();
   const knownDatabases = indexedDB.databases ? await indexedDB.databases() : [];
   const installedNames = new Set(knownDatabases.map(({ name }) => name));
   const sourceIds = Object.entries(CATALOG_SOURCES)
     .filter(([, source]) => installedNames.has(source.databaseName))
     .map(([sourceId]) => sourceId);
   const records = await Promise.all(sourceIds.map((sourceId) => readSourceRecord(sourceId)));
-  return records.filter(Boolean).map((record) => ({
+  const customDatabaseNames = knownDatabases
+    .map(({ name }) => name)
+    .filter((name) => name?.startsWith(CUSTOM_DICTIONARY_DATABASE_PREFIX));
+  const customRecords = await Promise.all(customDatabaseNames.map(async (databaseName) => {
+    const database = await openNamedCatalogDatabase(databaseName);
+    try {
+      return await new Promise((resolve, reject) => {
+        const transaction = database.transaction(STORE_NAME, 'readonly');
+        const request = transaction.objectStore(STORE_NAME).getAll();
+        request.onsuccess = () => resolve(request.result.map((record) => ({ ...record, databaseName })));
+        request.onerror = () => reject(request.error || new Error('Не удалось прочитать пользовательский словарь.'));
+      });
+    } finally {
+      database.close();
+    }
+  }));
+  return [myDictionary, ...records, ...customRecords.flat()].filter(Boolean).map((record) => ({
     ...record,
     catalogId: record.catalogId || record.language
   }));
@@ -174,6 +278,62 @@ export async function writePhraseDictionary(sourceId, dictionary) {
     catalogId: sourceId,
     title: dictionary.title,
     entries: dictionary.entries,
+    updatedAt: Date.now()
+  });
+}
+
+export async function createCustomDictionary({ name, language, targetLanguage }) {
+  const title = String(name || '').trim();
+  if (!title || title.length > 60) throw new Error('Название должно содержать от 1 до 60 символов.');
+  if (!['en', 'de'].includes(language) || !['ru', 'uk'].includes(targetLanguage)) {
+    throw new Error('Выберите поддерживаемую языковую пару.');
+  }
+
+  const uniqueId = globalThis.crypto?.randomUUID?.()
+    || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const catalogId = `custom-dictionary-${uniqueId}`;
+  const databaseName = `${CUSTOM_DICTIONARY_DATABASE_PREFIX}${uniqueId}`;
+  const dictionary = {
+    catalogId,
+    databaseName,
+    title,
+    language,
+    targetLanguage,
+    isCustom: true,
+    entries: [],
+    updatedAt: Date.now()
+  };
+  await writeNamedRecord(databaseName, dictionary);
+  return dictionary;
+}
+
+export async function writeCustomDictionary(dictionary) {
+  if (dictionary?.databaseName === MY_DICTIONARY_DATABASE) {
+    const entriesByLanguage = new Map();
+    for (const entry of dictionary.entries || []) {
+      const language = entry.source_language || dictionary.language || 'en';
+      const entries = entriesByLanguage.get(language) || [];
+      entries.push(entry);
+      entriesByLanguage.set(language, entries);
+    }
+    if (!entriesByLanguage.has(dictionary.language || 'en')) {
+      entriesByLanguage.set(dictionary.language || 'en', []);
+    }
+    for (const [language, entries] of entriesByLanguage) {
+      await writeNamedRecord(MY_DICTIONARY_DATABASE, {
+        ...dictionary,
+        language,
+        entries,
+        updatedAt: Date.now()
+      });
+    }
+    return;
+  }
+  if (!dictionary?.databaseName?.startsWith(CUSTOM_DICTIONARY_DATABASE_PREFIX)) {
+    throw new Error('Неизвестный пользовательский словарь.');
+  }
+  await writeNamedRecord(dictionary.databaseName, {
+    ...dictionary,
     updatedAt: Date.now()
   });
 }

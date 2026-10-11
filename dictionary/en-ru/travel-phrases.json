@@ -2,30 +2,211 @@
   "language": "en-ru",
   "title": "Фразы для путешествий",
   "entries": [
-    { "word": "Where is the nearest station?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 1, "definitions": ["Где ближайшая станция?"] },
-    { "word": "I have a reservation.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 2, "definitions": ["У меня есть бронь."] },
-    { "word": "Can I see the menu, please?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 3, "definitions": ["Можно посмотреть меню?"] },
-    { "word": "How much is a ticket?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 4, "definitions": ["Сколько стоит билет?"] },
-    { "word": "One ticket to the airport, please.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 5, "definitions": ["Один билет до аэропорта, пожалуйста."] },
-    { "word": "What time does the bus leave?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 6, "definitions": ["Во сколько отправляется автобус?"] },
-    { "word": "Could you call a taxi?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 7, "definitions": ["Не могли бы вы вызвать такси?"] },
-    { "word": "I have a booking under this name.", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 8, "definitions": ["У меня бронь на это имя."] },
-    { "word": "Is breakfast included?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 9, "definitions": ["Завтрак включён?"] },
-    { "word": "Could I have the bill, please?", "part_of_speech": "phrase", "level": "A1", "learning_level": 0, "frequency_rank": 10, "definitions": ["Можно счёт, пожалуйста?"] },
-    { "word": "Could you show me on the map?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 11, "definitions": ["Не могли бы вы показать мне на карте?"] },
-    { "word": "How long does the journey take?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 12, "definitions": ["Сколько времени занимает поездка?"] },
-    { "word": "Could I have a window seat?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 13, "definitions": ["Можно мне место у окна?"] },
-    { "word": "Where can I collect my luggage?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 14, "definitions": ["Где я могу получить багаж?"] },
-    { "word": "I'd like to check out, please.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 15, "definitions": ["Я хотел бы выехать из номера."] },
-    { "word": "Is there a direct train to the city centre?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 16, "definitions": ["Есть ли прямой поезд до центра города?"] },
-    { "word": "Could you tell me how to get to the hotel?", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 17, "definitions": ["Не могли бы вы объяснить, как добраться до отеля?"] },
-    { "word": "I'd like to change my booking.", "part_of_speech": "phrase", "level": "A2", "learning_level": 0, "frequency_rank": 18, "definitions": ["Я хотел бы изменить бронирование."] },
-    { "word": "Could you recommend a place to eat nearby?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 19, "definitions": ["Не могли бы вы посоветовать место, где можно поесть неподалёку?"] },
-    { "word": "My flight has been delayed. What should I do?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 20, "definitions": ["Мой рейс задержали. Что мне делать?"] },
-    { "word": "I think my luggage has gone missing.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 21, "definitions": ["Кажется, мой багаж потерялся."] },
-    { "word": "Would it be possible to check in a little earlier?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 22, "definitions": ["Можно ли заселиться немного раньше?"] },
-    { "word": "Could you let me know when we need to change trains?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 23, "definitions": ["Не могли бы вы сообщить, когда нам нужно пересесть на другой поезд?"] },
-    { "word": "Is there an extra charge for checked baggage?", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 24, "definitions": ["Нужно ли доплачивать за багаж, который сдаётся в багажное отделение?"] },
-    { "word": "I seem to have left my passport in the taxi.", "part_of_speech": "phrase", "level": "B1", "learning_level": 0, "frequency_rank": 25, "definitions": ["Кажется, я оставил паспорт в такси."] }
+    {
+      "word": "Where is the nearest station?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 1,
+      "definitions": ["Где ближайшая станция?"]
+    },
+    {
+      "word": "I have a reservation.",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 2,
+      "definitions": ["У меня есть бронь."]
+    },
+    {
+      "word": "Can I see the menu, please?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 3,
+      "definitions": ["Можно посмотреть меню?"]
+    },
+    {
+      "word": "How much is a ticket?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 4,
+      "definitions": ["Сколько стоит билет?"]
+    },
+    {
+      "word": "One ticket to the airport, please.",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 5,
+      "definitions": ["Один билет до аэропорта, пожалуйста."]
+    },
+    {
+      "word": "What time does the bus leave?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 6,
+      "definitions": ["Во сколько отправляется автобус?"]
+    },
+    {
+      "word": "Could you call a taxi?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 7,
+      "definitions": ["Не могли бы вы вызвать такси?"]
+    },
+    {
+      "word": "I have a booking under this name.",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 8,
+      "definitions": ["У меня бронь на это имя."]
+    },
+    {
+      "word": "Is breakfast included?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 9,
+      "definitions": ["Завтрак включён?"]
+    },
+    {
+      "word": "Could I have the bill, please?",
+      "part_of_speech": "phrase",
+      "level": "A1",
+      "learning_level": 0,
+      "frequency_rank": 10,
+      "definitions": ["Можно счёт, пожалуйста?"]
+    },
+    {
+      "word": "Could you show me on the map?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 11,
+      "definitions": ["Не могли бы вы показать мне на карте?"]
+    },
+    {
+      "word": "How long does the journey take?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 12,
+      "definitions": ["Сколько времени занимает поездка?"]
+    },
+    {
+      "word": "Could I have a window seat?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 13,
+      "definitions": ["Можно мне место у окна?"]
+    },
+    {
+      "word": "Where can I collect my luggage?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 14,
+      "definitions": ["Где я могу получить багаж?"]
+    },
+    {
+      "word": "I'd like to check out, please.",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 15,
+      "definitions": ["Я хотел бы выехать из номера."]
+    },
+    {
+      "word": "Is there a direct train to the city centre?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 16,
+      "definitions": ["Есть ли прямой поезд до центра города?"]
+    },
+    {
+      "word": "Could you tell me how to get to the hotel?",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 17,
+      "definitions": ["Не могли бы вы объяснить, как добраться до отеля?"]
+    },
+    {
+      "word": "I'd like to change my booking.",
+      "part_of_speech": "phrase",
+      "level": "A2",
+      "learning_level": 0,
+      "frequency_rank": 18,
+      "definitions": ["Я хотел бы изменить бронирование."]
+    },
+    {
+      "word": "Could you recommend a place to eat nearby?",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 19,
+      "definitions": [
+        "Не могли бы вы посоветовать место, где можно поесть неподалёку?"
+      ]
+    },
+    {
+      "word": "My flight has been delayed. What should I do?",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 20,
+      "definitions": ["Мой рейс задержали. Что мне делать?"]
+    },
+    {
+      "word": "I think my luggage has gone missing.",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 21,
+      "definitions": ["Кажется, мой багаж потерялся."]
+    },
+    {
+      "word": "Would it be possible to check in a little earlier?",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 22,
+      "definitions": ["Можно ли заселиться немного раньше?"]
+    },
+    {
+      "word": "Could you let me know when we need to change trains?",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 23,
+      "definitions": [
+        "Не могли бы вы сообщить, когда нам нужно пересесть на другой поезд?"
+      ]
+    },
+    {
+      "word": "Is there an extra charge for checked baggage?",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 24,
+      "definitions": [
+        "Нужно ли доплачивать за багаж, который сдаётся в багажное отделение?"
+      ]
+    },
+    {
+      "word": "I seem to have left my passport in the taxi.",
+      "part_of_speech": "phrase",
+      "level": "B1",
+      "learning_level": 0,
+      "frequency_rank": 25,
+      "definitions": ["Кажется, я оставил паспорт в такси."]
+    }
   ]
 }

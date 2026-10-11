@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
-import cardStyles from '../shared/DictionaryEntryHeader.module.css';
 import { getEntryLearningLevel } from './dictionaryUtils.js';
-import { DictionaryEntryHeader } from '../shared/DictionaryEntryHeader.jsx';
+import { DictionaryWordCard } from '../shared/DictionaryWordCard.jsx';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -186,24 +185,24 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
           {filteredSourceEntries.map((entry) => {
             const learningLevel = getEntryLearningLevel(
               entry,
-              entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
+              entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
               learningLevelOverrides
             );
             return (
-              <li className={cardStyles.entryCard} key={`${entry._catalogId || entry._catalogLanguage}:${entry.word}`}>
-                <DictionaryEntryHeader
-                  word={entry.word}
-                  translation={entry.definitions.join(' · ')}
-                  learningLevel={learningLevel}
-                  forms={entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech)
-                    && entry.forms?.past_simple && entry.forms?.past_participle
-                    ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
-                    : undefined}
-                  translationVisible={revealedTranslationWord === entry.word}
-                  onAddToLearning={() => onAddToLearning(entry)}
-                  onRevealTranslation={() => revealTranslation(entry.word)}
-                  onHideTranslation={hideTranslation}
-                />
+              <DictionaryWordCard
+                key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry.word}`}
+                word={entry.word}
+                translation={entry.definitions.join(' · ')}
+                learningLevel={learningLevel}
+                forms={entry.is_irregular && ['verb', 'phrasal_verb'].includes(entry.part_of_speech)
+                  && entry.forms?.past_simple && entry.forms?.past_participle
+                  ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
+                  : undefined}
+                translationVisible={revealedTranslationWord === entry.word}
+                onAddToLearning={() => onAddToLearning(entry)}
+                onRevealTranslation={() => revealTranslation(entry.word)}
+                onHideTranslation={hideTranslation}
+              >
 
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">
@@ -228,7 +227,7 @@ export function DictionaryCatalogPanel({ catalog, onAddToLearning, onOpenSetting
                   </div>
                 )}
 
-              </li>
+              </DictionaryWordCard>
             );
           })}
         </ul>

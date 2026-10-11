@@ -1,8 +1,7 @@
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SavedWordsPanel.module.css';
 import { getEntryLearningLevel, getLanguagePairs } from './dictionaryUtils.js';
-import { DictionaryEntryHeader } from '../shared/DictionaryEntryHeader.jsx';
-import cardStyles from '../shared/DictionaryEntryHeader.module.css';
+import { DictionaryWordCard } from '../shared/DictionaryWordCard.jsx';
 
 export function SavedWordsPanel({ words, search, status, catalog }) {
   const query = search.trim().toLocaleLowerCase();
@@ -36,23 +35,25 @@ export function SavedWordsPanel({ words, search, status, catalog }) {
                 _catalogLanguage: word.sourceLang,
                 learning_level: 0
               };
-              const learningSource = entry._catalogId || entry._catalogLanguage;
+              const learningSource = entry._learningSource || entry._catalogId || entry._catalogLanguage;
               const learningLevel = getEntryLearningLevel(
                 entry,
                 learningSource,
                 catalog.learningLevelOverrides
               );
+              const savedLearningLevel = Number.isInteger(word.learning_level) ? word.learning_level : 0;
+              const displayedLearningLevel = Math.max(learningLevel, savedLearningLevel);
 
               return (
-                <li className={`${cardStyles.entryCard} ${panelStyles.savedWordCard}`} key={word.id}>
-                  <DictionaryEntryHeader
+                <DictionaryWordCard
+                  className={panelStyles.savedWordCard}
+                  key={word.id}
                     word={word.sourceText}
                     translation={word.translatedText}
-                    learningLevel={learningLevel}
+                    learningLevel={displayedLearningLevel}
                     translationVisible
                     onAddToLearning={() => catalog.addToLearning(entry)}
-                  />
-                </li>
+                />
               );
             })}
           </ul>

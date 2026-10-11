@@ -87,7 +87,7 @@ export function DictionaryPage() {
 
   useEffect(() => {
     function handleDatabaseDeleted(event) {
-      if (!['my-words-vocabee', 'vocabee-dictionary'].includes(event.detail?.databaseName)) return;
+      if (!['learn-vocabee', 'my-words-vocabee', 'vocabee-dictionary'].includes(event.detail?.databaseName)) return;
       setWords([]);
       setStatus('');
       setConnection((current) => ({ ...current, warning: '' }));

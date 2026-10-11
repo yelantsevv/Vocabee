@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { TooltipActions } from './components/TooltipActions.jsx';
 import { TooltipHeader } from './components/TooltipHeader.jsx';
 import { useTranslationTooltip } from './hooks/useTranslationTooltip.js';
+import { DictionaryWordCard } from '../../shared/DictionaryWordCard.jsx';
 import styles from './TranslationTooltip.module.css';
 
 export function TranslationTooltip({ app }) {
@@ -10,16 +11,15 @@ export function TranslationTooltip({ app }) {
   const {
     tooltip,
     feedback,
+    studyStatus,
     addStatus,
     pointerInside,
     hideTimer,
     hideTooltip,
     scheduleTooltipHide,
     setPointerInside,
+    startLearning,
     addToDictionary,
-    changeTargetLanguage,
-    copyTranslation,
-    speakText
   } = useTranslationTooltip(app);
 
   useLayoutEffect(() => {
@@ -65,20 +65,23 @@ export function TranslationTooltip({ app }) {
         }}
       >
         <TooltipHeader
-          app={app}
-          tooltip={tooltip}
-          onLanguageChange={changeTargetLanguage}
-          onSpeak={speakText}
           onClose={() => hideTooltip(true)}
         />
+        <ul className={styles.cardList}>
+          <DictionaryWordCard
+            word={tooltip.text}
+            translation={tooltip.loading ? 'Перевожу…' : tooltip.details?.translated || 'Перевод недоступен'}
+            translationVisible
+            forms={tooltip.details?.pronunciation}
+          />
+        </ul>
         <TooltipActions
           loading={tooltip.loading}
           translated={tooltip.details?.translated}
+          studyStatus={studyStatus}
           addStatus={addStatus}
           feedback={feedback}
-          targetLanguage={app.state.lang || 'ru'}
-          onSpeak={speakText}
-          onCopy={copyTranslation}
+          onStudy={startLearning}
           onAdd={addToDictionary}
         />
       </div>
