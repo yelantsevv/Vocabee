@@ -1,0 +1,82 @@
+[
+  {
+    "id": "greetings_and_introductions",
+    "label": "Приветствия и знакомство"
+  },
+  {
+    "id": "everyday_conversations",
+    "label": "Повседневное общение"
+  },
+  {
+    "id": "family_and_relationships",
+    "label": "Семья и отношения"
+  },
+  {
+    "id": "daily_routine",
+    "label": "Распорядок дня и быт"
+  },
+  {
+    "id": "food_and_restaurants",
+    "label": "Еда, напитки и рестораны"
+  },
+  {
+    "id": "shopping_and_prices",
+    "label": "Покупки и цены"
+  },
+  {
+    "id": "travel_and_navigation",
+    "label": "Путешествия и ориентирование в городе"
+  },
+  {
+    "id": "transport_and_tickets",
+    "label": "Транспорт и билеты"
+  },
+  {
+    "id": "hotels_and_accommodation",
+    "label": "Отели и проживание"
+  },
+  {
+    "id": "work_and_career",
+    "label": "Работа и карьера"
+  },
+  {
+    "id": "it_and_technologies",
+    "label": "IT и современные технологии"
+  },
+  {
+    "id": "health_and_medicine",
+    "label": "Здоровье, медицина и аптека"
+  },
+  {
+    "id": "hobbies_and_free_time",
+    "label": "Хобби, досуг и спорт"
+  },
+  {
+    "id": "movies_music_and_art",
+    "label": "Кино, музыка и развлечения"
+  },
+  {
+    "id": "weather_and_seasons",
+    "label": "Погода и времена года"
+  },
+  {
+    "id": "emotions_and_feelings",
+    "label": "Эмоции и выражения чувств"
+  },
+  {
+    "id": "opinions_and_agreements",
+    "label": "Выражение мнения, согласие и несогласие"
+  },
+  {
+    "id": "emergencies_and_help",
+    "label": "Экстренные ситуации и просьбы о помощи"
+  },
+  {
+    "id": "phrasal_verbs_and_idioms",
+    "label": "Фразовые глаголы и идиомы"
+  },
+  {
+    "id": "time_and_planning",
+    "label": "Время, даты и планирование"
+  }
+]

@@ -11,8 +11,15 @@ export function SettingsActionButtons({ variant = 'page', firstAction, actions =
       aria-label={ariaLabel}
     >
       {firstAction}
-      {visibleActions.map(({ label, onClick, disabled, checked }) => (
-        <button className={checked ? styles.checked : undefined} key={label} type="button" onClick={onClick} disabled={disabled}>
+      {visibleActions.map(({ label, onClick, disabled, checked, active }) => (
+        <button
+          className={active ? styles.active : undefined}
+          key={label}
+          type="button"
+          onClick={onClick}
+          disabled={disabled}
+          aria-pressed={active}
+        >
           <span>{label}</span>
           {checked && <span className={styles.checkmark} aria-label="База подключена">✓</span>}
         </button>

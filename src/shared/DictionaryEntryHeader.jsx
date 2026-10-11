@@ -28,15 +28,21 @@ export function DictionaryEntryHeader({
             className={clsx(styles.entryTranslation, translationVisible && styles.entryTranslationVisible)}
             aria-hidden={!translationVisible}
           >{translation}</p>
-          {learningLevel === 0 && onAddToLearning ? (
+          {learningLevel < 9 && onAddToLearning ? (
             <button
-              className={styles.addToLearningButton}
+              className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
               type="button"
-              aria-label={`Добавить «${word}» в обучение`}
+              aria-label={`Повысить уровень знания «${word}»: ${learningLevel} из 9`}
               data-translation-trigger=""
+              title={`Повысить уровень знания: ${learningLevel}/9`}
+              style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / 9 * 360}deg` } : undefined}
               onPointerEnter={onRevealTranslation}
               onClick={onAddToLearning}
-            ><span aria-hidden="true">+</span></button>
+            >
+              {learningLevel === 0
+                ? <span aria-hidden="true">+</span>
+                : <span>{learningLevel}/9</span>}
+            </button>
           ) : learningLevel === 9 ? (
             <span
               className={styles.learnedMark}
@@ -44,18 +50,6 @@ export function DictionaryEntryHeader({
               data-translation-trigger=""
               onPointerEnter={onRevealTranslation}
             >✓</span>
-          ) : Number.isInteger(learningLevel) ? (
-            <div
-              className={styles.progressCircle}
-              role="progressbar"
-              aria-label={`Уровень знания слова «${word}»: ${learningLevel} из 9`}
-              data-translation-trigger=""
-              aria-valuemin={0}
-              aria-valuemax={9}
-              aria-valuenow={learningLevel}
-              style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
-              onPointerEnter={onRevealTranslation}
-            ><span>{learningLevel}/9</span></div>
           ) : null}
         </div>
       </div>

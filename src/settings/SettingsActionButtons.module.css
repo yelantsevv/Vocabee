@@ -30,7 +30,7 @@
   transition: border-color 0.16s ease, background 0.16s ease;
 }
 
-.actions > button.checked {
+.actions > button.active {
   border-color: rgba(67, 213, 176, 0.48);
   background: rgba(67, 213, 176, 0.09);
 }

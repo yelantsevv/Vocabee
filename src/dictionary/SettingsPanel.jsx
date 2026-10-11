@@ -34,12 +34,15 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
   const quickLoadActions = dictionaryQuickActions.map((action) => {
     const sourceId = action.id.slice('words-'.length);
     const checked = loadedSources.has(sourceId);
+    const active = catalog.selectedSourceLanguage === sourceId;
     return {
       label: action.label,
       checked,
+      active,
       disabled: catalog.catalogLoading,
       onClick: () => {
-        if (!checked) onLoadDictionary(sourceId);
+        if (checked) catalog.setSelectedSourceLanguage(sourceId);
+        else onLoadDictionary(sourceId);
       }
     };
   });

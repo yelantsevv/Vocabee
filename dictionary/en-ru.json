@@ -12,17 +12,20 @@
       {
         "phrase": "I really enjoy science classes at school.",
         "translation": "Мне очень нравятся уроки естествознания в школе.",
-        "level": "A1"
+        "level": "A1",
+        "learning_level": 0
       },
       {
         "phrase": "Modern science is changing our everyday lives quickly.",
         "translation": "Современная наука быстро меняет нашу повседневную жизнь.",
-        "level": "A2"
+        "level": "A2",
+        "learning_level": 0
       },
       {
         "phrase": "Don't worry about cooking pasta, it's not rocket science.",
         "translation": "Не переживай насчет варки пасты, это не высшая математика.",
-        "level": "B1"
+        "level": "B1",
+        "learning_level": 0
       }
     ],
     "forms": {
@@ -191,10 +194,10 @@
     "learning_level": 0
   },
   {
-    "word": "look AT",
+    "word": "look at phrasal verb",
     "part_of_speech": "phrasal-verb",
     "level": "A1",
-    "frequency_rank": 446,
+    "frequency_rank": 4461,
     "is_irregular": false,
     "definitions": ["смотреть", "выглядеть", "казаться"],
     "synonyms": ["watch", "glance", "appear"],
@@ -223,42 +226,10 @@
     "learning_level": 0
   },
   {
-    "word": "look AT",
-    "part_of_speech": "phrasal-verb",
-    "level": "A1",
-    "frequency_rank": 446,
-    "is_irregular": false,
-    "definitions": ["смотреть", "выглядеть", "казаться"],
-    "synonyms": ["watch", "glance", "appear"],
-    "antonyms": ["ignore"],
-    "examples": [
-      {
-        "phrase": "Look at that beautiful bird over there!",
-        "translation": "Посмотри вон на ту красивую птицу!",
-        "level": "A1"
-      },
-      {
-        "phrase": "You look really happy today; what happened?",
-        "translation": "Ты выглядишь очень счастливым сегодня, что случилось?",
-        "level": "A2"
-      },
-      {
-        "phrase": "Can you look over this report before I send it?",
-        "translation": "Можешь просмотреть этот отчет, прежде чем я его отправлю?",
-        "level": "B1"
-      }
-    ],
-    "forms": {
-      "past_simple": "looked",
-      "past_participle": "looked"
-    },
-    "learning_level": 0
-  },
-  {
-    "word": "look irregular",
+    "word": "look irregular verb",
     "part_of_speech": "verb",
     "level": "A1",
-    "frequency_rank": 446,
+    "frequency_rank": 441,
     "is_irregular": true,
     "definitions": ["смотреть", "выглядеть", "казаться"],
     "synonyms": ["watch", "glance", "appear"],

@@ -192,7 +192,11 @@ export function DictionaryPage() {
         </nav>
         <DictionarySearch
           activeView={activeView}
-          selectedSourceLanguage={catalog.selectedSourceLanguage}
+          selectedSourceLanguage={catalog.selectedSourceLanguage || (
+            activeView === 'dictionaries' && ['my', 'words', 'phrases'].includes(catalog.catalogView)
+              ? 'my-vocabee'
+              : null
+          )}
           savedWordsSearch={search}
           onSavedWordsSearchChange={setSearch}
           sourceSearch={catalog.sourceSearch}

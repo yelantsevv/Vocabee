@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
 import { getEntryLearningLevel } from './dictionaryUtils.js';
+import phraseCategories from '../../dictionary/phrase-categories.json';
 import { DictionaryWordCard } from '../shared/DictionaryWordCard.jsx';
 
 function toggleValue(values, setter, value) {
@@ -28,11 +29,12 @@ export function DictionaryCatalogPanel({
   refreshVersion
 }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
-  const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
   const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
+    catalogView,
+    setCatalogView,
     availableSources,
     catalogLoading,
     catalogError,
@@ -44,6 +46,8 @@ export function DictionaryCatalogPanel({
     setSourceSort,
     progressViews,
     setProgressViews,
+    sourceConnections,
+    setSourceConnections,
     overallDictionaryProgress,
     selectedSourceDictionary,
     selectedLevelEntries,
@@ -54,14 +58,48 @@ export function DictionaryCatalogPanel({
     learningLevelOverrides,
     filteredSourceEntries
   } = catalog;
-  const shuffledEntries = useMemo(
-    () => shuffleEntries(filteredSourceEntries),
-    [filteredSourceEntries, refreshVersion]
-  );
+  const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
+  const previousRefreshVersion = useRef(refreshVersion);
+  const filteredEntryKeys = filteredSourceEntries.map((entry) => (
+    `${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`
+  ));
+  const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
+  const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
+  const loadedLanguages = availableSources.filter(({ id }) => ['en', 'de'].includes(id));
+  const hasMyDictionary = availableSources.some(({ id }) => id === 'my-vocabee');
+  const activeLanguage = loadedLanguages.find(({ id }) => id === selectedSourceLanguage)
+    || loadedLanguages[0];
+  const hasViewableSource = (sourceConnections.my && hasMyDictionary)
+    || (sourceConnections.language && Boolean(activeLanguage));
+  useEffect(() => {
+    if (previousRefreshVersion.current !== refreshVersion) {
+      previousRefreshVersion.current = refreshVersion;
+      setShuffledEntries(shuffleEntries(filteredSourceEntries));
+      return;
+    }
+
+    setShuffledEntries((current) => {
+      const currentKeys = new Set(filteredEntryKeys);
+      const entriesByKey = new Map(filteredSourceEntries.map((entry) => [
+        `${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`,
+        entry
+      ]));
+      const retainedEntries = current
+        .filter((entry) => currentKeys.has(`${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`))
+        .map((entry) => entriesByKey.get(`${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`));
+      const retainedKeys = new Set(retainedEntries.map((entry) => (
+        `${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`
+      )));
+      const newEntries = filteredSourceEntries.filter((entry) => (
+        !retainedKeys.has(`${entry._catalogId || entry._catalogLanguage}:${entry._entryKey || entry.word}`)
+      ));
+      return [...retainedEntries, ...shuffleEntries(newEntries)];
+    });
+  }, [filteredSourceEntries, filteredEntrySignature, refreshVersion]);
 
   useEffect(() => {
     setDisplayedCardCount(cardsPerLoad);
-  }, [cardsPerLoad, filteredSourceEntries, refreshVersion]);
+  }, [cardsPerLoad, filteredEntrySignature, refreshVersion]);
 
   function revealTranslation(word) {
     clearTimeout(revealTranslationTimer.current);
@@ -76,9 +114,13 @@ export function DictionaryCatalogPanel({
 
   useEffect(() => () => clearTimeout(revealTranslationTimer.current), []);
 
+  function toggleSourceConnection(source) {
+    setSourceConnections((current) => ({ ...current, [source]: !current[source] }));
+  }
+
   return (
     <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
-      {selectedSourceLanguage && <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
+      <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
         <div
           className={styles.overallProgress}
           role="progressbar"
@@ -92,18 +134,44 @@ export function DictionaryCatalogPanel({
         </div>
         <div className={styles.filterTopRow}>
           <div className={styles.sourceControls}>
-            <label className={styles.filterField}>
-              <select
-                aria-label="Словарь"
-                value={selectedSourceLanguage}
-                onChange={(event) => setSelectedSourceLanguage(event.target.value)}
+            <div className={styles.sourceViewButtons} role="group" aria-label="Раздел словаря">
+              <button
+                className={clsx(styles.sourceViewButton, sourceConnections.my && styles.selected)}
+                type="button"
+                aria-label={sourceConnections.my ? 'Отключить мой словарь' : 'Подключить мой словарь'}
+                aria-pressed={sourceConnections.my}
+                title={sourceConnections.my ? 'Мой словарь подключён' : 'Подключить мой словарь'}
+                onClick={() => toggleSourceConnection('my')}
               >
-                <option value="all">🌐 Все словари</option>
-                {availableSources.map((source) => (
-                  <option key={source.id} value={source.id}>{source.label}</option>
-                ))}
-              </select>
-            </label>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 5.5c2.8-1 5.5-.6 8 1.1v13c-2.5-1.7-5.2-2.1-8-1.1v-13Z" />
+                  <path d="M20 5.5c-2.8-1-5.5-.6-8 1.1v13c2.5-1.7 5.2-2.1 8-1.1v-13Z" />
+                </svg>
+              </button>
+              <button
+                className={clsx(styles.sourceViewButton, sourceConnections.language && activeLanguage && styles.selected)}
+                type="button"
+                aria-label={`${activeLanguage?.label || 'Языковой словарь'}: ${sourceConnections.language ? 'подключён' : 'отключён'}`}
+                aria-pressed={Boolean(sourceConnections.language && activeLanguage)}
+                title={activeLanguage
+                  ? `${activeLanguage.label} · ${sourceConnections.language ? 'подключён' : 'отключён'}`
+                  : 'Сначала загрузите EN → RU или DE → RU в настройках'}
+                disabled={!activeLanguage}
+                onClick={() => toggleSourceConnection('language')}
+              >{activeLanguage?.id === 'de' ? '🇩🇪' : '🇬🇧'}</button>
+              <button
+                className={clsx(styles.sourceViewButton, catalogView === 'words' && styles.selected)}
+                type="button"
+                aria-pressed={catalogView === 'words'}
+                onClick={() => setCatalogView('words')}
+              >Слова</button>
+              <button
+                className={clsx(styles.sourceViewButton, catalogView === 'phrases' && styles.selected)}
+                type="button"
+                aria-pressed={catalogView === 'phrases'}
+                onClick={() => setCatalogView('phrases')}
+              >Фразы</button>
+            </div>
             <label className={styles.filterField}>
               <select
                 id="source-sort"
@@ -115,11 +183,16 @@ export function DictionaryCatalogPanel({
                 <option value="alphabetical">🔤 По алфавиту</option>
                 <option value="progress">🧠 Сначала меньше прогресс</option>
                 <option value="progress-desc">🧠 Сначала больше прогресс</option>
+                <optgroup label="Категории фраз">
+                  {phraseCategories.map(({ id, label }) => (
+                    <option key={id} value={`category:${id}`}>{label}</option>
+                  ))}
+                </optgroup>
               </select>
             </label>
           </div>
 
-          {selectedSourceLanguage && <div className={styles.filterStack}>
+          <div className={styles.filterStack}>
             <fieldset className={styles.filterGroup} aria-label="Уровень">
               <div className={styles.filterChips}>
                 {['A1', 'A2', 'B1', 'B2'].map((level) => (
@@ -152,9 +225,9 @@ export function DictionaryCatalogPanel({
                 {sourceLevels.length ? sourceLevels.join(', ') : 'Все уровни'} · {selectedLevelEntries.length} слов
               </span>
             </div>
-          </div>}
+          </div>
 
-          {selectedSourceLanguage && <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label="Тип глагола">
+          <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
             <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
               {[
                 ['regular', '✅ Правильные'],
@@ -185,9 +258,9 @@ export function DictionaryCatalogPanel({
                 >{label}</button>
               ))}
             </div>
-          </fieldset>}
+          </fieldset>
         </div>
-      </section>}
+      </section>
 
       {catalogLoading ? (
         <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
@@ -196,16 +269,22 @@ export function DictionaryCatalogPanel({
           <p>{catalogError}</p>
           <button type="button" onClick={onOpenSettings}>Открыть настройки</button>
         </div>
-      ) : !selectedSourceLanguage ? (
+      ) : !hasViewableSource ? (
         <div className={styles.emptyCatalog}>
-          <p>База словарей пока не загружена.</p>
-          <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+          {hasMyDictionary || loadedLanguages.length ? (
+            <p>Оба источника отключены. Включите нужный словарь кнопками выше.</p>
+          ) : (
+            <>
+              <p>База словарей пока не загружена.</p>
+              <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+            </>
+          )}
         </div>
       ) : <>
       <p className={styles.dictionaryCount}>
-        Показано {Math.min(displayedCardCount, shuffledEntries.length)} из {shuffledEntries.length} слов
+        Показано {Math.min(displayedCardCount, shuffledEntries.length)} из {shuffledEntries.length} {catalogView === 'phrases' ? 'фраз' : 'слов'}
       </p>
-      <section className={commonStyles.wordList} aria-label="Записи выбранного словаря">
+      <section className={commonStyles.wordList} aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}>
         <ul>
           {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
             const learningLevel = getEntryLearningLevel(
@@ -215,7 +294,7 @@ export function DictionaryCatalogPanel({
             );
             return (
               <DictionaryWordCard
-                key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry.word}`}
+                key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry._entryKey || entry.word}`}
                 word={entry.word}
                 translation={entry.definitions.join(' · ')}
                 learningLevel={learningLevel}
@@ -228,10 +307,21 @@ export function DictionaryCatalogPanel({
                 onRevealTranslation={() => revealTranslation(entry.word)}
                 onHideTranslation={hideTranslation}
               >
+                {catalogView === 'phrases' && (
+                  <p className={styles.phraseMetadata}>
+                    Уровень {entry.level}
+                    {entry.category && ` · ${phraseCategories.find(({ id }) => id === entry.category)?.label || entry.category}`}
+                  </p>
+                )}
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">
                     <ul className={styles.exampleList}>
-                      {entry.examples.map((example, index) => (
+                      {entry.examples
+                        .filter((example) => (
+                          !sourceSort.startsWith('category:')
+                          || example.category === sourceSort.slice('category:'.length)
+                        ))
+                        .map((example, index) => (
                         <li key={`${example.phrase}-${index}`}>
                           <span>{example.phrase}</span>
                           <span

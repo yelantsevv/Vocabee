@@ -114,8 +114,11 @@
   height: 58px;
   flex: 0 0 58px;
   place-items: center;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
   background: conic-gradient(#8b5cf6 var(--progress-angle), rgba(173, 183, 220, 0.15) 0);
+  color: inherit;
   cursor: pointer;
 }
 
@@ -129,6 +132,16 @@
   color: #e2d8ff;
   font-size: 12px;
   font-weight: 700;
+}
+
+.progressCircle:hover {
+  filter: brightness(1.15);
+}
+
+.progressCircle:focus-visible,
+.addToLearningButton:focus-visible {
+  outline: 2px solid #d2c4ff;
+  outline-offset: 3px;
 }
 
 @media (max-width: 640px) {
