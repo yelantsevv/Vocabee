@@ -269,7 +269,7 @@ export function DictionaryCatalogPanel({
               {[
                 ['learning', `Изучаю (${inProgressCount})`],
                 ['learned', `Изученные (${learnedCount})`],
-                ['remaining', `Все слова (${remainingCount})`]
+                ['remaining', `Не изученные (${remainingCount})`]
               ].map(([view, label]) => (
                 <button
                   className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}

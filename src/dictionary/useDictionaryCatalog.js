@@ -410,7 +410,7 @@ export function useDictionaryCatalog() {
         : learningLevel > 0
           ? 'learning'
           : 'remaining';
-      const matchesProgress = progressViews.includes(progressCategory);
+      const matchesProgress = progressViews.length === 0 || progressViews.includes(progressCategory);
       return matchesLevel && matchesType && matchesCategory
         && (!query || searchableText.includes(query)) && matchesProgress;
     });
