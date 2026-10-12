@@ -6,29 +6,6 @@ import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from '../settings/dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 
-function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, dictionaryPreview, onChange }) {
-  return (
-    <div className={panelStyles.fontSetting}>
-      <label className={panelStyles.settingLabel} htmlFor={id}>
-        <strong>{label}</strong>
-        <output>{value}{unit}</output>
-      </label>
-      <input
-        id={id}
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <p className={clsx(panelStyles.settingPreview, dictionaryPreview && panelStyles.dictionaryPreview)}>
-        Пример текста {previewText}
-      </p>
-    </div>
-  );
-}
-
 export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, modal = false }) {
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const quickLoadActions = dictionaryQuickActions.map((action) => {
@@ -62,29 +39,6 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
           )}
         />
         {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
-        <FontSizeSetting
-          id="interface-font-scale"
-          label="Размер текста интерфейса"
-          value={settings.interfaceFontScale}
-          unit="%"
-          min="80"
-          max="140"
-          step="5"
-          previewText="интерфейса"
-          onChange={(value) => updateSetting('interfaceFontScale', value)}
-        />
-        <FontSizeSetting
-          id="dictionary-font-size"
-          label="Размер текста словаря"
-          value={settings.dictionaryFontSize}
-          unit=" px"
-          min="12"
-          max="24"
-          step="1"
-          previewText="словаря"
-          dictionaryPreview
-          onChange={(value) => updateSetting('dictionaryFontSize', value)}
-        />
         <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
           <span>Карточек за загрузку</span>
           <select
@@ -96,6 +50,15 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
               <option key={count} value={count}>{count}</option>
             ))}
           </select>
+        </label>
+        <label className={panelStyles.toggleSetting} htmlFor="hide-translations-until-hover">
+          <span>Скрывать перевод до наведения</span>
+          <input
+            id="hide-translations-until-hover"
+            type="checkbox"
+            checked={settings.hideTranslationsUntilHover}
+            onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
+          />
         </label>
         {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
         <DatabaseManager />

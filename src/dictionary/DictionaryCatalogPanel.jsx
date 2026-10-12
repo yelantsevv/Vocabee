@@ -30,6 +30,7 @@ export function DictionaryCatalogPanel({
   onOpenSettings,
   onRefreshCards,
   cardsPerLoad,
+  hideTranslationsUntilHover,
   refreshVersion
 }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
@@ -340,7 +341,7 @@ export function DictionaryCatalogPanel({
                   && entry.forms?.past_simple && entry.forms?.past_participle
                   ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
                   : undefined}
-                translationVisible={revealedTranslationWord === entry.word}
+                translationVisible={!hideTranslationsUntilHover || revealedTranslationWord === entry.word}
                 onAddToLearning={() => onAddToLearning(entry)}
                 onRevealTranslation={() => revealTranslation(entry.word)}
                 onHideTranslation={hideTranslation}
@@ -363,8 +364,8 @@ export function DictionaryCatalogPanel({
                         <li key={`${example.phrase}-${index}`}>
                           <span>{example.phrase}</span>
                           <span
-                            className={clsx(styles.exampleTranslation, revealedTranslationWord === entry.word && styles.exampleTranslationVisible)}
-                            aria-hidden={revealedTranslationWord !== entry.word}
+                            className={clsx(styles.exampleTranslation, (!hideTranslationsUntilHover || revealedTranslationWord === entry.word) && styles.exampleTranslationVisible)}
+                            aria-hidden={hideTranslationsUntilHover && revealedTranslationWord !== entry.word}
                           >{example.translation}</span>
                         </li>
                       ))}

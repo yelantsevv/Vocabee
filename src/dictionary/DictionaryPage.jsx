@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './DictionaryPage.module.css';
 import {
@@ -21,26 +21,34 @@ const DEFAULT_SETTINGS = {
   lang: 'ru',
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
-  cardsPerLoad: 20
+  cardsPerLoad: 20,
+  hideTranslationsUntilHover: true
 };
 
 export function DictionaryPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [appliedSettings, setAppliedSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
   const [cardRefreshVersion, setCardRefreshVersion] = useState(0);
   const settingsCloseButtonRef = useRef(null);
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+  const closeSettings = useCallback(() => {
+    setAppliedSettings(settingsRef.current);
+    setSettingsOpen(false);
+  }, []);
   const catalog = useDictionaryCatalog();
 
   useEffect(() => {
     if (!settingsOpen) return undefined;
     settingsCloseButtonRef.current?.focus();
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setSettingsOpen(false);
+      if (event.key === 'Escape') closeSettings();
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [settingsOpen]);
+  }, [settingsOpen, closeSettings]);
 
   async function loadBuiltinDictionary(language) {
     await catalog.loadBuiltinDictionary(language);
@@ -68,15 +76,18 @@ export function DictionaryPage() {
     let active = true;
     getDictionarySettings(DEFAULT_SETTINGS).then((result) => {
       if (!active) return;
-      setSettings({
+      const loadedSettings = {
         enabled: Boolean(result.enabled),
         lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
-          : DEFAULT_SETTINGS.cardsPerLoad
-      });
+          : DEFAULT_SETTINGS.cardsPerLoad,
+        hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false
+      };
+      setSettings(loadedSettings);
+      setAppliedSettings(loadedSettings);
       if (result.source === 'website') {
         setSettingsStatus('Настройки расширения недоступны: изменения сохраняются только на этом сайте.');
       }
@@ -95,13 +106,10 @@ export function DictionaryPage() {
     const nextValue = normalizers[key] ? normalizers[key](value) : value;
     const nextSettings = { ...settings, [key]: nextValue };
     setSettings(nextSettings);
-    setSettingsStatus('Сохраняю настройки…');
 
     try {
-      const destination = await saveDictionarySettings(nextSettings);
-      setSettingsStatus(destination === 'extension'
-        ? 'Настройки сохранены в расширении.'
-        : 'Расширение не подключено. Настройки сохранены только на этом сайте.');
+      await saveDictionarySettings(nextSettings);
+      setSettingsStatus('');
     } catch (error) {
       console.error('Vocabee: could not save dictionary settings', error);
       setSettingsStatus(`Не удалось сохранить настройки: ${error.message}`);
@@ -109,8 +117,8 @@ export function DictionaryPage() {
   }
 
   const pageStyle = {
-    '--vocabee-ui-font-scale': settings.interfaceFontScale / 100,
-    '--vocabee-dictionary-font-size': `${settings.dictionaryFontSize}px`
+    '--vocabee-ui-font-scale': appliedSettings.interfaceFontScale / 100,
+    '--vocabee-dictionary-font-size': `${appliedSettings.dictionaryFontSize}px`
   };
   function refreshCards() {
     setCardRefreshVersion((version) => version + 1);
@@ -126,7 +134,8 @@ export function DictionaryPage() {
         onAddToLearning={catalog.addToLearning}
         onOpenSettings={() => setSettingsOpen(true)}
         onRefreshCards={refreshCards}
-        cardsPerLoad={settings.cardsPerLoad}
+        cardsPerLoad={appliedSettings.cardsPerLoad}
+        hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
         refreshVersion={cardRefreshVersion}
       />
 
@@ -135,7 +144,7 @@ export function DictionaryPage() {
           className={styles.settingsModalBackdrop}
           style={pageStyle}
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setSettingsOpen(false);
+            if (event.target === event.currentTarget) closeSettings();
           }}
         >
           <section className={styles.settingsModal} role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
@@ -146,7 +155,7 @@ export function DictionaryPage() {
                 className={styles.settingsModalClose}
                 type="button"
                 aria-label="Закрыть настройки"
-                onClick={() => setSettingsOpen(false)}
+                onClick={closeSettings}
               >×</button>
             </header>
             <SettingsPanel

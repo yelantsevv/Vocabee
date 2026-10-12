@@ -8,46 +8,6 @@
   padding: 12px 24px;
 }
 
-.fontSetting {
-  display: grid;
-  gap: 12px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
-  padding: 20px 2px;
-}
-
-.settingLabel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: #f3f4fc;
-  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
-}
-
-.settingLabel output {
-  color: #c9baff;
-  font-variant-numeric: tabular-nums;
-}
-
-.fontSetting input[type="range"] {
-  width: 100%;
-  margin: 0;
-  accent-color: #a15cff;
-  cursor: pointer;
-}
-
-.settingPreview {
-  margin: 0;
-  color: #c9baff;
-  font-size: calc(18px * var(--vocabee-ui-font-scale, 1));
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.dictionaryPreview {
-  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
-}
-
 .batchSizeSetting {
   display: flex;
   align-items: center;
@@ -67,6 +27,27 @@
   color: #f6f7ff;
   padding: 0 10px;
   font: inherit;
+}
+
+.toggleSetting {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
+  color: #f3f4fc;
+  padding: 14px 2px;
+  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
+  cursor: pointer;
+}
+
+.toggleSetting input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  accent-color: #a15cff;
+  cursor: pointer;
 }
 
 .settingsStatus {
