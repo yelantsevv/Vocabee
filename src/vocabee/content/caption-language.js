@@ -16,7 +16,11 @@
 
     const rect = range.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
-    return { text, rect };
+    return {
+      text,
+      rect,
+      fontSize: Number.parseFloat(getComputedStyle(startScope).fontSize)
+    };
   };
 
   function findCaptionSourceLanguage() {
@@ -62,7 +66,7 @@
     if (!app.state.enabled) return;
     const selectedText = app.getSelectedTextInfo();
     if (!selectedText || selectedText.text.split(/\s+/).length < 2) return;
-    app.showTranslationPopup(selectedText.text, selectedText.rect);
+    app.showTranslationPopup(selectedText.text, selectedText.rect, null, selectedText.fontSize);
   };
 
   let suppressNextSelectionTranslation = false;

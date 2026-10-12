@@ -1,32 +1,33 @@
-import { useState } from 'react';
 import styles from './popup.module.css';
-import { Brand } from './components/Brand.jsx';
 import { DictionaryNotice } from './components/DictionaryNotice.jsx';
 import { PopupFooter } from './components/PopupFooter.jsx';
 import { TranslationSettings } from '../settings/TranslationSettings.jsx';
 import { usePopupSettings } from './hooks/usePopupSettings.js';
-import { useSourceLanguage } from './hooks/useSourceLanguage.js';
+import { useTheme } from '../hooks/useTheme.js';
 
 export function PopupApp() {
   const settings = usePopupSettings();
-  const sourceLanguage = useSourceLanguage();
-  const [dictionaryNoticeVisible, setDictionaryNoticeVisible] = useState(false);
+  const [theme, changeTheme] = useTheme();
 
   return (
-    <main className={styles.popup}>
-      <Brand />
+    <main className={styles.popup} data-theme={theme}>
       <TranslationSettings
         idPrefix="popup"
         variant="compact"
         enabled={settings.enabled}
-        targetLanguage={settings.language}
-        sourceLanguage={sourceLanguage}
         onEnabledChange={settings.changeEnabled}
-        onTargetLanguageChange={settings.changeLanguage}
       />
+      <label className={styles.themeSetting} htmlFor="popup-color-theme">
+        Тема оформления
+        <select id="popup-color-theme" value={theme} onChange={(event) => changeTheme(event.target.value)}>
+          <option value="light">Светлая</option>
+          <option value="dark">Тёмная</option>
+        </select>
+      </label>
       <DictionaryNotice
-        visible={dictionaryNoticeVisible}
-        onOpen={() => setDictionaryNoticeVisible(true)}
+        onOpen={() => chrome.tabs.create({
+          url: chrome.runtime.getURL('dictionary/dictionary.html')
+        })}
       />
       <PopupFooter />
     </main>

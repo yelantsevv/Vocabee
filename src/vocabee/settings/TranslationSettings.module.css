@@ -1,6 +1,6 @@
 .controls {
   display: block;
-  color: #f3f4fc;
+  color: var(--vb-text, #f3f4fc);
 }
 
 .row {
@@ -16,18 +16,18 @@
 }
 
 .copy strong {
-  color: #f3f4fc;
+  color: var(--vb-text, #f3f4fc);
   font-size: var(--translation-setting-title-size, 12px);
   font-weight: 650;
 }
 
 .copy small {
-  color: #929bb7;
+  color: var(--vb-subtle, #929bb7);
   font-size: var(--translation-setting-description-size, 10px);
 }
 
 .languageRow {
-  border-bottom: 1px solid rgba(173, 183, 220, 0.1);
+  border-bottom: 1px solid var(--vb-divider, rgba(173, 183, 220, 0.1));
   gap: 12px;
   padding: var(--translation-setting-row-padding, 10px 2px);
 }
@@ -43,7 +43,7 @@
 .sourceLanguage {
   max-width: var(--translation-setting-source-width, 125px);
   overflow: hidden;
-  color: #d7d9eb;
+  color: var(--vb-text, #d7d9eb);
   font-size: var(--translation-setting-value-size, 11px);
   font-weight: 600;
   text-align: right;
@@ -55,7 +55,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #d7d9eb;
+  color: var(--vb-text, #d7d9eb);
   font-size: var(--translation-setting-value-size, 11px);
 }
 
@@ -66,10 +66,10 @@
   box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid rgba(176, 186, 222, 0.2);
+  border: 1px solid var(--vb-border, rgba(176, 186, 222, 0.2));
   border-radius: 9px;
   outline: none;
-  background-color: #202640;
+  background-color: var(--vb-surface, #202640);
   background-image:
     linear-gradient(45deg, transparent 50%, #aeb5cb 50%),
     linear-gradient(135deg, #aeb5cb 50%, transparent 50%);
@@ -78,7 +78,7 @@
     calc(100% - 10px) 50%;
   background-repeat: no-repeat;
   background-size: 5px 5px;
-  color: #f6f7ff;
+  color: var(--vb-text, #f6f7ff);
   cursor: pointer;
   padding: 7px 30px 7px 10px;
   font: inherit;
@@ -87,20 +87,20 @@
 }
 
 .targetLanguage select:focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid var(--vb-focus, #a78bfa);
   outline-offset: 2px;
 }
 
 .targetLanguage select option {
-  background: #202640;
-  color: #f6f7ff;
+  background: var(--vb-surface, #202640);
+  color: var(--vb-text, #f6f7ff);
 }
 
 .toggleRow {
   position: relative;
   min-height: var(--translation-setting-toggle-height, 60px);
   gap: 12px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.1);
+  border-bottom: 1px solid var(--vb-divider, rgba(173, 183, 220, 0.1));
   cursor: pointer;
   padding: var(--translation-setting-row-padding, 10px 2px);
 }
@@ -117,9 +117,9 @@
   width: var(--translation-setting-toggle-width, 38px);
   height: var(--translation-setting-toggle-size, 22px);
   flex: 0 0 auto;
-  border: 1px solid rgba(182, 191, 224, 0.22);
+  border: 1px solid var(--vb-border, rgba(182, 191, 224, 0.22));
   border-radius: 99px;
-  background: #353d59;
+  background: var(--vb-track, #353d59);
 }
 
 .toggle::after {
@@ -129,13 +129,13 @@
   width: var(--translation-setting-toggle-knob, 14px);
   height: var(--translation-setting-toggle-knob, 14px);
   border-radius: 50%;
-  background: #d8dcef;
+  background: var(--vb-knob, #d8dcef);
   content: "";
   transition: transform 0.18s ease;
 }
 
 .toggleRow input:checked + .toggle {
-  border-color: #8e6cff;
+  border-color: var(--vb-focus, #8e6cff);
   background: linear-gradient(110deg, #7b5cff, #a64dff);
 }
 
@@ -145,38 +145,75 @@
 }
 
 .toggleRow input:focus-visible + .toggle {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid var(--vb-focus, #a78bfa);
   outline-offset: 2px;
 }
 
 .controls[data-variant="compact"] {
-  --translation-setting-row-padding: 12px 15px;
-  --translation-setting-toggle-height: 66px;
-  --translation-setting-title-size: 12px;
-  --translation-setting-description-size: 10px;
-  --translation-setting-value-size: 11px;
-  --translation-setting-select-width: 116px;
-  --translation-setting-toggle-width: 38px;
-  --translation-setting-toggle-size: 22px;
-  --translation-setting-toggle-inset: 3px;
-  --translation-setting-toggle-knob: 14px;
-  --translation-setting-toggle-shift: 16px;
-  overflow: hidden;
+  --translation-setting-row-padding: 8px 0;
+  --translation-setting-toggle-height: auto;
+  --translation-setting-title-size: 13px;
+  --translation-setting-description-size: 11px;
+  --translation-setting-value-size: 12px;
+  --translation-setting-select-width: 145px;
+  color: var(--vb-text, CanvasText);
 }
 
 .controls[data-variant="compact"] .languageRow {
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 8px;
+  border-bottom-color: var(--vb-divider, ThreeDLightShadow);
+  gap: 10px;
 }
 
 .controls[data-variant="compact"] .languageControls {
-  width: 100%;
-  justify-content: space-between;
+  gap: 8px;
 }
 
 .controls[data-variant="compact"] .sourceLanguage {
-  max-width: 115px;
+  color: var(--vb-muted, GrayText);
+}
+
+.controls[data-variant="compact"] .copy strong {
+  color: var(--vb-text, CanvasText);
+}
+
+.controls[data-variant="compact"] .copy small,
+.controls[data-variant="compact"] .targetLanguage {
+  color: var(--vb-muted, GrayText);
+}
+
+.controls[data-variant="compact"] .targetLanguage select {
+  appearance: auto;
+  border: 1px solid var(--vb-border, ButtonBorder);
+  border-radius: 4px;
+  outline: none;
+  background: var(--vb-surface, Field);
+  color: var(--vb-text, FieldText);
+  cursor: default;
+  padding: 5px 7px;
+}
+
+.controls[data-variant="compact"] .targetLanguage select:focus-visible {
+  outline: 2px solid var(--vb-focus, Highlight);
+  outline-offset: 2px;
+}
+
+.controls[data-variant="compact"] .toggleRow {
+  border-bottom-color: var(--vb-divider, ThreeDLightShadow);
+  cursor: default;
+}
+
+.controls[data-variant="compact"] .toggleRow input {
+  position: static;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin: 0;
+  accent-color: auto;
+  opacity: 1;
+}
+
+.controls[data-variant="compact"] .toggle {
+  display: none;
 }
 
 .controls[data-variant="panel"] {
@@ -192,6 +229,11 @@
   --translation-setting-toggle-inset: 2px;
   --translation-setting-toggle-knob: 15px;
   --translation-setting-toggle-shift: 15px;
+}
+
+.controls[data-variant="panel"] .toggleRow input:checked + .toggle {
+  border-color: var(--vb-focus, #8e6cff);
+  background: linear-gradient(110deg, #7b5cff, #a64dff);
 }
 
 .controls[data-variant="page"] {

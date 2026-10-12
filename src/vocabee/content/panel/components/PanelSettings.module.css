@@ -2,10 +2,36 @@
   display: block;
 }
 
+.themeSetting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--vb-divider);
+  color: var(--vb-text);
+  padding: 12px 2px;
+  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
+}
+
+.themeSetting select {
+  max-width: 140px;
+  border: 1px solid var(--vb-border);
+  border-radius: 8px;
+  background: var(--vb-surface);
+  color: var(--vb-text);
+  padding: 6px 8px;
+  font: inherit;
+}
+
+.themeSetting select:focus-visible {
+  outline: 2px solid var(--vb-focus);
+  outline-offset: 2px;
+}
+
 .fontSetting {
   display: grid;
   gap: 8px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.1);
+  border-bottom: 1px solid var(--vb-divider);
   padding: 12px 2px;
 }
 
@@ -14,12 +40,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: #f3f4fc;
+  color: var(--vb-text);
   font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
 }
 
 .fontSettingValue {
-  color: #c9baff;
+  color: var(--vb-accent);
   font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
   font-variant-numeric: tabular-nums;
 }
@@ -27,13 +53,13 @@
 .fontSetting input[type="range"] {
   width: 100%;
   margin: 0;
-  accent-color: #a15cff;
+  accent-color: var(--vb-focus);
   cursor: pointer;
 }
 
 .fontSettingPreview {
   margin: 0;
-  color: #c9baff;
+  color: var(--vb-accent);
   font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
   line-height: 1.4;
   overflow-wrap: anywhere;

@@ -19,14 +19,14 @@
 
 .title {
   margin: 0;
-  color: #f3f4fc;
+  color: var(--vb-text);
   font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
   font-weight: 700;
 }
 
 .languagePair {
   margin: 0;
-  color: #a5acc4;
+  color: var(--vb-muted);
   font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
   line-height: 1.4;
 }
@@ -45,7 +45,7 @@
 
 .status {
   margin: 0;
-  color: #a5acc4;
+  color: var(--vb-muted);
   font-size: calc(var(--vocabee-dictionary-font-size, 16px) * 0.75 * var(--vocabee-ui-font-scale, 1));
   line-height: 1.5;
 }
@@ -58,9 +58,37 @@
   list-style: none;
 }
 
+.list > li {
+  border-color: var(--vb-border);
+  background: var(--vb-card-bg);
+}
+
+.list h2 {
+  color: var(--vb-text);
+}
+
+.list p {
+  color: var(--vb-muted);
+}
+
+.list [data-translation-trigger] span {
+  background: var(--vb-surface);
+  color: var(--vb-accent);
+}
+
+.list [aria-label="Слово выучено"] {
+  color: var(--vb-accent);
+}
+
+.list button[data-translation-trigger] {
+  border-color: var(--vb-border);
+  background-color: var(--vb-surface);
+  color: var(--vb-accent);
+}
+
 .hint {
   margin: 9px 2px 0;
-  color: #929bb7;
+  color: var(--vb-subtle);
   font-size: calc(10px * var(--vocabee-ui-font-scale, 1));
   line-height: 1.5;
 }

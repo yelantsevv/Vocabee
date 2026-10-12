@@ -14,10 +14,12 @@ import { usePanelInteractions } from './hooks/usePanelInteractions.js';
 import { usePanelPreferences } from './hooks/usePanelPreferences.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useStoredSetting } from './hooks/useStoredSetting.js';
+import { useTheme } from '../../hooks/useTheme.js';
 import styles from './FloatingPanel.module.css';
 
 export function FloatingPanel({ app }) {
   const panelRef = useRef(null);
+  const [theme, changeTheme] = useTheme();
   const preferences = usePanelPreferences(app);
   const { panelState, setPanelState, hydrated, update, save } = usePanelState(app, preferences.refreshSourceLanguage);
   const [dictionaryFontSize, changeDictionaryFontSize] = useStoredSetting({
@@ -67,6 +69,7 @@ export function FloatingPanel({ app }) {
       aria-label="Vocabee"
       hidden={!hydrated || !panelState.visible}
       style={panelStyle}
+      data-theme={theme}
       onPointerDown={(event) => event.stopPropagation()}
       onPointerUp={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
@@ -88,6 +91,8 @@ export function FloatingPanel({ app }) {
               preferences={preferences}
               dictionaryFontSize={dictionaryFontSize}
               interfaceFontScale={interfaceFontScale}
+              theme={theme}
+              onThemeChange={changeTheme}
               onDictionaryFontSizeChange={changeDictionaryFontSize}
               onInterfaceFontScaleChange={changeInterfaceFontScale}
             />

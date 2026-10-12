@@ -1,15 +1,40 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const initialTooltip = { visible: false, text: '', details: null, loading: false, anchorRect: null };
+const initialTooltip = { visible: false, text: '', details: null, loading: false, anchorRect: null, fontSize: 16 };
 
 export function useTranslationTooltip(app) {
   const [tooltip, setTooltip] = useState(initialTooltip);
-  const [feedback, setFeedback] = useState('');
-  const [studyStatus, setStudyStatus] = useState('');
-  const [addStatus, setAddStatus] = useState('');
+  const [isAdded, setIsAdded] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const hideTimer = useRef(null);
   const activeRequest = useRef(0);
   const pointerInside = useRef(false);
+  const savedEntries = useRef(null);
+
+  const wordIsSaved = useCallback((entries, text) => {
+    const sourceLanguage = app.state.sourceLang;
+    const normalizedText = text.toLocaleLowerCase(sourceLanguage);
+    return entries.some((entry) => (
+      entry.word?.toLocaleLowerCase(sourceLanguage) === normalizedText
+      && (entry.source_language || sourceLanguage) === sourceLanguage
+      && (entry.target_language || 'ru') === app.state.lang
+    ));
+  }, [app]);
+
+  const loadSavedEntries = useCallback((onLoaded) => {
+    if (savedEntries.current) {
+      onLoaded(savedEntries.current);
+      return;
+    }
+    chrome.runtime.sendMessage({ type: 'GET_MY_VOCABEE_DICTIONARY' }, (response) => {
+      if (chrome.runtime.lastError || !response?.ok) {
+        onLoaded([]);
+        return;
+      }
+      savedEntries.current = response.entries || [];
+      onLoaded(savedEntries.current);
+    });
+  }, []);
 
   const hideTooltip = useCallback((force = false) => {
     if (!force && pointerInside.current) return;
@@ -22,7 +47,7 @@ export function useTranslationTooltip(app) {
     });
   }, []);
 
-  const showTranslationPopup = useCallback(async (text, anchorRect, anchorElement = null) => {
+  const showTranslationPopup = useCallback(async (text, anchorRect, anchorElement = null, sourceFontSize = null) => {
     if (!app.state.enabled) return;
     clearTimeout(hideTimer.current);
     const requestId = ++activeRequest.current;
@@ -35,16 +60,28 @@ export function useTranslationTooltip(app) {
       width: anchorRect.width,
       height: anchorRect.height
     };
+    const anchorFontSize = anchorElement
+      ? Number.parseFloat(getComputedStyle(anchorElement).fontSize)
+      : Number.parseFloat(sourceFontSize);
     pointerInside.current = false;
-    setFeedback('');
-    setStudyStatus('');
-    setAddStatus('');
-    setTooltip({ visible: true, text: phrase, details: null, loading: true, anchorRect: safeRect });
+    setIsAdded(false);
+    setIsSaving(false);
+    setTooltip({
+      visible: true,
+      text: phrase,
+      details: null,
+      loading: true,
+      anchorRect: safeRect,
+      fontSize: Number.isFinite(anchorFontSize) ? anchorFontSize : 16
+    });
+    loadSavedEntries((entries) => {
+      if (requestId === activeRequest.current) setIsAdded(wordIsSaved(entries, phrase));
+    });
     if (anchorElement) anchorElement.dataset.tooltipVisible = 'true';
     const translation = await app.getTranslation(phrase);
     if (requestId !== activeRequest.current) return;
     setTooltip((current) => ({ ...current, details: translation, loading: false }));
-  }, [app]);
+  }, [app, loadSavedEntries, wordIsSaved]);
 
   const scheduleTooltipHide = useCallback(() => {
     clearTimeout(hideTimer.current);
@@ -54,7 +91,7 @@ export function useTranslationTooltip(app) {
   const showWordTooltip = useCallback((wordElement) => {
     const selectedText = app.getSelectedTextInfo();
     if (selectedText) {
-      showTranslationPopup(selectedText.text, selectedText.rect);
+      showTranslationPopup(selectedText.text, selectedText.rect, null, selectedText.fontSize);
       return;
     }
     showTranslationPopup(wordElement.dataset.word, wordElement.getBoundingClientRect(), wordElement);
@@ -74,13 +111,12 @@ export function useTranslationTooltip(app) {
     };
   }, [app, hideTooltip, scheduleTooltipHide, showTranslationPopup, showWordTooltip]);
 
-  function saveWord(messageType, setActionStatus, loadingLabel, idleLabel) {
+  function addToDictionary() {
     const translatedText = tooltip.details?.translated || '';
-    if (!translatedText || translatedText === 'Перевод недоступен') return;
-    setActionStatus(loadingLabel);
-    setFeedback('');
+    if (!translatedText || translatedText === 'Перевод недоступен' || isSaving || isAdded) return;
+    setIsSaving(true);
     chrome.runtime.sendMessage({
-      type: messageType,
+      type: 'ADD_DICTIONARY_WORD',
       word: {
         sourceText: tooltip.text,
         translatedText,
@@ -90,50 +126,30 @@ export function useTranslationTooltip(app) {
     }, (response) => {
       if (chrome.runtime.lastError) {
         console.error('Vocabee: could not send dictionary request', chrome.runtime.lastError.message);
-        setActionStatus(idleLabel);
-        setFeedback('Не удалось связаться с Vocabee. Попробуйте ещё раз.');
+        setIsSaving(false);
         return;
       }
       if (!response?.ok) {
-        setActionStatus(idleLabel);
-        setFeedback(response?.error || 'Не удалось сохранить слово.');
+        console.error('Vocabee: could not add word to dictionary', response?.error || 'Unknown error');
+        setIsSaving(false);
         return;
       }
-      if (messageType === 'START_DICTIONARY_WORD_LEARNING') {
-        const status = response.alreadyLearned
-          ? 'Уже в моём словаре ✓'
-          : response.alreadyLearning ? 'Уже добавлено ✓' : 'Добавлено в мой словарь ✓';
-        setActionStatus(status);
-        setFeedback(response.alreadyLearned
-          ? 'Это слово уже сохранено в моём словаре.'
-          : response.alreadyLearning ? 'Слово уже есть в моём словаре.' : 'Слово добавлено в мой словарь и отмечено для изучения.');
-      } else {
-        setActionStatus(response.duplicate ? 'Уже в словаре ✓' : 'Добавлено ✓');
-        setFeedback(response.duplicate ? 'Это слово уже сохранено.' : 'Слово сохранено.');
-      }
+      savedEntries.current = null;
+      setIsAdded(true);
+      setIsSaving(false);
       app.refreshDictionaryView?.();
     });
   }
 
-  function startLearning() {
-    saveWord('START_DICTIONARY_WORD_LEARNING', setStudyStatus, 'Добавляю…', 'Добавить в мой словарь');
-  }
-
-  function addToDictionary() {
-    saveWord('ADD_DICTIONARY_WORD', setAddStatus, 'Сохраняю…', 'Добавить в словарь');
-  }
-
   return {
     tooltip,
-    feedback,
-    studyStatus,
-    addStatus,
+    isAdded,
+    isSaving,
     pointerInside,
     hideTimer,
     hideTooltip,
     scheduleTooltipHide,
     showTranslationPopup,
-    startLearning,
     addToDictionary,
     setPointerInside: (value) => { pointerInside.current = value; }
   };

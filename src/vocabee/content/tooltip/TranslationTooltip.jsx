@@ -1,24 +1,20 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { TooltipActions } from './components/TooltipActions.jsx';
-import { TooltipHeader } from './components/TooltipHeader.jsx';
 import { useTranslationTooltip } from './hooks/useTranslationTooltip.js';
-import { DictionaryWordCard } from '../../../shared/DictionaryWordCard.jsx';
+import { useTheme } from '../../hooks/useTheme.js';
 import styles from './TranslationTooltip.module.css';
 
 export function TranslationTooltip({ app }) {
   const tooltipRef = useRef(null);
+  const [theme] = useTheme();
   const {
     tooltip,
-    feedback,
-    studyStatus,
-    addStatus,
+    isAdded,
+    isSaving,
     pointerInside,
     hideTimer,
-    hideTooltip,
     scheduleTooltipHide,
     setPointerInside,
-    startLearning,
     addToDictionary,
   } = useTranslationTooltip(app);
 
@@ -51,6 +47,7 @@ export function TranslationTooltip({ app }) {
         ref={tooltipRef}
         id="vocabee-tooltip"
         className={clsx(styles.tooltip, { [styles.visible]: tooltip.visible })}
+        data-theme={theme}
         data-visible={tooltip.visible}
         data-pointer-inside={pointerInside.current ? 'true' : 'false'}
         onPointerEnter={() => {
@@ -64,26 +61,22 @@ export function TranslationTooltip({ app }) {
           scheduleTooltipHide();
         }}
       >
-        <TooltipHeader
-          onClose={() => hideTooltip(true)}
-        />
-        <ul className={styles.cardList}>
-          <DictionaryWordCard
-            word={tooltip.text}
-            translation={tooltip.loading ? 'Перевожу…' : tooltip.details?.translated || 'Перевод недоступен'}
-            translationVisible
-            forms={tooltip.details?.pronunciation}
-          />
-        </ul>
-        <TooltipActions
-          loading={tooltip.loading}
-          translated={tooltip.details?.translated}
-          studyStatus={studyStatus}
-          addStatus={addStatus}
-          feedback={feedback}
-          onStudy={startLearning}
-          onAdd={addToDictionary}
-        />
+        <div className={styles.translationRow}>
+          <p className={styles.translationText} style={{ fontSize: `${tooltip.fontSize}px` }}>
+            {tooltip.loading ? 'Перевожу…' : tooltip.details?.translated || 'Перевод недоступен'}
+          </p>
+          <button
+            className={styles.dictionaryStar}
+            type="button"
+            aria-label={isAdded ? 'Слово добавлено в словарь' : 'Добавить слово в словарь'}
+            aria-pressed={isAdded}
+            title={isAdded ? 'Добавлено в словарь' : isSaving ? 'Сохраняю…' : 'Добавить в словарь'}
+            disabled={tooltip.loading || !tooltip.details?.translated || isSaving || isAdded}
+            onClick={addToDictionary}
+          >
+            {isAdded ? '★' : '☆'}
+          </button>
+        </div>
       </div>
     </div>
   );

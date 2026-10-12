@@ -8,9 +8,9 @@
   justify-content: space-between;
   gap: 8px;
   margin-top: 12px;
-  border-top: 1px solid rgba(173, 183, 220, 0.12);
+  border-top: 1px solid var(--vb-divider);
   padding-top: 10px;
-  color: #929bb7;
+  color: var(--vb-subtle);
   font-size: 12px;
 }
 
@@ -27,26 +27,26 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #c9baff;
+  color: var(--vb-accent);
   cursor: pointer;
-  padding: 5px 8px;
+  padding: 5px 9px;
   font-size: 12px;
 }
 
 .feedback {
   flex-basis: 100%;
-  color: #aeb5cb;
+  color: var(--vb-subtle);
   font-size: 11px;
   text-align: right;
 }
 
 .study:hover,
 .addToDictionary:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--vb-hover);
 }
 
 .study:disabled,
 .addToDictionary:disabled {
-  color: #727b96;
+  color: var(--vb-subtle);
   cursor: default;
 }
