@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { targetLanguages } from './languages.js';
+import { targetLanguages } from '../../shared/languages.js';
 import styles from './TranslationSettings.module.css';
 
 export function TranslationSettings({

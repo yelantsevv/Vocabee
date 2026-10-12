@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './PanelDictionary.module.css';
-import { DictionaryWordCard } from '../../../shared/DictionaryWordCard.jsx';
+import { DictionaryWordCard } from '../../../../shared/DictionaryWordCard.jsx';
 
 export function PanelDictionary({ words, status, languagePairs, fill }) {
   return (

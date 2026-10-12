@@ -56,7 +56,7 @@ process.env.NODE_ENV = 'development';
 try {
   previewServer = await createServer({ configFile: 'vite.config.js' });
   await previewServer.listen();
-  const dictionaryUrl = new URL('dictionary.html', previewServer.resolvedUrls.local[0]).toString();
+  const dictionaryUrl = new URL('dictionary/dictionary.html', previewServer.resolvedUrls.local[0]).toString();
   console.log(`[dev] Dictionary available at ${dictionaryUrl}`);
   openPreview(dictionaryUrl);
 } catch (error) {

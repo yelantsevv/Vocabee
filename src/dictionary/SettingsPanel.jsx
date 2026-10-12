@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SettingsPanel.module.css';
-import { SettingsActionButtons } from '../settings/SettingsActionButtons.jsx';
+import { SettingsActionButtons } from './SettingsActionButtons.jsx';
 import { DictionaryImportButton } from './DictionaryImportButton.jsx';
-import { dictionaryQuickActions } from '../settings/dictionaryQuickActions.js';
+import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 
 export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, modal = false }) {

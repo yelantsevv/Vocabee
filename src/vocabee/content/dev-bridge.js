@@ -3,7 +3,7 @@
   const isLocalHost = window.location.protocol === 'http:'
     && ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
-  if (!isLocalHost || window.location.pathname !== '/dictionary.html') {
+  if (!isLocalHost || window.location.pathname !== '/dictionary/dictionary.html') {
     return;
   }
 

@@ -30,7 +30,7 @@ chrome.action.onClicked.addListener(() => {
 
     chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_VOCABEE_PANEL' }, () => {
       if (chrome.runtime.lastError) {
-        chrome.tabs.create({ url: chrome.runtime.getURL('dictionary.html') }, () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('dictionary/dictionary.html') }, () => {
           if (chrome.runtime.lastError) {
             console.error('Vocabee: could not open dictionary page', chrome.runtime.lastError.message);
           }
@@ -400,7 +400,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return false;
     }
 
-    const pageUrl = new URL(chrome.runtime.getURL('dictionary.html'));
+    const pageUrl = new URL(chrome.runtime.getURL('dictionary/dictionary.html'));
     pageUrl.searchParams.set('load', message.id);
     chrome.tabs.create({ url: pageUrl.toString() }, () => {
       if (chrome.runtime.lastError) {

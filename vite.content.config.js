@@ -13,12 +13,12 @@ export default defineConfig({
     emptyOutDir: false,
     cssCodeSplit: false,
     rollupOptions: {
-      input: resolve(projectRoot, 'src/content/content-app.jsx'),
+      input: resolve(projectRoot, 'src/vocabee/content/content-app.jsx'),
       output: {
         format: 'iife',
         name: 'VocabeeContentApp',
-        entryFileNames: 'content/content-app.js',
-        assetFileNames: 'content/content-app.css',
+        entryFileNames: 'vocabee/content/content-app.js',
+        assetFileNames: 'vocabee/content/content-app.css',
         inlineDynamicImports: true
       }
     }

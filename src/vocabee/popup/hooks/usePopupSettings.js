@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { targetLanguages } from '../../settings/languages.js';
+import { targetLanguages } from '../../../shared/languages.js';
 
 const storage = chrome.storage.sync || chrome.storage.local;
 

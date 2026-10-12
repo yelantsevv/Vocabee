@@ -15,7 +15,7 @@ export default defineConfig({
     outDir: resolve(projectRoot, 'dist'),
     emptyOutDir: false,
     rollupOptions: {
-      input: resolve(sourceDirectory, 'popup/popup.html')
+      input: resolve(sourceDirectory, 'vocabee/popup/popup.html')
     }
   }
 });

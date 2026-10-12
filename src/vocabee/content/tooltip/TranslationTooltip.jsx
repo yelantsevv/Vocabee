@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { TooltipActions } from './components/TooltipActions.jsx';
 import { TooltipHeader } from './components/TooltipHeader.jsx';
 import { useTranslationTooltip } from './hooks/useTranslationTooltip.js';
-import { DictionaryWordCard } from '../../shared/DictionaryWordCard.jsx';
+import { DictionaryWordCard } from '../../../shared/DictionaryWordCard.jsx';
 import styles from './TranslationTooltip.module.css';
 
 export function TranslationTooltip({ app }) {

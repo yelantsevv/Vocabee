@@ -1,4 +1,4 @@
-import { cpSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -12,18 +12,19 @@ function copyExtensionRuntime() {
   return {
     name: 'copy-extension-runtime',
     closeBundle() {
+      mkdirSync(resolve(outputDirectory, 'vocabee'), { recursive: true });
       cpSync(
-        resolve(sourceDirectory, 'content'),
-        resolve(outputDirectory, 'content'),
+        resolve(sourceDirectory, 'vocabee/content'),
+        resolve(outputDirectory, 'vocabee/content'),
         { recursive: true }
       );
       writeFileSync(
-        resolve(outputDirectory, 'background.js'),
-        readFileSync(resolve(sourceDirectory, 'background.js'), 'utf8')
+        resolve(outputDirectory, 'vocabee/background.js'),
+        readFileSync(resolve(sourceDirectory, 'vocabee/background.js'), 'utf8')
       );
       cpSync(
-        resolve(sourceDirectory, 'icons'),
-        resolve(outputDirectory, 'icons'),
+        resolve(sourceDirectory, 'vocabee/icons'),
+        resolve(outputDirectory, 'vocabee/icons'),
         { recursive: true }
       );
       const manifest = JSON.parse(readFileSync(resolve(projectRoot, 'manifest.json'), 'utf8'));
@@ -59,8 +60,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        popup: resolve(sourceDirectory, 'popup/popup.html'),
-        dictionary: resolve(sourceDirectory, 'dictionary.html')
+        popup: resolve(sourceDirectory, 'vocabee/popup/popup.html'),
+        dictionary: resolve(sourceDirectory, 'dictionary/dictionary.html')
       }
     }
   }
