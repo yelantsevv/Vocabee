@@ -1,82 +1,41 @@
 [
+  { "id": "greetings_and_introductions", "label": "Приветствия и знакомство" },
+  { "id": "personal_information", "label": "О себе и личная информация" },
+  { "id": "family_and_relationships", "label": "Семья и отношения" },
+  { "id": "people_and_personality", "label": "Люди и характер" },
+  { "id": "emotions_and_feelings", "label": "Эмоции и чувства" },
+  { "id": "daily_routines", "label": "Повседневные дела и привычки" },
+  { "id": "home_and_household", "label": "Дом и домашние дела" },
+  { "id": "food_and_drinks", "label": "Еда и напитки" },
+  { "id": "cooking_and_restaurants", "label": "Кулинария и рестораны" },
+  { "id": "shopping_and_services", "label": "Покупки и услуги" },
+  { "id": "money_and_banking", "label": "Деньги и финансы" },
+  { "id": "clothes_and_appearance", "label": "Одежда и внешность" },
+  { "id": "city_and_directions", "label": "Город и ориентирование" },
+  { "id": "transport_and_driving", "label": "Транспорт и вождение" },
+  { "id": "travel_and_accommodation", "label": "Путешествия и проживание" },
+  { "id": "work_and_careers", "label": "Работа и карьера" },
+  { "id": "business_and_projects", "label": "Бизнес и проекты" },
+  { "id": "education_and_skills", "label": "Образование и навыки" },
+  { "id": "technology_and_internet", "label": "Технологии и интернет" },
+  { "id": "health_and_medicine", "label": "Здоровье и медицина" },
+  { "id": "sports_and_fitness", "label": "Спорт и физическая активность" },
+  { "id": "hobbies_and_leisure", "label": "Хобби и свободное время" },
+  { "id": "culture_and_entertainment", "label": "Культура и развлечения" },
+  { "id": "nature_and_weather", "label": "Природа и погода" },
+  { "id": "animals_and_environment", "label": "Животные и окружающая среда" },
+  { "id": "time_and_planning", "label": "Время и планирование" },
   {
-    "id": "greetings_and_introductions",
-    "label": "Приветствия и знакомство"
+    "id": "communication_and_social_media",
+    "label": "Общение и социальные сети"
   },
   {
-    "id": "everyday_conversations",
-    "label": "Повседневное общение"
+    "id": "questions_requests_and_permission",
+    "label": "Вопросы, просьбы и разрешения"
   },
-  {
-    "id": "family_and_relationships",
-    "label": "Семья и отношения"
-  },
-  {
-    "id": "daily_routine",
-    "label": "Распорядок дня и быт"
-  },
-  {
-    "id": "food_and_restaurants",
-    "label": "Еда, напитки и рестораны"
-  },
-  {
-    "id": "shopping_and_prices",
-    "label": "Покупки и цены"
-  },
-  {
-    "id": "travel_and_navigation",
-    "label": "Путешествия и ориентирование в городе"
-  },
-  {
-    "id": "transport_and_tickets",
-    "label": "Транспорт и билеты"
-  },
-  {
-    "id": "hotels_and_accommodation",
-    "label": "Отели и проживание"
-  },
-  {
-    "id": "work_and_career",
-    "label": "Работа и карьера"
-  },
-  {
-    "id": "it_and_technologies",
-    "label": "IT и современные технологии"
-  },
-  {
-    "id": "health_and_medicine",
-    "label": "Здоровье, медицина и аптека"
-  },
-  {
-    "id": "hobbies_and_free_time",
-    "label": "Хобби, досуг и спорт"
-  },
-  {
-    "id": "movies_music_and_art",
-    "label": "Кино, музыка и развлечения"
-  },
-  {
-    "id": "weather_and_seasons",
-    "label": "Погода и времена года"
-  },
-  {
-    "id": "emotions_and_feelings",
-    "label": "Эмоции и выражения чувств"
-  },
-  {
-    "id": "opinions_and_agreements",
-    "label": "Выражение мнения, согласие и несогласие"
-  },
-  {
-    "id": "emergencies_and_help",
-    "label": "Экстренные ситуации и просьбы о помощи"
-  },
-  {
-    "id": "phrasal_verbs_and_idioms",
-    "label": "Фразовые глаголы и идиомы"
-  },
-  {
-    "id": "time_and_planning",
-    "label": "Время, даты и планирование"
-  }
+  { "id": "opinions_and_discussions", "label": "Мнения и обсуждения" },
+  { "id": "problems_and_solutions", "label": "Проблемы и решения" },
+  { "id": "rules_law_and_safety", "label": "Правила, закон и безопасность" },
+  { "id": "science_and_world", "label": "Наука и окружающий мир" },
+  { "id": "adult_slang_and_swearing", "label": "18+: Интим, сленг и мат" }
 ]

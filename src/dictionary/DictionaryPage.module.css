@@ -38,6 +38,72 @@
   flex-direction: column;
 }
 
+.settingsModalBackdrop {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  background: rgba(5, 8, 20, 0.76);
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+
+.settingsModal {
+  width: min(840px, 100%);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 16px;
+  background: #141a2d;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.settingsModalHeader {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(173, 183, 220, 0.14);
+  background: #141a2d;
+  padding: 10px 20px;
+}
+
+.settingsModalHeader h2 {
+  margin: 0;
+  color: #f3f4fc;
+  font-size: 20px;
+}
+
+.settingsModalClose {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dce0f1;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.settingsModal > :last-child {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  flex: none;
+  align-self: stretch;
+  padding: 18px;
+}
+
 .header {
   position: sticky;
   z-index: 1;
@@ -222,6 +288,24 @@
 }
 
 @media (max-width: 640px) {
+  .settingsModalBackdrop {
+    padding: 12px;
+  }
+
+  .settingsModal {
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+
+  .settingsModalHeader {
+    padding-right: 14px;
+    padding-left: 16px;
+  }
+
+  .settingsModal > :last-child {
+    padding: 12px;
+  }
+
   .header {
     flex-wrap: wrap;
     min-height: 64px;

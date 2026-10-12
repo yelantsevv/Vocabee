@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './DictionaryPage.module.css';
 import {
   getDictionarySettings,
@@ -15,7 +15,6 @@ import { targetLanguages } from './dictionaryUtils.js';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
 import { SettingsPanel } from './SettingsPanel.jsx';
 import { useDictionaryCatalog } from './useDictionaryCatalog.js';
-import { DictionarySearch } from './DictionarySearch.jsx';
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -26,11 +25,22 @@ const DEFAULT_SETTINGS = {
 };
 
 export function DictionaryPage() {
-  const [activeView, setActiveView] = useState('dictionaries');
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
   const [cardRefreshVersion, setCardRefreshVersion] = useState(0);
+  const settingsCloseButtonRef = useRef(null);
   const catalog = useDictionaryCatalog();
+
+  useEffect(() => {
+    if (!settingsOpen) return undefined;
+    settingsCloseButtonRef.current?.focus();
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setSettingsOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [settingsOpen]);
 
   async function loadBuiltinDictionary(language) {
     await catalog.loadBuiltinDictionary(language);
@@ -47,11 +57,9 @@ export function DictionaryPage() {
     }
 
     if (requestedPreset === 'words-en') {
-      setActiveView('dictionaries');
       loadBuiltinDictionary('en');
     }
     if (requestedPreset === 'words-de') {
-      setActiveView('dictionaries');
       loadBuiltinDictionary('de');
     }
   }, []);
@@ -104,80 +112,54 @@ export function DictionaryPage() {
     '--vocabee-ui-font-scale': settings.interfaceFontScale / 100,
     '--vocabee-dictionary-font-size': `${settings.dictionaryFontSize}px`
   };
+  function refreshCards() {
+    setCardRefreshVersion((version) => version + 1);
+  }
+
   return (
     <main className={styles.page} style={pageStyle}>
-      <header className={styles.header}>
-        <a className={styles.brand} href="./dictionary.html" aria-label="Vocabee — словари">
-          <span className={styles.logo} aria-hidden="true">V</span>
-          <span>Vocabee</span>
-        </a>
-        <nav className={styles.navigation} aria-label="Разделы Vocabee">
-          <button
-            className={styles.navButton}
-            type="button"
-            aria-label="Обновить список карточек"
-            title="Обновить список карточек"
-            onClick={() => {
-              setActiveView('dictionaries');
-              setCardRefreshVersion((version) => version + 1);
-            }}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20 7v5h-5M4 17v-5h5" />
-              <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
-            </svg>
-          </button>
-          <button
-            className={clsx(styles.navButton, activeView === 'dictionaries' && styles.active)}
-            type="button"
-            aria-pressed={activeView === 'dictionaries'}
-            aria-label="Словари"
-            title="Словари"
-            onClick={() => setActiveView('dictionaries')}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m3.5 6 6.5-2 4.5 1.5v14L10 18l-6.5 2V6Z" />
-              <path d="M14.5 5.5 20.5 4v14l-6 1.5M10 4v14M6 8l2.5-.8M6 11l2.5-.8M16.5 8l2-.5M16.5 11l2-.5" />
-            </svg>
-          </button>
-          <button
-            className={clsx(styles.navButton, activeView === 'settings' && styles.active)}
-            type="button"
-            aria-pressed={activeView === 'settings'}
-            aria-label="Настройки"
-            title="Настройки"
-            onClick={() => setActiveView('settings')}
-          >⚙</button>
-        </nav>
-        {activeView === 'dictionaries' && (
-          <DictionarySearch
-            activeView={activeView}
-            selectedSourceLanguage={catalog.selectedSourceLanguage || (
-              ['my', 'words', 'phrases'].includes(catalog.catalogView) ? 'my-vocabee' : null
-            )}
-            sourceSearch={catalog.sourceSearch}
-            onSourceSearchChange={catalog.setSourceSearch}
-          />
+      <DictionaryCatalogPanel
+        catalog={catalog}
+        searchLanguage={catalog.selectedSourceLanguage || (
+          ['my', 'words', 'phrases'].includes(catalog.catalogView) ? 'my-vocabee' : null
         )}
-      </header>
+        onAddToLearning={catalog.addToLearning}
+        onOpenSettings={() => setSettingsOpen(true)}
+        onRefreshCards={refreshCards}
+        cardsPerLoad={settings.cardsPerLoad}
+        refreshVersion={cardRefreshVersion}
+      />
 
-      {activeView === 'dictionaries' ? (
-        <DictionaryCatalogPanel
-          catalog={catalog}
-          onAddToLearning={catalog.addToLearning}
-          onOpenSettings={() => setActiveView('settings')}
-          cardsPerLoad={settings.cardsPerLoad}
-          refreshVersion={cardRefreshVersion}
-        />
-      ) : (
-        <SettingsPanel
-          settings={settings}
-          updateSetting={updateSetting}
-          settingsStatus={settingsStatus}
-          catalog={catalog}
-          onLoadDictionary={loadBuiltinDictionary}
-        />
-      )}
+      {settingsOpen && createPortal((
+        <div
+          className={styles.settingsModalBackdrop}
+          style={pageStyle}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSettingsOpen(false);
+          }}
+        >
+          <section className={styles.settingsModal} role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+            <header className={styles.settingsModalHeader}>
+              <h2 id="settings-modal-title">Настройки</h2>
+              <button
+                ref={settingsCloseButtonRef}
+                className={styles.settingsModalClose}
+                type="button"
+                aria-label="Закрыть настройки"
+                onClick={() => setSettingsOpen(false)}
+              >×</button>
+            </header>
+            <SettingsPanel
+              settings={settings}
+              updateSetting={updateSetting}
+              settingsStatus={settingsStatus}
+              catalog={catalog}
+              onLoadDictionary={loadBuiltinDictionary}
+              modal
+            />
+          </section>
+        </div>
+      ), document.body)}
 
       <footer className={styles.footer}>
         Карточки и языковые базы отображаются в разделе «Словари».

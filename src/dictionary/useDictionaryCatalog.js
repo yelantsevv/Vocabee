@@ -21,24 +21,11 @@ import {
 const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
 const CATALOG_FILTERS_VERSION = 4;
 const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
-const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'phrasal'];
+const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'modal', 'phrasal'];
 const PROGRESS_VIEWS = ['learning', 'learned', 'remaining'];
-const SORT_OPTIONS = ['popular', 'alphabetical', 'progress', 'progress-desc'];
-const CATEGORY_SORT_PREFIX = 'category:';
 const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
 const DEFAULT_SOURCE_CONNECTIONS = { my: true, language: true };
-const AVAILABLE_CATEGORIES = new Set(
-  phraseCategories.map(({ id }) => `${CATEGORY_SORT_PREFIX}${id}`)
-);
-
-function isAvailableSortOption(sort) {
-  return SORT_OPTIONS.includes(sort) || AVAILABLE_CATEGORIES.has(sort);
-}
-
-function getSelectedCategory(sort) {
-  if (!sort.startsWith(CATEGORY_SORT_PREFIX)) return null;
-  return sort.slice(CATEGORY_SORT_PREFIX.length);
-}
+const AVAILABLE_CATEGORIES = new Set(phraseCategories.map(({ id }) => id));
 
 function createMyDictionaryRecord(entries) {
   if (!entries.length) return null;
@@ -77,7 +64,7 @@ function readCatalogFilters() {
     selectedSourceLanguage: null,
     sourceLevels: ['A1', 'A2', 'B1'],
     sourceVerbTypes: ['irregular', 'phrasal'],
-    sourceSort: 'popular',
+    sourceCategories: [],
     sourceSearch: '',
     progressViews: PROGRESS_VIEWS
   };
@@ -97,9 +84,9 @@ function readCatalogFilters() {
       sourceVerbTypes: Array.isArray(saved.sourceVerbTypes)
         ? saved.sourceVerbTypes.filter((type) => AVAILABLE_VERB_TYPES.includes(type))
         : defaults.sourceVerbTypes,
-      sourceSort: isAvailableSortOption(saved.sourceSort)
-        ? saved.sourceSort
-        : defaults.sourceSort,
+      sourceCategories: Array.isArray(saved.sourceCategories)
+        ? saved.sourceCategories.filter((category) => AVAILABLE_CATEGORIES.has(category))
+        : [],
       sourceSearch: typeof saved.sourceSearch === 'string' ? saved.sourceSearch : defaults.sourceSearch,
       progressViews: Array.isArray(saved.progressViews)
         ? saved.progressViews.filter((view) => PROGRESS_VIEWS.includes(view))
@@ -133,7 +120,7 @@ export function useDictionaryCatalog() {
   const [catalogError, setCatalogError] = useState('');
   const [sourceLevels, setSourceLevels] = useState(initialFilters.sourceLevels);
   const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
-  const [sourceSort, setSourceSort] = useState(initialFilters.sourceSort);
+  const [sourceCategories, setSourceCategories] = useState(initialFilters.sourceCategories);
   const [sourceSearch, setSourceSearch] = useState(initialFilters.sourceSearch);
   const [progressViews, setProgressViews] = useState(initialFilters.progressViews);
   const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
@@ -301,14 +288,14 @@ export function useDictionaryCatalog() {
         selectedSourceLanguage,
         sourceLevels,
         sourceVerbTypes,
-        sourceSort,
+        sourceCategories,
         sourceSearch,
         progressViews
       }));
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
     }
-  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceSort, sourceSearch, progressViews]);
+  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, sourceSearch, progressViews]);
 
   useEffect(() => {
     try {
@@ -353,14 +340,13 @@ export function useDictionaryCatalog() {
       })));
   }, [catalogView, importedDictionaries, selectedSourceLanguage, sourceConnections, sourceMetadata]);
 
-  const selectedCategory = getSelectedCategory(sourceSort);
   const progressCountEntries = catalogView === 'phrases'
     ? selectedSourceDictionary.filter((entry) => {
       const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
       const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
       const matchesType = sourceVerbTypes.length === 0
         || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
-      const matchesCategory = !selectedCategory || entry.category === selectedCategory;
+      const matchesCategory = sourceCategories.length === 0 || sourceCategories.includes(entry.category);
       return matchesLevel && matchesType && matchesCategory;
     })
     : selectedSourceDictionary;
@@ -390,7 +376,6 @@ export function useDictionaryCatalog() {
 
   const filteredSourceEntries = useMemo(() => {
     const query = sourceSearch.trim().toLocaleLowerCase();
-    const selectedCategory = getSelectedCategory(sourceSort);
     const entries = selectedSourceDictionary.filter((entry) => {
       const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
       const learningLevel = getEntryLearningLevel(
@@ -408,9 +393,9 @@ export function useDictionaryCatalog() {
           example.category || ''
         ])
       ].join(' ').toLocaleLowerCase();
-      const matchesCategory = !selectedCategory
-        || entry.category === selectedCategory
-        || (entry.examples || []).some((example) => example.category === selectedCategory);
+      const matchesCategory = catalogView !== 'phrases'
+        || sourceCategories.length === 0
+        || sourceCategories.includes(entry.category);
 
       const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
       const matchesType = entry._isPhrase
@@ -430,17 +415,6 @@ export function useDictionaryCatalog() {
         && (!query || searchableText.includes(query)) && matchesProgress;
     });
 
-    if (sourceSort === 'alphabetical') {
-      return entries.sort((a, b) => a.word.localeCompare(b.word, a._catalogLanguage || selectedSourceLanguage));
-    }
-    if (sourceSort === 'progress' || sourceSort === 'progress-desc') {
-      return entries.sort((a, b) => {
-        const progressDifference = getEntryLearningLevel(a, a._learningSource || a._catalogId || a._catalogLanguage || selectedSourceLanguage, learningLevelOverrides)
-          - getEntryLearningLevel(b, b._learningSource || b._catalogId || b._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
-        return (sourceSort === 'progress-desc' ? -progressDifference : progressDifference)
-          || (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity);
-      });
-    }
     return entries.sort((a, b) => (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity));
   }, [
     learningLevelOverrides,
@@ -448,7 +422,7 @@ export function useDictionaryCatalog() {
     selectedSourceDictionary,
     selectedSourceLanguage,
     sourceSearch,
-    sourceSort,
+    sourceCategories,
     sourceLevels,
     sourceVerbTypes,
     sourceMetadata
@@ -587,8 +561,8 @@ export function useDictionaryCatalog() {
     setSourceLevels,
     sourceVerbTypes,
     setSourceVerbTypes,
-    sourceSort,
-    setSourceSort,
+    sourceCategories,
+    setSourceCategories,
     sourceSearch,
     catalogView,
     setCatalogView,

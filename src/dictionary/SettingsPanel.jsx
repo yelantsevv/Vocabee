@@ -29,7 +29,7 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, 
   );
 }
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary }) {
+export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, modal = false }) {
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const quickLoadActions = dictionaryQuickActions.map((action) => {
     const sourceId = action.id.slice('words-'.length);
@@ -48,7 +48,7 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
   });
 
   return (
-    <section className={styles.content} aria-label="Настройки">
+    <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label="Настройки">
       <section className={panelStyles.settings} aria-label="Настройки Vocabee">
         <SettingsActionButtons
           actions={quickLoadActions}

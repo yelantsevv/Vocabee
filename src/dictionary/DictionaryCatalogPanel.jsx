@@ -6,6 +6,7 @@ import { getEntryLearningLevel } from './dictionaryUtils.js';
 import { openBrowserExtensionSettings } from './storage.js';
 import phraseCategories from '../../dictionary/phrase-categories.json';
 import { DictionaryWordCard } from '../shared/DictionaryWordCard.jsx';
+import { DictionarySearch } from './DictionarySearch.jsx';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -24,14 +25,17 @@ function shuffleEntries(entries) {
 
 export function DictionaryCatalogPanel({
   catalog,
+  searchLanguage,
   onAddToLearning,
   onOpenSettings,
+  onRefreshCards,
   cardsPerLoad,
   refreshVersion
 }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const revealTranslationTimer = useRef(null);
+  const cardListRef = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -44,16 +48,16 @@ export function DictionaryCatalogPanel({
     setSourceLevels,
     sourceVerbTypes,
     setSourceVerbTypes,
-    sourceSort,
-    setSourceSort,
+    sourceCategories,
+    setSourceCategories,
+    sourceSearch,
+    setSourceSearch,
     progressViews,
     setProgressViews,
     sourceConnections,
     setSourceConnections,
     overallDictionaryProgress,
     selectedSourceDictionary,
-    selectedLevelEntries,
-    levelLearningProgress,
     learnedCount,
     inProgressCount,
     remainingCount,
@@ -143,9 +147,10 @@ export function DictionaryCatalogPanel({
         >
           <span style={{ width: `${overallDictionaryProgress}%` }} />
         </div>
-        <div className={styles.filterTopRow}>
-          <div className={styles.sourceControls}>
-            <div className={styles.sourceViewButtons} role="group" aria-label="Раздел словаря">
+        <div className={styles.filterLayout}>
+          <div className={styles.filterLeftGroup}>
+            <div className={styles.filterLeftTopRow}>
+          <div className={styles.sourceViewButtons} role="group" aria-label="Раздел словаря">
               <button
                 className={clsx(styles.sourceViewButton, sourceConnections.my && styles.selected)}
                 type="button"
@@ -182,29 +187,10 @@ export function DictionaryCatalogPanel({
                 aria-pressed={catalogView === 'phrases'}
                 onClick={() => setCatalogView('phrases')}
               >Фразы</button>
-            </div>
-            <label className={styles.filterField}>
-              <select
-                id="source-sort"
-                aria-label="Сортировка"
-                value={sourceSort}
-                onChange={(event) => setSourceSort(event.target.value)}
-              >
-                <option value="popular">🔥 По популярности</option>
-                <option value="alphabetical">🔤 По алфавиту</option>
-                <option value="progress">🧠 Сначала меньше прогресс</option>
-                <option value="progress-desc">🧠 Сначала больше прогресс</option>
-                <optgroup label="Категории фраз">
-                  {phraseCategories.map(({ id, label }) => (
-                    <option key={id} value={`category:${id}`}>{label}</option>
-                  ))}
-                </optgroup>
-              </select>
-            </label>
           </div>
 
-          <div className={styles.filterStack}>
-            <fieldset className={styles.filterGroup} aria-label="Уровень">
+          <fieldset className={styles.filterGroup} aria-label="Уровень">
+            <div className={styles.levelControls}>
               <div className={styles.filterChips}>
                 {['A1', 'A2', 'B1', 'B2'].map((level) => (
                   <button
@@ -216,49 +202,74 @@ export function DictionaryCatalogPanel({
                   >{level}</button>
                 ))}
               </div>
-            </fieldset>
-            <div className={styles.levelProgress}>
-              <div className={styles.levelProgressLabel}>
-                <span>Прогресс изучения</span>
-                <span>{levelLearningProgress}%</span>
-              </div>
-              <div
-                className={styles.levelProgressTrack}
-                role="progressbar"
-                aria-label="Прогресс изучения слов выбранных уровней"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={levelLearningProgress}
-              >
-                <span style={{ width: `${levelLearningProgress}%` }} />
-              </div>
-              <span className={styles.levelProgressHint}>
-                {sourceLevels.length ? sourceLevels.join(', ') : 'Все уровни'} · {selectedLevelEntries.length} слов
-              </span>
+              <DictionarySearch
+                selectedSourceLanguage={searchLanguage}
+                sourceSearch={sourceSearch}
+                onSourceSearchChange={setSourceSearch}
+              />
+            </div>
+          </fieldset>
+            </div>
+            <div className={styles.filterLeftBottomRow}>
+          <label className={styles.filterField}>
+            <select
+              id="source-categories"
+              aria-label="Категории фраз"
+              value={sourceCategories[0] || ''}
+              onChange={(event) => setSourceCategories(event.target.value ? [event.target.value] : [])}
+            >
+              <option value="">Все категории</option>
+              {phraseCategories.map(({ id, label }) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
+            </select>
+          </label>
+          <button
+            className={styles.startLearningButton}
+            type="button"
+            onClick={() => {
+              setProgressViews(['remaining']);
+              requestAnimationFrame(() => cardListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+            }}
+          >Начать изучение</button>
+          <button
+            className={styles.refreshCardsButton}
+            type="button"
+            aria-label="Обновить список карточек"
+            title="Обновить список карточек"
+            onClick={onRefreshCards}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 7v5h-5M4 17v-5h5" />
+              <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
+            </svg>
+          </button>
             </div>
           </div>
-
-          <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
-            <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
-              {[
-                ['regular', '✅ Правильные'],
-                ['irregular', '⚡ Неправильные'],
-                ['phrasal', '💬 Фразовые']
-              ].map(([type, label]) => (
-                <button
-                  className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
-                  key={type}
-                  type="button"
-                  aria-pressed={sourceVerbTypes.includes(type)}
-                  onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
-                >{label}</button>
-              ))}
-            </div>
+          <div className={styles.filterRightGroup}>
+            <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
+              <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
+                {[
+                  ['regular', '✅ Правильные'],
+                  ['irregular', '⚡ Неправильные'],
+                  ['modal', '🧩 Модальные'],
+                  ['phrasal', '💬 Фразовые']
+                ].map(([type, label]) => (
+                  <button
+                    className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
+                    key={type}
+                    type="button"
+                    aria-pressed={sourceVerbTypes.includes(type)}
+                    onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
+                  >{label}</button>
+                ))}
+              </div>
+            </fieldset>
             <div className={styles.progressFilters} role="group" aria-label="Статус изучения слов">
               {[
-                ['learning', `В изучении · ${inProgressCount}`],
-                ['learned', `Изученные · ${learnedCount}`],
-                ['remaining', `Все слова · ${remainingCount}`]
+                ['learning', `Изучаю (${inProgressCount})`],
+                ['learned', `Изученные (${learnedCount})`],
+                ['remaining', `Все слова (${remainingCount})`]
               ].map(([view, label]) => (
                 <button
                   className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
@@ -268,8 +279,15 @@ export function DictionaryCatalogPanel({
                   onClick={() => toggleValue(progressViews, setProgressViews, view)}
                 >{label}</button>
               ))}
+              <button
+                className={`${styles.progressButton} ${styles.settingsButton}`}
+                type="button"
+                aria-label="Открыть настройки"
+                title="Настройки"
+                onClick={onOpenSettings}
+              >⚙</button>
             </div>
-          </fieldset>
+          </div>
         </div>
       </section>
 
@@ -299,7 +317,11 @@ export function DictionaryCatalogPanel({
       <p className={styles.dictionaryCount}>
         Показано {Math.min(displayedCardCount, shuffledEntries.length)} из {shuffledEntries.length} {catalogView === 'phrases' ? 'фраз' : 'слов'}
       </p>
-      <section className={commonStyles.wordList} aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}>
+      <section
+        className={commonStyles.wordList}
+        aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}
+        ref={cardListRef}
+      >
         <ul>
           {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
             const learningLevel = getEntryLearningLevel(
@@ -313,7 +335,8 @@ export function DictionaryCatalogPanel({
                 word={entry.word}
                 translation={entry.definitions.join(' · ')}
                 learningLevel={learningLevel}
-                forms={entry.is_irregular && ['verb', 'phrasal_verb', 'phrasal-verb'].includes(entry.part_of_speech)
+                forms={['verb', 'i-verb', 'm-verb', 'ph-verb', 'r-verb', 'phrasal_verb', 'phrasal-verb']
+                  .includes(entry.part_of_speech)
                   && entry.forms?.past_simple && entry.forms?.past_participle
                   ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
                   : undefined}
@@ -333,8 +356,8 @@ export function DictionaryCatalogPanel({
                     <ul className={styles.exampleList}>
                       {entry.examples
                         .filter((example) => (
-                          !sourceSort.startsWith('category:')
-                          || example.category === sourceSort.slice('category:'.length)
+                          sourceCategories.length === 0
+                          || sourceCategories.includes(example.category)
                         ))
                         .map((example, index) => (
                         <li key={`${example.phrase}-${index}`}>
