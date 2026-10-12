@@ -27,7 +27,7 @@ function copyExtensionRuntime() {
         resolve(outputDirectory, 'vocabee/icons'),
         { recursive: true }
       );
-      const manifest = JSON.parse(readFileSync(resolve(projectRoot, 'manifest.json'), 'utf8'));
+      const manifest = JSON.parse(readFileSync(resolve(sourceDirectory, 'vocabee/manifest.json'), 'utf8'));
       manifest.background.service_worker = manifest.background.service_worker.replace(/^src\//, '');
       manifest.icons = Object.fromEntries(
         Object.entries(manifest.icons).map(([size, file]) => [size, file.replace(/^src\//, '')])
@@ -43,7 +43,7 @@ function copyExtensionRuntime() {
         js: contentScript.js.map((file) => file.replace(/^src\//, '').replace(/^dist\//, ''))
       }));
       writeFileSync(
-        resolve(outputDirectory, 'manifest.json'),
+        resolve(outputDirectory, 'vocabee/manifest.json'),
         `${JSON.stringify(manifest, null, 2)}\n`
       );
     }

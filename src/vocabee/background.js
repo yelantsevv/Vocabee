@@ -6,6 +6,18 @@ const DICTIONARY_STORE = 'words';
 const CUSTOM_DICTIONARY_DATABASE_PREFIX = 'vocabee-custom-dictionary-';
 const SOURCE_LANGUAGES = ['en', 'de'];
 const TARGET_LANGUAGES = ['en', 'ru', 'uk', 'de'];
+const ACTIVE_ICON = {
+  16: 'icons/vocabee-16.png',
+  32: 'icons/vocabee-32.png'
+};
+const INACTIVE_ICON = {
+  16: 'icons/vocabee-inactive-16.png',
+  32: 'icons/vocabee-inactive-32.png'
+};
+const DEFAULT_ACTIVE_ICON = {
+  16: 'icons/vocabee-16.png',
+  32: 'icons/vocabee-32.png'
+};
 
 let myVocabularyDatabase;
 let legacyDictionaryMigration;
@@ -28,22 +40,125 @@ function openExistingDatabase(databaseName) {
   });
 }
 
+function isLocalDictionaryUrl(url) {
+  return url.protocol === 'http:'
+    && url.port === '5173'
+    && ['localhost', '127.0.0.1'].includes(url.hostname)
+    && url.pathname === '/dictionary/dictionary.html';
+}
+
+function isSupportedUrl(value) {
+  try {
+    const url = new URL(value || '');
+    return url.protocol === 'https:' && url.hostname === 'www.youtube.com'
+      || isLocalDictionaryUrl(url);
+  } catch {
+    return false;
+  }
+}
+
+function updateTabIcon(tabId, url) {
+  const active = isSupportedUrl(url);
+  chrome.action.setIcon({ tabId, path: active ? ACTIVE_ICON : INACTIVE_ICON });
+  chrome.action.setTitle({
+    tabId,
+    title: active ? 'Vocabee' : 'Vocabee работает только на YouTube'
+  });
+  if (active) chrome.action.setBadgeText({ tabId, text: '' });
+}
+
+function updateActiveTabIcon() {
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, ([tab]) => {
+    if (tab?.id !== undefined) updateTabIcon(tab.id, tab.url);
+    else chrome.action.setIcon({ path: DEFAULT_ACTIVE_ICON });
+  });
+}
+
+function clearRestrictedTabBadge(tabId) {
+  chrome.action.setBadgeText({ tabId, text: '' });
+  chrome.action.setIcon({ tabId, path: ACTIVE_ICON });
+  chrome.action.setTitle({ tabId, title: 'Vocabee' });
+}
+
+function showUnsupportedSiteNotice(tabId) {
+  chrome.action.setBadgeBackgroundColor({ tabId, color: '#b3261e' });
+  chrome.action.setBadgeText({ tabId, text: 'YT' });
+  chrome.action.setTitle({ tabId, title: 'Vocabee работает только на YouTube' });
+
+  chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const hostId = 'vocabee-site-restriction-toast';
+      document.getElementById(hostId)?.remove();
+
+      const host = document.createElement('div');
+      host.id = hostId;
+      host.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:2147483647';
+      const shadow = host.attachShadow({ mode: 'closed' });
+      const style = document.createElement('style');
+      style.textContent = `
+        div {
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: #25242c;
+          color: #fff;
+          box-shadow: 0 4px 18px #0005;
+          font: 14px/1.4 system-ui, sans-serif;
+        }
+      `;
+      const message = document.createElement('div');
+      message.textContent = 'Расширение Vocabee работает только на YouTube.';
+      shadow.append(style, message);
+      document.documentElement.append(host);
+      setTimeout(() => host.remove(), 3500);
+    }
+  }).catch(() => {
+    // Chrome internal pages do not allow script injection; the badge and title remain visible.
+  });
+}
+
 chrome.action.onClicked.addListener(() => {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    const tabId = tabs[0]?.id;
+    const tab = tabs[0];
+    const tabId = tab?.id;
     if (tabId === undefined) return;
+
+    let url;
+    try {
+      url = new URL(tab.url || '');
+    } catch {
+      showUnsupportedSiteNotice(tabId);
+      return;
+    }
+
+    if (url.hostname !== 'www.youtube.com' && !isLocalDictionaryUrl(url)) {
+      chrome.action.setIcon({ tabId, path: INACTIVE_ICON });
+      showUnsupportedSiteNotice(tabId);
+      return;
+    }
+
+    clearRestrictedTabBadge(tabId);
+    if (isLocalDictionaryUrl(url)) return;
 
     chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_VOCABEE_PANEL' }, () => {
       if (chrome.runtime.lastError) {
-        chrome.tabs.create({ url: chrome.runtime.getURL('dictionary/dictionary.html') }, () => {
-          if (chrome.runtime.lastError) {
-            console.error('Vocabee: could not open dictionary page', chrome.runtime.lastError.message);
-          }
-        });
+        console.error('Vocabee: YouTube content script is unavailable', chrome.runtime.lastError.message);
       }
     });
   });
 });
+
+chrome.tabs.onActivated.addListener(updateActiveTabIcon);
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url || changeInfo.status === 'complete') {
+    updateTabIcon(tabId, changeInfo.url || tab.url);
+  }
+});
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId !== chrome.windows.WINDOW_ID_NONE) updateActiveTabIcon();
+});
+chrome.runtime.onStartup.addListener(updateActiveTabIcon);
+chrome.runtime.onInstalled.addListener(updateActiveTabIcon);
 
 async function migrateLearningWordsToMyDictionary(database, legacyDatabase, databaseName) {
   if (!legacyDatabase.objectStoreNames.contains(DICTIONARY_STORE)) {

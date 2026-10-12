@@ -1,6 +1,7 @@
 (() => {
   const CHANNEL = 'VOCABEE_LOCAL_DICTIONARY';
   const isLocalHost = window.location.protocol === 'http:'
+    && window.location.port === '5173'
     && ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
   if (!isLocalHost || window.location.pathname !== '/dictionary/dictionary.html') {

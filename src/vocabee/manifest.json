@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Vocabee",
+  "version": "1.0.1",
+  "description": "Бесплатный переводчик слов и фраз в субтитрах YouTube. Создано с помощью ИИ.",
+  "icons": {
+    "16": "icons/vocabee-16.png",
+    "32": "icons/vocabee-32.png",
+    "48": "icons/vocabee-48.png",
+    "128": "icons/vocabee-128.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://translate.googleapis.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Vocabee",
+    "default_icon": {
+      "16": "icons/vocabee-inactive-16.png",
+      "32": "icons/vocabee-inactive-32.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "css": ["content/content.css", "content/content-app.css"],
+      "js": [
+        "content/content-core.js",
+        "content/caption-language.js",
+        "content/video-pause.js",
+        "content/main.js",
+        "content/content-app.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "http://localhost/dictionary/dictionary.html*",
+        "http://127.0.0.1/dictionary/dictionary.html*"
+      ],
+      "js": ["content/dev-bridge.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
