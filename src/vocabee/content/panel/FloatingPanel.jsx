@@ -54,7 +54,11 @@ export function FloatingPanel({ app }) {
   };
 
   function selectView(view) {
-    update((current) => ({ ...current, activeView: view, minimized: false }));
+    update((current) => {
+      if (current.minimized) return { ...current, activeView: view, minimized: false };
+      if (current.activeView === view) return { ...current, minimized: true };
+      return { ...current, activeView: view, minimized: false };
+    });
   }
 
   return (
@@ -74,10 +78,8 @@ export function FloatingPanel({ app }) {
       onDoubleClick={(event) => event.stopPropagation()}
     >
       <PanelHeader
-        minimized={panelState.minimized}
         activeView={panelState.activeView}
         onSelectView={selectView}
-        onMinimize={() => update((current) => ({ ...current, minimized: !current.minimized }))}
         onPointerDown={interactions.handleHeaderPointerDown}
         onPointerMove={interactions.handleHeaderPointerMove}
         onPointerUp={interactions.handleHeaderPointerUp}
@@ -86,6 +88,7 @@ export function FloatingPanel({ app }) {
         {panelState.activeView === 'settings'
           ? <PanelSettings
               preferences={preferences}
+              homepageUrl={app.homepageUrl}
               dictionaryFontSize={dictionaryFontSize}
               interfaceFontScale={interfaceFontScale}
               theme={theme}

@@ -2,6 +2,24 @@
   display: block;
 }
 
+.websiteButton {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--vb-selected-border);
+  border-radius: 10px;
+  background: var(--vb-selected);
+  color: var(--vb-text);
+  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.websiteButton:hover {
+  background: var(--vb-hover);
+}
+
 .fontSetting {
   display: grid;
   gap: 8px;
@@ -31,14 +49,8 @@
   cursor: pointer;
 }
 
-.fontSettingPreview {
+.dictionaryPreview {
   margin: 0;
-  color: var(--vb-accent);
-  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.dictionaryFontPreview {
-  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
+  padding: 0;
+  list-style: none;
 }

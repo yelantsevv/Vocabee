@@ -5,6 +5,11 @@ globalThis.Vocabee = globalThis.Vocabee || {};
   const translationCache = new Map();
 
   app.storage = chrome.storage.sync || chrome.storage.local;
+  try {
+    app.homepageUrl = chrome.runtime.getManifest().homepage_url || '';
+  } catch (_error) {
+    app.homepageUrl = '';
+  }
   app.isExtensionContextValid = function () {
     try {
       return Boolean(chrome.runtime?.id);
