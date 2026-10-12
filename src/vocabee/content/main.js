@@ -29,6 +29,8 @@
   }
 
   loadSettings();
+  if (window.location.hostname !== 'www.youtube.com') return;
+
   processCaptions();
   observePage();
 

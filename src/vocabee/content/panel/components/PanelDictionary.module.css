@@ -8,29 +8,6 @@
   min-height: 0;
 }
 
-.heading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  column-gap: 10px;
-  row-gap: 2px;
-  margin: 0 2px 10px;
-}
-
-.title {
-  margin: 0;
-  color: var(--vb-text);
-  font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
-  font-weight: 700;
-}
-
-.languagePair {
-  margin: 0;
-  color: var(--vb-muted);
-  font-size: calc(11px * var(--vocabee-ui-font-scale, 1));
-  line-height: 1.4;
-}
-
 .dictionary {
   max-height: min(220px, 35vh);
   overflow-y: auto;
@@ -84,11 +61,4 @@
   border-color: var(--vb-border);
   background-color: var(--vb-surface);
   color: var(--vb-accent);
-}
-
-.hint {
-  margin: 9px 2px 0;
-  color: var(--vb-subtle);
-  font-size: calc(10px * var(--vocabee-ui-font-scale, 1));
-  line-height: 1.5;
 }

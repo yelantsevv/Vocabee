@@ -35,6 +35,8 @@
     app.showTranslationPopup(selectedText.text, selectedText.rect, null, selectedText.fontSize);
   };
 
+  if (window.location.hostname !== 'www.youtube.com') return;
+
   let suppressNextSelectionTranslation = false;
   let suppressSelectionTimer;
 

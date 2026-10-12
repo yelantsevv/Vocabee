@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getLanguagePairs } from '../settings.js';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useDictionary(app, active) {
   const [words, setWords] = useState([]);
@@ -20,9 +19,7 @@ export function useDictionary(app, active) {
         return;
       }
       setWords(response.words);
-      setStatus(response.words.length
-        ? `Сохранено слов: ${response.words.length}`
-        : 'Пока нет сохранённых слов. Добавляй их из карточки перевода.');
+      setStatus(response.words.length ? '' : 'Нет сохранённых слов.');
     });
   }, []);
 
@@ -30,10 +27,5 @@ export function useDictionary(app, active) {
     if (active) load();
   }, [active, load]);
 
-  const languagePairs = useMemo(
-    () => getLanguagePairs(words, app, app.state.sourceLang, app.state.lang),
-    [app, words, app.state.sourceLang, app.state.lang]
-  );
-
-  return { words, status, languagePairs, load };
+  return { words, status, load };
 }

@@ -11,7 +11,7 @@
   },
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "https://www.youtube.com/*",
+    "<all_urls>",
     "https://translate.googleapis.com/*"
   ],
   "background": {
@@ -26,7 +26,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*"],
+      "matches": ["<all_urls>"],
       "css": ["src/vocabee/content/content.css", "dist/vocabee/content/content-app.css"],
       "js": [
         "src/vocabee/content/content-core.js",

@@ -5,13 +5,3 @@ export function getDefaultPosition() {
     y: 24
   };
 }
-
-export function getLanguagePairs(words, app, fallbackSource, fallbackTarget) {
-  if (!words.length) {
-    return [`${app.languageNames[fallbackSource] || fallbackSource} → ${app.languageNames[fallbackTarget] || fallbackTarget}`];
-  }
-
-  return [...new Set(words.map((word) =>
-    `${app.languageNames[word.sourceLang] || word.sourceLang} → ${app.languageNames[word.targetLang] || word.targetLang}`
-  ))];
-}
