@@ -1,4 +1,4 @@
-import { targetLanguages as targetLanguageOptions } from '../shared/languages.js';
+import { targetLanguages as targetLanguageOptions } from './languages.js';
 
 export const languageNames = {
   en: 'Английский',

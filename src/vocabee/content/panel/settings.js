@@ -1,10 +1,3 @@
-export {
-  DEFAULT_DICTIONARY_FONT_SIZE,
-  DEFAULT_INTERFACE_FONT_SCALE,
-  normalizeDictionaryFontSize,
-  normalizeInterfaceFontScale
-} from '../../../shared/settings.js';
-
 export function getDefaultPosition() {
   const panelWidth = Math.min(320, window.innerWidth - 16);
   return {

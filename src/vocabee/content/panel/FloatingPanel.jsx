@@ -5,7 +5,7 @@ import {
   DEFAULT_INTERFACE_FONT_SCALE,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale
-} from './settings.js';
+} from '../../settings/display.js';
 import { PanelDictionary } from './components/PanelDictionary.jsx';
 import { PanelHeader } from './components/PanelHeader.jsx';
 import { PanelSettings } from './components/PanelSettings.jsx';

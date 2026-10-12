@@ -10,7 +10,7 @@ import {
   DEFAULT_INTERFACE_FONT_SCALE,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale
-} from '../shared/settings.js';
+} from './settings.js';
 import { targetLanguages } from './dictionaryUtils.js';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
 import { SettingsPanel } from './SettingsPanel.jsx';
