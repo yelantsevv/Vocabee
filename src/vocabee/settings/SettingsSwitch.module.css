@@ -1,0 +1,22 @@
+.row {
+  display: flex;
+  width: 100%;
+  min-height: 55px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--vb-divider);
+  background: transparent;
+  color: var(--vb-text);
+  cursor: pointer;
+  padding: 9px 2px;
+  font: inherit;
+  text-align: left;
+}
+
+.label {
+  min-width: 0;
+  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 650;
+}

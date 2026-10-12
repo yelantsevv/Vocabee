@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { SettingsSwitch } from './SettingsSwitch.jsx';
 import styles from './TranslationSettings.module.css';
 
 export function TranslationSettings({
@@ -11,19 +12,27 @@ export function TranslationSettings({
 
   return (
     <div className={styles.controls} data-variant={variant}>
-      <label className={clsx(styles.row, styles.toggleRow)} htmlFor={enabledId}>
-        <span className={styles.copy}>
-          <strong>Перевод на русский</strong>
-          <small>Слова и фразы на YouTube</small>
-        </span>
-        <input
+      {variant === 'compact' ? (
+        <label className={clsx(styles.row, styles.toggleRow)} htmlFor={enabledId}>
+          <span className={styles.copy}>
+            <strong>Перевод субтитров</strong>
+          </span>
+          <input
+            id={enabledId}
+            type="checkbox"
+            checked={enabled}
+            onChange={(event) => onEnabledChange(event.target.checked)}
+          />
+          <span className={styles.toggle} aria-hidden="true" />
+        </label>
+      ) : (
+        <SettingsSwitch
           id={enabledId}
-          type="checkbox"
+          label="Перевод субтитров"
           checked={enabled}
-          onChange={(event) => onEnabledChange(event.target.checked)}
+          onChange={onEnabledChange}
         />
-        <span className={styles.toggle} aria-hidden="true" />
-      </label>
+      )}
     </div>
   );
 }

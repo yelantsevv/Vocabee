@@ -2,32 +2,6 @@
   display: block;
 }
 
-.themeSetting {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid var(--vb-divider);
-  color: var(--vb-text);
-  padding: 12px 2px;
-  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
-}
-
-.themeSetting select {
-  max-width: 140px;
-  border: 1px solid var(--vb-border);
-  border-radius: 8px;
-  background: var(--vb-surface);
-  color: var(--vb-text);
-  padding: 6px 8px;
-  font: inherit;
-}
-
-.themeSetting select:focus-visible {
-  outline: 2px solid var(--vb-focus);
-  outline-offset: 2px;
-}
-
 .fontSetting {
   display: grid;
   gap: 8px;

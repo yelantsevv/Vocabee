@@ -44,12 +44,14 @@
 
 .toggle {
   position: relative;
-  width: var(--translation-setting-toggle-width, 38px);
-  height: var(--translation-setting-toggle-size, 22px);
+  width: var(--translation-setting-toggle-width, 42px);
+  height: var(--translation-setting-toggle-size, 24px);
   flex: 0 0 auto;
   border: 1px solid var(--vb-border, rgba(182, 191, 224, 0.22));
   border-radius: 99px;
   background: var(--vb-track, #353d59);
+  padding: 2px;
+  transition: background 0.16s ease, border-color 0.16s ease;
 }
 
 .toggle::after {
@@ -66,7 +68,7 @@
 
 .toggleRow input:checked + .toggle {
   border-color: var(--vb-focus, #8e6cff);
-  background: linear-gradient(110deg, #7b5cff, #a64dff);
+  background: var(--vb-focus, #8e6cff);
 }
 
 .toggleRow input:checked + .toggle::after {
@@ -112,18 +114,6 @@
 
 .controls[data-variant="compact"] .toggle {
   display: none;
-}
-
-.controls[data-variant="panel"] {
-  --translation-setting-row-padding: 9px 2px;
-  --translation-setting-toggle-height: 55px;
-  --translation-setting-title-size: calc(12px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-description-size: calc(10px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-toggle-width: 36px;
-  --translation-setting-toggle-size: 21px;
-  --translation-setting-toggle-inset: 2px;
-  --translation-setting-toggle-knob: 15px;
-  --translation-setting-toggle-shift: 15px;
 }
 
 .controls[data-variant="page"] {

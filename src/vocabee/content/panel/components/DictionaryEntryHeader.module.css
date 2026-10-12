@@ -20,16 +20,16 @@
 
 .entryWordBlock h2 {
   margin: 0;
-  color: #f3f4fc;
-  font-size: clamp(22px, 2.6vw, 30px);
+  color: var(--vb-text, #f3f4fc);
+  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
 
 .inlineForms {
   margin: 0;
-  color: #aeb5cb;
-  font-size: 14px;
+  color: var(--vb-muted, #aeb5cb);
+  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * 0.8 * var(--vocabee-ui-font-scale, 1));
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
@@ -38,8 +38,8 @@
   min-width: 0;
   flex: 1 1 auto;
   margin: 0;
-  color: #d2c4ff;
-  font-size: 18px;
+  color: var(--vb-accent, #d2c4ff);
+  font-size: calc(var(--vocabee-dictionary-font-size, 16px) * var(--vocabee-ui-font-scale, 1));
   line-height: 1.5;
   text-align: right;
   overflow-wrap: anywhere;
@@ -75,7 +75,7 @@
   border: 1px solid rgba(169, 91, 255, 0.5);
   border-radius: 50%;
   background: rgba(119, 82, 255, 0.15);
-  color: #e2d8ff;
+  color: var(--vb-text, #e2d8ff);
   cursor: pointer;
   padding: 0;
   transition: background 0.16s ease, border-color 0.16s ease;
@@ -128,8 +128,8 @@
   height: 46px;
   place-items: center;
   border-radius: 50%;
-  background: #171b30;
-  color: #e2d8ff;
+  background: var(--vb-surface, #171b30);
+  color: var(--vb-text, #e2d8ff);
   font-size: 12px;
   font-weight: 700;
 }
