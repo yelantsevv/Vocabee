@@ -6,14 +6,12 @@ globalThis.Vocabee = globalThis.Vocabee || {};
 
   app.storage = chrome.storage.sync || chrome.storage.local;
   app.state = { enabled: true, lang: 'ru', sourceLang: 'en' };
-  app.detectedCaptionLanguage = null;
   app.languageNames = {
     en: 'Английский',
     de: 'Немецкий',
     ru: 'Русский',
     uk: 'Украинский'
   };
-  app.targetLanguages = ['ru', 'uk'];
 
   app.escapeHtml = function (value = '') {
     return String(value)
@@ -92,17 +90,4 @@ globalThis.Vocabee = globalThis.Vocabee || {};
     translationCache.clear();
   };
 
-  app.setTargetLanguage = function (language) {
-    if (!app.targetLanguages.includes(language)) {
-      throw new Error(`Unsupported target language: ${language}`);
-    }
-
-    app.state.lang = language;
-    app.clearTranslationCache();
-    app.storage.set({ lang: language }, () => {
-      if (chrome.runtime.lastError) {
-        console.error('Vocabee: could not save target language', chrome.runtime.lastError.message);
-      }
-    });
-  };
 })(globalThis.Vocabee);

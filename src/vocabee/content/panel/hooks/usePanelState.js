@@ -20,7 +20,7 @@ function normalizeSavedState(savedState) {
   };
 }
 
-export function usePanelState(app, refreshSourceLanguage) {
+export function usePanelState(app) {
   const [panelState, setPanelState] = useState(initialPanelState);
   const [hydrated, setHydrated] = useState(false);
 
@@ -64,13 +64,12 @@ export function usePanelState(app, refreshSourceLanguage) {
           minimized: false
         };
       });
-      refreshSourceLanguage();
       sendResponse?.({ visible: true });
       return false;
     };
     chrome.runtime.onMessage.addListener(onToggle);
     return () => chrome.runtime.onMessage.removeListener(onToggle);
-  }, [refreshSourceLanguage, update]);
+  }, [update]);
 
   useEffect(() => {
     const onResize = () => {

@@ -31,8 +31,8 @@ export function useDictionary(app, active) {
   }, [active, load]);
 
   const languagePairs = useMemo(
-    () => getLanguagePairs(words, app, app.detectedCaptionLanguage || app.state.sourceLang, app.state.lang),
-    [app, words, app.detectedCaptionLanguage, app.state.lang]
+    () => getLanguagePairs(words, app, app.state.sourceLang, app.state.lang),
+    [app, words, app.state.sourceLang, app.state.lang]
   );
 
   return { words, status, languagePairs, load };

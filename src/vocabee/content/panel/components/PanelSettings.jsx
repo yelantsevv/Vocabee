@@ -23,10 +23,7 @@ export function PanelSettings({ preferences, dictionaryFontSize, interfaceFontSc
         idPrefix="panel"
         variant="panel"
         enabled={preferences.enabled}
-        sourceLanguage={preferences.sourceLanguage}
-        targetLanguage={preferences.targetLanguage}
         onEnabledChange={preferences.changeEnabled}
-        onTargetLanguageChange={preferences.changeLanguage}
       />
       <div className={styles.themeSetting}>
         <label htmlFor="vocabee-color-theme">Тема оформления</label>

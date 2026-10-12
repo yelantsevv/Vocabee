@@ -21,7 +21,7 @@ export function FloatingPanel({ app }) {
   const panelRef = useRef(null);
   const [theme, changeTheme] = useTheme();
   const preferences = usePanelPreferences(app);
-  const { panelState, setPanelState, hydrated, update, save } = usePanelState(app, preferences.refreshSourceLanguage);
+  const { panelState, setPanelState, hydrated, update, save } = usePanelState(app);
   const [dictionaryFontSize, changeDictionaryFontSize] = useStoredSetting({
     app,
     key: 'dictionaryFontSize',
@@ -38,13 +38,11 @@ export function FloatingPanel({ app }) {
   const interactions = usePanelInteractions({ panelRef, panelState, setPanelState, save });
 
   useEffect(() => {
-    app.refreshFloatingPanelLanguage = preferences.refreshSourceLanguage;
     app.refreshDictionaryView = dictionary.load;
     return () => {
-      if (app.refreshFloatingPanelLanguage === preferences.refreshSourceLanguage) delete app.refreshFloatingPanelLanguage;
       if (app.refreshDictionaryView === dictionary.load) delete app.refreshDictionaryView;
     };
-  }, [app, dictionary.load, preferences.refreshSourceLanguage]);
+  }, [app, dictionary.load]);
 
   const panelStyle = {
     left: `${panelState.x}px`,

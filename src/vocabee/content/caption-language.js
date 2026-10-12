@@ -23,43 +23,9 @@
     };
   };
 
-  function findCaptionSourceLanguage() {
-    const visibleCaption = Array.from(document.querySelectorAll('#ytp-caption-window-container .ytp-caption-segment'))
-      .find(app.isVisibleCaption);
-    if (!visibleCaption) return null;
-
-    const captionWindow = visibleCaption.closest('.caption-window');
-    const declaredLanguage = captionWindow?.getAttribute('lang')?.toLowerCase().split('-')[0];
-    if (declaredLanguage === 'en' || declaredLanguage === 'de') return declaredLanguage;
-    return /[äöüß]/i.test(visibleCaption.textContent) ? 'de' : 'en';
-  }
-
-  app.updateDetectedSourceLanguage = function () {
-    const nextLanguage = findCaptionSourceLanguage();
-    app.detectedCaptionLanguage = nextLanguage;
-    if (nextLanguage) app.state.sourceLang = nextLanguage;
-  };
-
-  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    if (message?.type !== 'GET_LANGUAGE_STATUS') return false;
-    app.updateDetectedSourceLanguage();
-    sendResponse({
-      sourceLanguage: app.detectedCaptionLanguage
-        ? app.languageNames[app.detectedCaptionLanguage]
-        : 'Субтитры не найдены',
-      targetLanguage: app.languageNames[app.state.lang] || 'Русский'
-    });
-    return false;
-  });
-
   app.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'sync' && areaName !== 'local') return;
     if (changes.enabled) app.state.enabled = Boolean(changes.enabled.newValue);
-    if (changes.lang) {
-      const language = changes.lang.newValue;
-      app.state.lang = app.targetLanguages.includes(language) ? language : 'ru';
-      app.clearTranslationCache();
-    }
   });
 
   app.translateSelectedPhrase = function () {

@@ -1,24 +1,19 @@
 import clsx from 'clsx';
-import { targetLanguages } from './languages.js';
 import styles from './TranslationSettings.module.css';
 
 export function TranslationSettings({
   idPrefix,
   variant = 'page',
   enabled,
-  sourceLanguage = '',
-  targetLanguage,
-  onEnabledChange,
-  onTargetLanguageChange
+  onEnabledChange
 }) {
   const enabledId = `${idPrefix}-enabled`;
-  const languageId = `${idPrefix}-language`;
 
   return (
     <div className={styles.controls} data-variant={variant}>
       <label className={clsx(styles.row, styles.toggleRow)} htmlFor={enabledId}>
         <span className={styles.copy}>
-          <strong>{variant === 'compact' ? 'Перевод на русский' : 'Перевод'}</strong>
+          <strong>Перевод на русский</strong>
           <small>Слова и фразы на YouTube</small>
         </span>
         <input
@@ -29,31 +24,6 @@ export function TranslationSettings({
         />
         <span className={styles.toggle} aria-hidden="true" />
       </label>
-
-      {variant !== 'compact' && (
-        <div className={clsx(styles.row, styles.languageRow)}>
-          <span className={styles.copy}>
-            <strong>Язык субтитров</strong>
-            <small>Определяется автоматически на YouTube</small>
-          </span>
-          <div className={styles.languageControls}>
-            {sourceLanguage && <span className={styles.sourceLanguage}>{sourceLanguage}</span>}
-            <label className={styles.targetLanguage} htmlFor={languageId}>
-              <span>Перевод</span>
-              <select
-                id={languageId}
-                aria-label="Язык перевода"
-                value={targetLanguage}
-                onChange={(event) => onTargetLanguageChange(event.target.value)}
-              >
-                {targetLanguages.map(([code, label]) => (
-                  <option key={code} value={code}>{label}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

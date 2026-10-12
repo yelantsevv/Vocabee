@@ -26,76 +26,6 @@
   font-size: var(--translation-setting-description-size, 10px);
 }
 
-.languageRow {
-  border-bottom: 1px solid var(--vb-divider, rgba(173, 183, 220, 0.1));
-  gap: 12px;
-  padding: var(--translation-setting-row-padding, 10px 2px);
-}
-
-.languageControls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--translation-setting-controls-gap, 12px);
-  min-width: 0;
-}
-
-.sourceLanguage {
-  max-width: var(--translation-setting-source-width, 125px);
-  overflow: hidden;
-  color: var(--vb-text, #d7d9eb);
-  font-size: var(--translation-setting-value-size, 11px);
-  font-weight: 600;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.targetLanguage {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--vb-text, #d7d9eb);
-  font-size: var(--translation-setting-value-size, 11px);
-}
-
-.targetLanguage select {
-  width: var(--translation-setting-select-width, 140px);
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--vb-border, rgba(176, 186, 222, 0.2));
-  border-radius: 9px;
-  outline: none;
-  background-color: var(--vb-surface, #202640);
-  background-image:
-    linear-gradient(45deg, transparent 50%, #aeb5cb 50%),
-    linear-gradient(135deg, #aeb5cb 50%, transparent 50%);
-  background-position:
-    calc(100% - 15px) 50%,
-    calc(100% - 10px) 50%;
-  background-repeat: no-repeat;
-  background-size: 5px 5px;
-  color: var(--vb-text, #f6f7ff);
-  cursor: pointer;
-  padding: 7px 30px 7px 10px;
-  font: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.targetLanguage select:focus-visible {
-  outline: 2px solid var(--vb-focus, #a78bfa);
-  outline-offset: 2px;
-}
-
-.targetLanguage select option {
-  background: var(--vb-surface, #202640);
-  color: var(--vb-text, #f6f7ff);
-}
-
 .toggleRow {
   position: relative;
   min-height: var(--translation-setting-toggle-height, 60px);
@@ -154,47 +84,15 @@
   --translation-setting-toggle-height: auto;
   --translation-setting-title-size: 13px;
   --translation-setting-description-size: 11px;
-  --translation-setting-value-size: 12px;
-  --translation-setting-select-width: 145px;
   color: var(--vb-text, CanvasText);
-}
-
-.controls[data-variant="compact"] .languageRow {
-  border-bottom-color: var(--vb-divider, ThreeDLightShadow);
-  gap: 10px;
-}
-
-.controls[data-variant="compact"] .languageControls {
-  gap: 8px;
-}
-
-.controls[data-variant="compact"] .sourceLanguage {
-  color: var(--vb-muted, GrayText);
 }
 
 .controls[data-variant="compact"] .copy strong {
   color: var(--vb-text, CanvasText);
 }
 
-.controls[data-variant="compact"] .copy small,
-.controls[data-variant="compact"] .targetLanguage {
+.controls[data-variant="compact"] .copy small {
   color: var(--vb-muted, GrayText);
-}
-
-.controls[data-variant="compact"] .targetLanguage select {
-  appearance: auto;
-  border: 1px solid var(--vb-border, ButtonBorder);
-  border-radius: 4px;
-  outline: none;
-  background: var(--vb-surface, Field);
-  color: var(--vb-text, FieldText);
-  cursor: default;
-  padding: 5px 7px;
-}
-
-.controls[data-variant="compact"] .targetLanguage select:focus-visible {
-  outline: 2px solid var(--vb-focus, Highlight);
-  outline-offset: 2px;
 }
 
 .controls[data-variant="compact"] .toggleRow {
@@ -221,9 +119,6 @@
   --translation-setting-toggle-height: 55px;
   --translation-setting-title-size: calc(12px * var(--vocabee-ui-font-scale, 1));
   --translation-setting-description-size: calc(10px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-value-size: calc(11px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-source-width: 115px;
-  --translation-setting-select-width: 140px;
   --translation-setting-toggle-width: 36px;
   --translation-setting-toggle-size: 21px;
   --translation-setting-toggle-inset: 2px;
@@ -231,19 +126,11 @@
   --translation-setting-toggle-shift: 15px;
 }
 
-.controls[data-variant="panel"] .toggleRow input:checked + .toggle {
-  border-color: var(--vb-focus, #8e6cff);
-  background: linear-gradient(110deg, #7b5cff, #a64dff);
-}
-
 .controls[data-variant="page"] {
   --translation-setting-row-padding: 12px 2px;
   --translation-setting-toggle-height: 68px;
   --translation-setting-title-size: calc(16px * var(--vocabee-ui-font-scale, 1));
   --translation-setting-description-size: calc(13px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-value-size: calc(14px * var(--vocabee-ui-font-scale, 1));
-  --translation-setting-source-width: 125px;
-  --translation-setting-select-width: 160px;
   --translation-setting-toggle-width: 42px;
   --translation-setting-toggle-size: 24px;
   --translation-setting-toggle-inset: 3px;
@@ -251,35 +138,7 @@
   --translation-setting-toggle-shift: 18px;
 }
 
-.controls[data-variant="page"] .languageRow {
-  gap: 20px;
-  border-bottom-color: rgba(173, 183, 220, 0.13);
-}
-
 .controls[data-variant="page"] .toggleRow {
   gap: 20px;
   border-bottom-color: rgba(173, 183, 220, 0.13);
-}
-
-@media (max-width: 760px) {
-  .controls[data-variant="page"] .languageRow {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .controls[data-variant="page"] .languageControls {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .controls[data-variant="page"] .targetLanguage {
-    justify-content: space-between;
-  }
-}
-
-@media (max-width: 640px) {
-  .controls[data-variant="page"] .targetLanguage select {
-    width: min(160px, 48%);
-  }
 }
