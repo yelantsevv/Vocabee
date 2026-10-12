@@ -412,7 +412,8 @@ export function useDictionaryCatalog() {
 
       const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
       const matchesType = entry._isPhrase
-        ? sourceVerbTypes.length === 0
+        ? (sourceMetadata[entry._catalogId]?.isCustom && entry.part_of_speech === 'phrase')
+          || sourceVerbTypes.length === 0
           || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage))
         : sourceMetadata[entry._catalogId]?.isCustom
           || entry.part_of_speech === 'phrase'
