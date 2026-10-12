@@ -1,7 +1,6 @@
-import React from 'react';
 import clsx from 'clsx';
-import { TranslationSettings } from '../../../settings/TranslationSettings.jsx';
-import { SettingsSwitch } from '../../../settings/SettingsSwitch.jsx';
+import { TranslationSettings } from '../../../shared/settings/TranslationSettings.jsx';
+import { SettingsSwitch } from '../../../shared/settings/SettingsSwitch.jsx';
 import styles from './PanelSettings.module.css';
 
 function FontSizeSetting({ id, label, value, unit, min, max, step, previewText, showPreview = true, dictionaryPreview = false, onChange }) {

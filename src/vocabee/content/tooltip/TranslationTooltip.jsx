@@ -1,7 +1,7 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { useTranslationTooltip } from './hooks/useTranslationTooltip.js';
-import { useTheme } from '../../hooks/useTheme.js';
+import { useTheme } from '../../shared/hooks/useTheme.js';
 import styles from './TranslationTooltip.module.css';
 
 export function TranslationTooltip({ app }) {

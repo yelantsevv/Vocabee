@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import {
   DEFAULT_DICTIONARY_FONT_SIZE,
   DEFAULT_INTERFACE_FONT_SCALE,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale
-} from '../../settings/display.js';
+} from '../../shared/settings/display.js';
 import { PanelDictionary } from './components/PanelDictionary.jsx';
 import { PanelHeader } from './components/PanelHeader.jsx';
 import { PanelSettings } from './components/PanelSettings.jsx';
@@ -14,7 +14,7 @@ import { usePanelInteractions } from './hooks/usePanelInteractions.js';
 import { usePanelPreferences } from './hooks/usePanelPreferences.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useStoredSetting } from './hooks/useStoredSetting.js';
-import { useTheme } from '../../hooks/useTheme.js';
+import { useTheme } from '../../shared/hooks/useTheme.js';
 import styles from './FloatingPanel.module.css';
 
 export function FloatingPanel({ app }) {

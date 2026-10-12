@@ -6,22 +6,6 @@ globalThis.Vocabee = globalThis.Vocabee || {};
 
   app.storage = chrome.storage.sync || chrome.storage.local;
   app.state = { enabled: true, lang: 'ru', sourceLang: 'en' };
-  app.languageNames = {
-    en: 'Английский',
-    de: 'Немецкий',
-    ru: 'Русский',
-    uk: 'Украинский'
-  };
-
-  app.escapeHtml = function (value = '') {
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
-
   app.normalizeText = function (text) {
     return String(text || '').trim().replace(/\s+/g, ' ');
   };
@@ -84,10 +68,6 @@ globalThis.Vocabee = globalThis.Vocabee || {};
       translated: 'Перевод недоступен',
       pronunciation: ''
     };
-  };
-
-  app.clearTranslationCache = function () {
-    translationCache.clear();
   };
 
 })(globalThis.Vocabee);

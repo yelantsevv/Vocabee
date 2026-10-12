@@ -1,23 +1,12 @@
-const DICTIONARY_DATABASE = 'learn-vocabee';
-const PREVIOUS_DICTIONARY_DATABASE = 'my-words-vocabee';
-const MY_VOCABEE_DATABASE = 'my-vocabee';
-const LEGACY_DICTIONARY_DATABASE = 'vocabee-dictionary';
-const DICTIONARY_STORE = 'words';
-const CUSTOM_DICTIONARY_DATABASE_PREFIX = 'vocabee-custom-dictionary-';
-const SOURCE_LANGUAGES = ['en', 'de'];
-const TARGET_LANGUAGES = ['en', 'ru', 'uk', 'de'];
-const ACTIVE_ICON = {
-  16: 'icons/vocabee-16.png',
-  32: 'icons/vocabee-32.png'
-};
-const INACTIVE_ICON = {
-  16: 'icons/vocabee-inactive-16.png',
-  32: 'icons/vocabee-inactive-32.png'
-};
-const DEFAULT_ACTIVE_ICON = {
-  16: 'icons/vocabee-16.png',
-  32: 'icons/vocabee-32.png'
-};
+import {
+  DICTIONARY_DATABASE,
+  DICTIONARY_STORE,
+  LEGACY_DICTIONARY_DATABASE,
+  MY_VOCABEE_DATABASE,
+  PREVIOUS_DICTIONARY_DATABASE,
+  SOURCE_LANGUAGES,
+  TARGET_LANGUAGES
+} from './constants.js';
 
 let myVocabularyDatabase;
 let legacyDictionaryMigration;
@@ -39,126 +28,6 @@ function openExistingDatabase(databaseName) {
     request.onsuccess = () => resolve(request.result);
   });
 }
-
-function isLocalDictionaryUrl(url) {
-  return url.protocol === 'http:'
-    && url.port === '5173'
-    && ['localhost', '127.0.0.1'].includes(url.hostname)
-    && url.pathname === '/dictionary/dictionary.html';
-}
-
-function isSupportedUrl(value) {
-  try {
-    const url = new URL(value || '');
-    return url.protocol === 'https:' && url.hostname === 'www.youtube.com'
-      || isLocalDictionaryUrl(url);
-  } catch {
-    return false;
-  }
-}
-
-function updateTabIcon(tabId, url) {
-  const active = isSupportedUrl(url);
-  chrome.action.setIcon({ tabId, path: active ? ACTIVE_ICON : INACTIVE_ICON });
-  chrome.action.setTitle({
-    tabId,
-    title: active ? 'Vocabee' : 'Vocabee работает только на YouTube'
-  });
-  if (active) chrome.action.setBadgeText({ tabId, text: '' });
-}
-
-function updateActiveTabIcon() {
-  chrome.tabs.query({ active: true, lastFocusedWindow: true }, ([tab]) => {
-    if (tab?.id !== undefined) updateTabIcon(tab.id, tab.url);
-    else chrome.action.setIcon({ path: DEFAULT_ACTIVE_ICON });
-  });
-}
-
-function clearRestrictedTabBadge(tabId) {
-  chrome.action.setBadgeText({ tabId, text: '' });
-  chrome.action.setIcon({ tabId, path: ACTIVE_ICON });
-  chrome.action.setTitle({ tabId, title: 'Vocabee' });
-}
-
-function showUnsupportedSiteNotice(tabId) {
-  chrome.action.setBadgeBackgroundColor({ tabId, color: '#b3261e' });
-  chrome.action.setBadgeText({ tabId, text: 'YT' });
-  chrome.action.setTitle({ tabId, title: 'Vocabee работает только на YouTube' });
-
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: () => {
-      const hostId = 'vocabee-site-restriction-toast';
-      document.getElementById(hostId)?.remove();
-
-      const host = document.createElement('div');
-      host.id = hostId;
-      host.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:2147483647';
-      const shadow = host.attachShadow({ mode: 'closed' });
-      const style = document.createElement('style');
-      style.textContent = `
-        div {
-          padding: 12px 16px;
-          border-radius: 10px;
-          background: #25242c;
-          color: #fff;
-          box-shadow: 0 4px 18px #0005;
-          font: 14px/1.4 system-ui, sans-serif;
-        }
-      `;
-      const message = document.createElement('div');
-      message.textContent = 'Расширение Vocabee работает только на YouTube.';
-      shadow.append(style, message);
-      document.documentElement.append(host);
-      setTimeout(() => host.remove(), 3500);
-    }
-  }).catch(() => {
-    // Chrome internal pages do not allow script injection; the badge and title remain visible.
-  });
-}
-
-chrome.action.onClicked.addListener(() => {
-  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    const tab = tabs[0];
-    const tabId = tab?.id;
-    if (tabId === undefined) return;
-
-    let url;
-    try {
-      url = new URL(tab.url || '');
-    } catch {
-      showUnsupportedSiteNotice(tabId);
-      return;
-    }
-
-    if (url.hostname !== 'www.youtube.com' && !isLocalDictionaryUrl(url)) {
-      chrome.action.setIcon({ tabId, path: INACTIVE_ICON });
-      showUnsupportedSiteNotice(tabId);
-      return;
-    }
-
-    clearRestrictedTabBadge(tabId);
-    if (isLocalDictionaryUrl(url)) return;
-
-    chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_VOCABEE_PANEL' }, () => {
-      if (chrome.runtime.lastError) {
-        console.error('Vocabee: YouTube content script is unavailable', chrome.runtime.lastError.message);
-      }
-    });
-  });
-});
-
-chrome.tabs.onActivated.addListener(updateActiveTabIcon);
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.url || changeInfo.status === 'complete') {
-    updateTabIcon(tabId, changeInfo.url || tab.url);
-  }
-});
-chrome.windows.onFocusChanged.addListener((windowId) => {
-  if (windowId !== chrome.windows.WINDOW_ID_NONE) updateActiveTabIcon();
-});
-chrome.runtime.onStartup.addListener(updateActiveTabIcon);
-chrome.runtime.onInstalled.addListener(updateActiveTabIcon);
 
 async function migrateLearningWordsToMyDictionary(database, legacyDatabase, databaseName) {
   if (!legacyDatabase.objectStoreNames.contains(DICTIONARY_STORE)) {
@@ -496,122 +365,10 @@ async function listIndexedDatabases() {
     .sort((first, second) => first.localeCompare(second));
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message?.type === 'OPEN_EXTENSION_SETTINGS') {
-    if (sender.id !== chrome.runtime.id) {
-      sendResponse({ ok: false, error: 'Запрос на открытие настроек отклонён.' });
-      return false;
-    }
-    chrome.tabs.create({ url: 'chrome://extensions/' }, () => {
-      if (chrome.runtime.lastError) {
-        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
-        return;
-      }
-      sendResponse({ ok: true });
-    });
-    return true;
-  }
-
-  if (message?.type === 'OPEN_DICTIONARY_QUICK_ACTION') {
-    const validActions = new Set([
-      'words-en', 'words-de'
-    ]);
-    if (sender.id !== chrome.runtime.id || !validActions.has(message.id)) {
-      sendResponse({ ok: false, error: 'Неизвестный раздел словаря.' });
-      return false;
-    }
-
-    const pageUrl = new URL(chrome.runtime.getURL('dictionary/dictionary.html'));
-    pageUrl.searchParams.set('load', message.id);
-    chrome.tabs.create({ url: pageUrl.toString() }, () => {
-      if (chrome.runtime.lastError) {
-        sendResponse({ ok: false, error: chrome.runtime.lastError.message });
-        return;
-      }
-      sendResponse({ ok: true });
-    });
-    return true;
-  }
-
-  if (![
-    'ADD_DICTIONARY_WORD',
-    'START_DICTIONARY_WORD_LEARNING',
-    'GET_DICTIONARY_WORDS',
-    'GET_MY_VOCABEE_DICTIONARY',
-    'DELETE_INDEXED_DATABASE',
-    'LIST_INDEXED_DATABASES'
-  ].includes(message?.type)) {
-    return false;
-  }
-
-  if (sender.id !== chrome.runtime.id) {
-    sendResponse({ ok: false, error: 'Запрос на сохранение отклонён.' });
-    return false;
-  }
-
-  if (message.type === 'DELETE_INDEXED_DATABASE') {
-    const allowedDatabaseNames = new Set([
-      DICTIONARY_DATABASE,
-      PREVIOUS_DICTIONARY_DATABASE,
-      'my-vocabee',
-      LEGACY_DICTIONARY_DATABASE,
-      'en-ru-vocabee',
-      'de-ru-vocabee',
-      'en-ru-everyday-phrases-vocabee',
-      'en-ru-travel-phrases-vocabee',
-      'vocabee-catalog'
-    ]);
-    if (!allowedDatabaseNames.has(message.databaseName)
-      && !message.databaseName?.startsWith(CUSTOM_DICTIONARY_DATABASE_PREFIX)) {
-      sendResponse({ ok: false, error: 'Неизвестная база данных.' });
-      return false;
-    }
-    deleteIndexedDatabase(message.databaseName)
-      .then(() => sendResponse({ ok: true }))
-      .catch((error) => sendResponse({ ok: false, error: error.message }));
-    return true;
-  }
-
-  if (message.type === 'LIST_INDEXED_DATABASES') {
-    listIndexedDatabases()
-      .then((databases) => sendResponse({ ok: true, databases }))
-      .catch((error) => sendResponse({ ok: false, error: error.message }));
-    return true;
-  }
-
-  if (message.type === 'GET_DICTIONARY_WORDS') {
-    getDictionaryWords()
-      .then((words) => sendResponse({ ok: true, words }))
-      .catch((error) => {
-        console.error('Vocabee: could not load dictionary', error);
-        sendResponse({ ok: false, error: error.message });
-      });
-    return true;
-  }
-
-  if (message.type === 'GET_MY_VOCABEE_DICTIONARY') {
-    getMyVocabularyEntries()
-      .then((entries) => sendResponse({ ok: true, entries }))
-      .catch((error) => {
-        console.error('Vocabee: could not load my vocabulary database', error);
-        sendResponse({ ok: false, error: error.message });
-      });
-    return true;
-  }
-
-  const saveRequest = addWordToMyDictionary(message.word, {
-    startLearning: message.type === 'START_DICTIONARY_WORD_LEARNING'
-  });
-  saveRequest
-    .then((result) => {
-      sendResponse({ ok: true, ...result });
-      chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
-        void chrome.runtime.lastError;
-      });
-    })
-    .catch((error) => {
-      console.error('Vocabee: could not add word to dictionary', error);
-      sendResponse({ ok: false, error: error.message });
-    });
-  return true;
-});
+export {
+  addWordToMyDictionary,
+  deleteIndexedDatabase,
+  getDictionaryWords,
+  getMyVocabularyEntries,
+  listIndexedDatabases
+};

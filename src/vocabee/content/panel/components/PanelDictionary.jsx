@@ -1,4 +1,3 @@
-import React from 'react';
 import clsx from 'clsx';
 import styles from './PanelDictionary.module.css';
 import { DictionaryWordCard } from './DictionaryWordCard.jsx';

@@ -4,7 +4,7 @@ import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
 import { getEntryLearningLevel } from './dictionaryUtils.js';
 import { openBrowserExtensionSettings } from './storage.js';
-import phraseCategories from '../../dictionary/phrase-categories.json';
+import phraseCategories from './phrase-categories.json';
 import { DictionaryWordCard } from './components/DictionaryWordCard.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './TooltipActions.module.css';
 
 export function TooltipActions({ loading, translated, studyStatus, addStatus, feedback, onStudy, onAdd }) {

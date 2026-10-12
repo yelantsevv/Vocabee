@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import sourceDictionary from '../../dictionary/en-ru.json';
-import germanRussianDictionary from '../../dictionary/de-ru.json';
-import phraseCategories from '../../dictionary/phrase-categories.json';
+import phraseCategories from './phrase-categories.json';
 import {
   CATALOG_SOURCES,
   createCustomDictionary as createStoredCustomDictionary,
@@ -26,7 +24,6 @@ const PROGRESS_VIEWS = ['learning', 'learned', 'remaining'];
 const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
 const DEFAULT_SOURCE_CONNECTIONS = { my: true, language: true };
 const AVAILABLE_CATEGORIES = new Set(phraseCategories.map(({ id }) => id));
-
 function createMyDictionaryRecord(entries) {
   if (!entries.length) return null;
   return {
@@ -507,20 +504,6 @@ export function useDictionaryCatalog() {
     }
   }
 
-  async function loadBuiltinDictionary(language) {
-    if (!['en', 'de'].includes(language)) return;
-    try {
-      const entries = language === 'de' ? germanRussianDictionary : sourceDictionary;
-      catalogMutationRef.current += 1;
-      await writeCatalogDictionary(language, entries);
-      setImportedDictionaries((current) => ({ ...current, [language]: entries }));
-      setSelectedSourceLanguage(language);
-      setImportStatus(`База ${language.toUpperCase()} → RU загружена.`);
-    } catch (error) {
-      setImportStatus(error.message || 'Не удалось сохранить базу словаря.');
-    }
-  }
-
   async function createCustomDictionary(details) {
     try {
       catalogMutationRef.current += 1;
@@ -570,7 +553,6 @@ export function useDictionaryCatalog() {
     availableSources,
     catalogLoading,
     catalogError,
-    loadBuiltinDictionary,
     sourceLevels,
     setSourceLevels,
     sourceVerbTypes,

@@ -5,17 +5,18 @@ import { defineConfig } from 'vite';
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
 const sourceDirectory = resolve(projectRoot, 'src');
+const extensionDirectory = resolve(sourceDirectory, 'vocabee');
 
 export default defineConfig({
-  root: sourceDirectory,
+  root: extensionDirectory,
   base: './',
   publicDir: false,
   plugins: [react()],
   build: {
-    outDir: resolve(projectRoot, 'dist'),
+    outDir: resolve(projectRoot, 'dist/vocabee'),
     emptyOutDir: false,
     rollupOptions: {
-      input: resolve(sourceDirectory, 'vocabee/popup/popup.html')
+      input: resolve(extensionDirectory, 'popup/popup.html')
     }
   }
 });

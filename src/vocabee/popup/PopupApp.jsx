@@ -1,9 +1,9 @@
 import styles from './popup.module.css';
 import { DictionaryNotice } from './components/DictionaryNotice.jsx';
 import { PopupFooter } from './components/PopupFooter.jsx';
-import { TranslationSettings } from '../settings/TranslationSettings.jsx';
+import { TranslationSettings } from '../shared/settings/TranslationSettings.jsx';
 import { usePopupSettings } from './hooks/usePopupSettings.js';
-import { useTheme } from '../hooks/useTheme.js';
+import { useTheme } from '../shared/hooks/useTheme.js';
 
 export function PopupApp() {
   const settings = usePopupSettings();

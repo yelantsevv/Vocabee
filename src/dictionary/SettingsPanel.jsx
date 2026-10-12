@@ -6,29 +6,27 @@ import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, onLoadDictionary, modal = false }) {
+export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, modal = false }) {
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
-  const quickLoadActions = dictionaryQuickActions.map((action) => {
-    const sourceId = action.id.slice('words-'.length);
-    const checked = loadedSources.has(sourceId);
-    const active = catalog.selectedSourceLanguage === sourceId;
-    return {
-      label: action.label,
-      checked,
-      active,
-      disabled: catalog.catalogLoading,
-      onClick: () => {
-        if (checked) catalog.setSelectedSourceLanguage(sourceId);
-        else onLoadDictionary(sourceId);
-      }
-    };
-  });
+  const loadedSourceActions = dictionaryQuickActions
+    .filter((action) => loadedSources.has(action.id.slice('words-'.length)))
+    .map((action) => {
+      const sourceId = action.id.slice('words-'.length);
+      const active = catalog.selectedSourceLanguage === sourceId;
+      return {
+        label: action.label,
+        checked: true,
+        active,
+        disabled: catalog.catalogLoading,
+        onClick: () => catalog.setSelectedSourceLanguage(sourceId)
+      };
+    });
 
   return (
     <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label="Настройки">
       <section className={panelStyles.settings} aria-label="Настройки Vocabee">
         <SettingsActionButtons
-          actions={quickLoadActions}
+          actions={loadedSourceActions}
           firstAction={(
             <DictionaryImportButton
               key="import-dictionary"

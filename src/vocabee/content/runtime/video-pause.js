@@ -1,6 +1,4 @@
 (function (app) {
-  if (window.location.hostname !== 'www.youtube.com') return;
-
   let pointerInPauseArea = false;
   let pointerX = -1;
   let pointerY = -1;

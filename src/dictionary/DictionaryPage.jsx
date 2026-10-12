@@ -50,28 +50,6 @@ export function DictionaryPage() {
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [settingsOpen, closeSettings]);
 
-  async function loadBuiltinDictionary(language) {
-    await catalog.loadBuiltinDictionary(language);
-  }
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const requestedPreset = params.get('load');
-    if (requestedPreset) {
-      params.delete('load');
-      const remainingQuery = params.toString();
-      const cleanUrl = `${window.location.pathname}${remainingQuery ? `?${remainingQuery}` : ''}${window.location.hash}`;
-      window.history.replaceState(window.history.state, '', cleanUrl);
-    }
-
-    if (requestedPreset === 'words-en') {
-      loadBuiltinDictionary('en');
-    }
-    if (requestedPreset === 'words-de') {
-      loadBuiltinDictionary('de');
-    }
-  }, []);
-
   useEffect(() => {
     let active = true;
     getDictionarySettings(DEFAULT_SETTINGS).then((result) => {
@@ -163,7 +141,6 @@ export function DictionaryPage() {
               updateSetting={updateSetting}
               settingsStatus={settingsStatus}
               catalog={catalog}
-              onLoadDictionary={loadBuiltinDictionary}
               modal
             />
           </section>

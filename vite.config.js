@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -14,34 +14,51 @@ function copyExtensionRuntime() {
     closeBundle() {
       mkdirSync(resolve(outputDirectory, 'vocabee'), { recursive: true });
       cpSync(
-        resolve(sourceDirectory, 'vocabee/content'),
-        resolve(outputDirectory, 'vocabee/content'),
+        resolve(sourceDirectory, 'vocabee/content/runtime'),
+        resolve(outputDirectory, 'vocabee/content/runtime'),
         { recursive: true }
       );
-      writeFileSync(
-        resolve(outputDirectory, 'vocabee/background.js'),
-        readFileSync(resolve(sourceDirectory, 'vocabee/background.js'), 'utf8')
+      cpSync(
+        resolve(sourceDirectory, 'vocabee/content/content.css'),
+        resolve(outputDirectory, 'vocabee/content/content.css')
+      );
+      cpSync(
+        resolve(sourceDirectory, 'vocabee/background'),
+        resolve(outputDirectory, 'vocabee/background'),
+        { recursive: true }
       );
       cpSync(
         resolve(sourceDirectory, 'vocabee/icons'),
         resolve(outputDirectory, 'vocabee/icons'),
         { recursive: true }
       );
+      const dictionaryDirectory = resolve(outputDirectory, 'dictionary');
+      if (existsSync(dictionaryDirectory)) {
+        cpSync(dictionaryDirectory, resolve(outputDirectory, 'vocabee/dictionary'), { recursive: true });
+      }
+      const popupHtmlPath = resolve(outputDirectory, 'vocabee/popup/popup.html');
+      const sharedAssetsDirectory = resolve(outputDirectory, 'assets');
+      if (existsSync(sharedAssetsDirectory)) {
+        cpSync(sharedAssetsDirectory, resolve(outputDirectory, 'vocabee/assets'), { recursive: true });
+      }
+      if (existsSync(popupHtmlPath) && existsSync(sharedAssetsDirectory)) {
+        let popupHtml = readFileSync(popupHtmlPath, 'utf8');
+        popupHtml = popupHtml.replaceAll('../../assets/', '../assets/');
+        writeFileSync(popupHtmlPath, popupHtml);
+      }
       const manifest = JSON.parse(readFileSync(resolve(sourceDirectory, 'vocabee/manifest.json'), 'utf8'));
-      manifest.background.service_worker = manifest.background.service_worker.replace(/^src\//, '');
-      manifest.icons = Object.fromEntries(
-        Object.entries(manifest.icons).map(([size, file]) => [size, file.replace(/^src\//, '')])
-      );
-      manifest.action.default_icon = Object.fromEntries(
-        Object.entries(manifest.action.default_icon).map(([size, file]) => [size, file.replace(/^src\//, '')])
-      );
-      manifest.content_scripts = manifest.content_scripts.map((contentScript) => ({
-        ...contentScript,
-        ...(contentScript.css ? {
-          css: contentScript.css.map((file) => file.replace(/^src\//, '').replace(/^dist\//, ''))
-        } : {}),
-        js: contentScript.js.map((file) => file.replace(/^src\//, '').replace(/^dist\//, ''))
-      }));
+      const packagedIconPaths = [
+        ...Object.values(manifest.icons),
+        ...Object.values(manifest.action.default_icon),
+        'icons/vocabee-16.png',
+        'icons/vocabee-32.png'
+      ];
+      const missingIcons = packagedIconPaths.filter((iconPath) => (
+        !existsSync(resolve(outputDirectory, 'vocabee', iconPath))
+      ));
+      if (missingIcons.length) {
+        throw new Error(`Vocabee extension package is missing icon files: ${missingIcons.join(', ')}`);
+      }
       writeFileSync(
         resolve(outputDirectory, 'vocabee/manifest.json'),
         `${JSON.stringify(manifest, null, 2)}\n`
