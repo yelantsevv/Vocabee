@@ -1,6 +1,5 @@
 import clsx from 'clsx';
-import { TranslationSettings } from '../../../shared/settings/TranslationSettings.jsx';
-import { SettingsSwitch } from '../../../shared/settings/SettingsSwitch.jsx';
+import { SettingsSwitch } from '../../../components/settings/SettingsSwitch.jsx';
 import { DictionaryWordCard } from './DictionaryWordCard.jsx';
 import { WebsiteLink } from './WebsiteLink.jsx';
 import styles from './PanelSettings.module.css';
@@ -28,11 +27,11 @@ export function PanelSettings({ preferences, homepageUrl, showWebsiteLink, onSho
         checked={showWebsiteLink}
         onChange={onShowWebsiteLinkChange}
       />
-      <TranslationSettings
-        idPrefix="panel"
-        variant="panel"
-        enabled={preferences.enabled}
-        onEnabledChange={preferences.changeEnabled}
+      <SettingsSwitch
+        id="panel-enabled"
+        label="Перевод субтитров"
+        checked={preferences.enabled}
+        onChange={preferences.changeEnabled}
       />
       <SettingsSwitch
         id="vocabee-color-theme"
