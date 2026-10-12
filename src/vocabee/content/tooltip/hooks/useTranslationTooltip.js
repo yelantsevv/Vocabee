@@ -2,6 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const initialTooltip = { visible: false, text: '', details: null, loading: false, anchorRect: null, fontSize: 16 };
 
+function isExtensionContextValid() {
+  try {
+    return Boolean(chrome.runtime?.id);
+  } catch (_error) {
+    return false;
+  }
+}
+
 export function useTranslationTooltip(app) {
   const [tooltip, setTooltip] = useState(initialTooltip);
   const [isAdded, setIsAdded] = useState(false);
@@ -26,15 +34,23 @@ export function useTranslationTooltip(app) {
       onLoaded(savedEntries.current);
       return;
     }
-    chrome.runtime.sendMessage({ type: 'GET_MY_VOCABEE_DICTIONARY' }, (response) => {
-      if (chrome.runtime.lastError || !response?.ok) {
-        onLoaded([]);
-        return;
-      }
-      savedEntries.current = response.entries || [];
-      onLoaded(savedEntries.current);
-    });
-  }, []);
+    if (!isExtensionContextValid()) {
+      onLoaded([]);
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({ type: 'GET_MY_VOCABEE_DICTIONARY' }, (response) => {
+        if (!isExtensionContextValid() || chrome.runtime.lastError || !response?.ok) {
+          onLoaded([]);
+          return;
+        }
+        savedEntries.current = response.entries || [];
+        onLoaded(savedEntries.current);
+      });
+    } catch (_error) {
+      onLoaded([]);
+    }
+  }, [app]);
 
   const hideTooltip = useCallback((force = false) => {
     if (!force && pointerInside.current) return;
@@ -114,8 +130,10 @@ export function useTranslationTooltip(app) {
   function addToDictionary() {
     const translatedText = tooltip.details?.translated || '';
     if (!translatedText || translatedText === 'Перевод недоступен' || isSaving || isAdded) return;
+    if (!isExtensionContextValid()) return;
     setIsSaving(true);
-    chrome.runtime.sendMessage({
+    try {
+      chrome.runtime.sendMessage({
       type: 'ADD_DICTIONARY_WORD',
       word: {
         sourceText: tooltip.text,
@@ -123,22 +141,24 @@ export function useTranslationTooltip(app) {
         sourceLang: app.state.sourceLang,
         targetLang: app.state.lang
       }
-    }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error('Vocabee: could not send dictionary request', chrome.runtime.lastError.message);
+      }, (response) => {
+        if (!isExtensionContextValid() || chrome.runtime.lastError) {
+          setIsSaving(false);
+          return;
+        }
+        if (!response?.ok) {
+          console.error('Vocabee: could not add word to dictionary', response?.error || 'Unknown error');
+          setIsSaving(false);
+          return;
+        }
+        savedEntries.current = null;
+        setIsAdded(true);
         setIsSaving(false);
-        return;
-      }
-      if (!response?.ok) {
-        console.error('Vocabee: could not add word to dictionary', response?.error || 'Unknown error');
-        setIsSaving(false);
-        return;
-      }
-      savedEntries.current = null;
-      setIsAdded(true);
+        app.refreshDictionaryView?.();
+      });
+    } catch (_error) {
       setIsSaving(false);
-      app.refreshDictionaryView?.();
-    });
+    }
   }
 
   return {

@@ -96,16 +96,20 @@ export function FloatingPanel({ app }) {
             />
           : <PanelDictionary {...dictionary} fill={Number.isFinite(panelState.width) && Number.isFinite(panelState.height)} />}
       </div>
-      <div
-        className={styles.resizeHandle}
-        role="separator"
-        aria-label="Изменить размер панели"
-        title="Перетащите, чтобы изменить размер"
-        onPointerDown={interactions.handleResizePointerDown}
-        onPointerMove={interactions.handleResizePointerMove}
-        onPointerUp={interactions.handleResizePointerUp}
-        onPointerCancel={interactions.handleResizePointerUp}
-      />
+      {!panelState.minimized && ['left', 'right', 'bottom', 'bottom-left', 'bottom-right'].map((edge) => (
+        <div
+          key={edge}
+          className={clsx(styles.resizeHandle, styles[`resize${edge[0].toUpperCase()}${edge.slice(1)}`])}
+          role="separator"
+          aria-label={`Изменить размер панели: ${edge}`}
+          aria-orientation={edge === 'bottom' ? 'horizontal' : 'vertical'}
+          title="Перетащите, чтобы изменить размер"
+          onPointerDown={(event) => interactions.handleResizePointerDown(event, edge)}
+          onPointerMove={interactions.handleResizePointerMove}
+          onPointerUp={interactions.handleResizePointerUp}
+          onPointerCancel={interactions.handleResizePointerUp}
+        />
+      ))}
     </section>
   );
 }

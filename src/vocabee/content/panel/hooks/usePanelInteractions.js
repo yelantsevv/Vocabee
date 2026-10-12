@@ -37,12 +37,15 @@ export function usePanelInteractions({ panelRef, panelState, setPanelState, save
     save(currentState.current);
   }
 
-  function handleResizePointerDown(event) {
+  function handleResizePointerDown(event, edge) {
     if (currentState.current.minimized) return;
     const bounds = panelRef.current.getBoundingClientRect();
     resizeOrigin.current = {
+      edge,
       pointerX: event.clientX,
       pointerY: event.clientY,
+      x: bounds.left,
+      y: bounds.top,
       width: bounds.width,
       height: bounds.height
     };
@@ -56,10 +59,33 @@ export function usePanelInteractions({ panelRef, panelState, setPanelState, save
     const origin = resizeOrigin.current;
     const maxWidth = Math.max(1, window.innerWidth - 16);
     const maxHeight = Math.max(1, window.innerHeight - 16);
-    const width = Math.max(Math.min(280, maxWidth), Math.min(maxWidth, origin.width + event.clientX - origin.pointerX));
-    const height = Math.max(Math.min(200, maxHeight), Math.min(maxHeight, origin.height + event.clientY - origin.pointerY));
-    setPanelState((current) => ({ ...current, width, height }));
-    currentState.current = { ...currentState.current, width, height };
+    const minWidth = Math.min(280, maxWidth);
+    const minHeight = Math.min(200, maxHeight);
+    const deltaX = event.clientX - origin.pointerX;
+    const deltaY = event.clientY - origin.pointerY;
+    let { x, y, width, height } = origin;
+
+    if (origin.edge === 'right') width = Math.max(minWidth, Math.min(maxWidth - x, origin.width + deltaX));
+    if (origin.edge === 'left') {
+      const right = origin.x + origin.width;
+      width = Math.max(minWidth, Math.min(right - 8, origin.width - deltaX));
+      x = right - width;
+    }
+    if (origin.edge === 'bottom') height = Math.max(minHeight, Math.min(maxHeight - y, origin.height + deltaY));
+    if (origin.edge === 'bottom-left' || origin.edge === 'bottom-right') {
+      height = Math.max(minHeight, Math.min(maxHeight - y, origin.height + deltaY));
+      if (origin.edge === 'bottom-right') {
+        width = Math.max(minWidth, Math.min(maxWidth - x, origin.width + deltaX));
+      } else {
+        const right = origin.x + origin.width;
+        width = Math.max(minWidth, Math.min(right - 8, origin.width - deltaX));
+        x = right - width;
+      }
+    }
+
+    const next = { ...currentState.current, x, y, width, height };
+    setPanelState(next);
+    currentState.current = next;
     event.stopPropagation();
   }
 

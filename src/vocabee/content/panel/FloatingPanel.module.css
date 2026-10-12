@@ -91,18 +91,52 @@
 
 .resizeHandle {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
   z-index: 1;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(135deg, transparent 55%, var(--vb-muted) 56% 62%, transparent 63% 72%, var(--vb-muted) 73% 79%, transparent 80%);
-  cursor: nwse-resize;
   touch-action: none;
 }
 
-.minimized .resizeHandle {
-  display: none;
+.resizeLeft,
+.resizeRight {
+  top: 48px;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.resizeLeft {
+  left: 0;
+}
+
+.resizeRight {
+  right: 0;
+}
+
+.resizeBottom {
+  right: 16px;
+  bottom: 0;
+  left: 16px;
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.resizeBottomLeft,
+.resizeBottomRight {
+  bottom: 0;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, transparent 61%, var(--vb-muted) 62% 68%, transparent 69% 76%, var(--vb-muted) 77% 83%, transparent 84%);
+}
+
+.resizeBottomLeft {
+  left: 0;
+  cursor: nesw-resize;
+  background: linear-gradient(45deg, transparent 61%, var(--vb-muted) 62% 68%, transparent 69% 76%, var(--vb-muted) 77% 83%, transparent 84%);
+}
+
+.resizeBottomRight {
+  right: 0;
+  cursor: nwse-resize;
 }
 
 .minimized .floatingContent {

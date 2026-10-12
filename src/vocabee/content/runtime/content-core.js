@@ -5,6 +5,13 @@ globalThis.Vocabee = globalThis.Vocabee || {};
   const translationCache = new Map();
 
   app.storage = chrome.storage.sync || chrome.storage.local;
+  app.isExtensionContextValid = function () {
+    try {
+      return Boolean(chrome.runtime?.id);
+    } catch (_error) {
+      return false;
+    }
+  };
   app.state = { enabled: true, lang: 'ru', sourceLang: 'en' };
   app.normalizeText = function (text) {
     return String(text || '').trim().replace(/\s+/g, ' ');
