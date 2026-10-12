@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './PanelHeader.module.css';
 
-export function PanelHeader({ minimized, activeView, onSelectView, onMinimize, onClose, onPointerDown, onPointerMove, onPointerUp }) {
+export function PanelHeader({ minimized, activeView, onSelectView, onMinimize, onPointerDown, onPointerMove, onPointerUp }) {
   return (
     <header
       className={styles.headerRoot}
@@ -21,7 +21,6 @@ export function PanelHeader({ minimized, activeView, onSelectView, onMinimize, o
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.8 7.8 0 0 0 0-2l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 3h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5-2.1-1.6ZM13 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" transform="translate(-1 -0.5) scale(.96)"/></svg>
       </button>
       <button className={clsx(styles.control, styles.minimize)} type="button" aria-label={minimized ? 'Развернуть панель' : 'Свернуть панель'} onClick={onMinimize}>{minimized ? '+' : '−'}</button>
-      <button className={clsx(styles.control, styles.close)} type="button" aria-label="Закрыть панель" onClick={onClose}>×</button>
     </header>
   );
 }

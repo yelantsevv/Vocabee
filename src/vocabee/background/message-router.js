@@ -14,6 +14,25 @@ import {
 
 export function registerMessageHandlers() {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message?.type === 'SET_VOCABEE_TAB_STATE') {
+      if (sender.id !== chrome.runtime.id || sender.tab?.id === undefined) {
+        sendResponse({ ok: false });
+        return false;
+      }
+      chrome.action.setTitle({
+        tabId: sender.tab.id,
+        title: message.enabled ? 'Vocabee включён (нажмите, чтобы выключить)' : 'Vocabee выключен (нажмите, чтобы включить)'
+      });
+      chrome.action.setBadgeText({ tabId: sender.tab.id, text: message.enabled ? '' : 'OFF' });
+      chrome.action.setBadgeBackgroundColor({ tabId: sender.tab.id, color: '#5f6368' });
+      chrome.tabs.sendMessage(sender.tab.id, {
+        type: 'VOCABEE_APP_STATE_CHANGED',
+        enabled: Boolean(message.panelVisible)
+      });
+      sendResponse({ ok: true });
+      return false;
+    }
+
     if (message?.type === 'OPEN_EXTENSION_SETTINGS') {
       if (sender.id !== chrome.runtime.id) {
         sendResponse({ ok: false, error: 'Запрос на открытие настроек отклонён.' });

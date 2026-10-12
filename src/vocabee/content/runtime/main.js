@@ -13,15 +13,44 @@
   }
 
   function loadSettings() {
-    app.storage.get({ enabled: true }, (settings) => {
-      app.state = { ...app.state, enabled: Boolean(settings.enabled), lang: 'ru', sourceLang: 'en' };
+    app.storage.get({ enabled: true, vocabeeTabEnabled: true }, (settings) => {
+      const tabEnabled = settings.vocabeeTabEnabled !== false;
+      app.state = {
+        ...app.state,
+        enabled: Boolean(settings.enabled) && tabEnabled,
+        tabEnabled,
+        lang: 'ru',
+        sourceLang: 'en'
+      };
+      app.userEnabled = Boolean(settings.enabled);
       if (app.state.enabled) processCaptions();
+      else app.clearCaptionProcessing();
     });
   }
 
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message?.type !== 'TOGGLE_VOCABEE_APP') return false;
+    app.state.tabEnabled = !app.state.tabEnabled;
+    app.state.enabled = app.state.tabEnabled && app.userEnabled !== false;
+    if (app.state.enabled) processCaptions();
+    else {
+      app.clearCaptionProcessing();
+      app.hideTooltip(true);
+    }
+    app.storage.set({ vocabeeTabEnabled: app.state.tabEnabled });
+    chrome.runtime.sendMessage({
+      type: 'SET_VOCABEE_TAB_STATE',
+      enabled: app.state.tabEnabled,
+      panelVisible: app.state.tabEnabled
+    });
+    sendResponse?.({ enabled: app.state.tabEnabled });
+    return false;
+  });
+
   app.storage.onChanged.addListener((changes, areaName) => {
     if ((areaName !== 'sync' && areaName !== 'local') || !changes.enabled) return;
-    app.state.enabled = Boolean(changes.enabled.newValue);
+    app.userEnabled = Boolean(changes.enabled.newValue);
+    app.state.enabled = app.userEnabled && app.state.tabEnabled !== false;
     if (app.state.enabled) processCaptions();
     else app.clearCaptionProcessing();
   });

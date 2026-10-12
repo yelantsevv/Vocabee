@@ -25,7 +25,10 @@
 
   app.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'sync' && areaName !== 'local') return;
-    if (changes.enabled) app.state.enabled = Boolean(changes.enabled.newValue);
+    if (changes.enabled) {
+      app.userEnabled = Boolean(changes.enabled.newValue);
+      app.state.enabled = app.userEnabled && app.state.tabEnabled !== false;
+    }
   });
 
   app.translateSelectedPhrase = function () {

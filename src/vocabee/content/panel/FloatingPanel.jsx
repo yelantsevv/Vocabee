@@ -78,7 +78,6 @@ export function FloatingPanel({ app }) {
         activeView={panelState.activeView}
         onSelectView={selectView}
         onMinimize={() => update((current) => ({ ...current, minimized: !current.minimized }))}
-        onClose={() => update({ visible: false })}
         onPointerDown={interactions.handleHeaderPointerDown}
         onPointerMove={interactions.handleHeaderPointerMove}
         onPointerUp={interactions.handleHeaderPointerUp}

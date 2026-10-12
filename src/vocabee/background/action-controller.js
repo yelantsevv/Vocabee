@@ -142,7 +142,26 @@ function handleActionClick(tab) {
   updateTabAction(tab.id, url.href);
   if (isLocalDictionaryUrl(url)) return;
 
-  sendPanelToggle(tab.id, true);
+  sendAppToggle(tab.id, true);
+}
+
+function sendAppToggle(tabId, recoverIfUnavailable = false) {
+  chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_VOCABEE_APP' }, (response) => {
+    if (chrome.runtime.lastError) {
+      if (recoverIfUnavailable) {
+        void restoreYouTubeContentScript(tabId, true);
+        return;
+      }
+      console.error('Vocabee: YouTube content script is unavailable', chrome.runtime.lastError.message);
+      return;
+    }
+    chrome.action.setTitle({
+      tabId,
+      title: response?.enabled ? 'Vocabee включён (нажмите, чтобы выключить)' : 'Vocabee выключен (нажмите, чтобы включить)'
+    });
+    chrome.action.setBadgeText({ tabId, text: response?.enabled ? '' : 'OFF' });
+    chrome.action.setBadgeBackgroundColor({ tabId, color: '#5f6368' });
+  });
 }
 
 function sendPanelToggle(tabId, recoverIfUnavailable = false) {
@@ -157,7 +176,7 @@ function sendPanelToggle(tabId, recoverIfUnavailable = false) {
   });
 }
 
-async function restoreYouTubeContentScript(tabId) {
+async function restoreYouTubeContentScript(tabId, toggleApp = false) {
   try {
     const [panelRoot] = await chrome.scripting.executeScript({
       target: { tabId },
@@ -166,7 +185,8 @@ async function restoreYouTubeContentScript(tabId) {
 
     if (panelRoot?.result) {
       await new Promise((resolve) => setTimeout(resolve, 150));
-      sendPanelToggle(tabId);
+      if (toggleApp) sendAppToggle(tabId);
+      else sendPanelToggle(tabId);
       return;
     }
 
@@ -176,7 +196,8 @@ async function restoreYouTubeContentScript(tabId) {
     });
     await chrome.scripting.executeScript({ target: { tabId }, files: YOUTUBE_CONTENT_FILES });
     await new Promise((resolve) => setTimeout(resolve, 150));
-    sendPanelToggle(tabId);
+    if (toggleApp) sendAppToggle(tabId);
+    else sendPanelToggle(tabId);
   } catch (error) {
     console.error('Vocabee: could not start on this YouTube tab. Reload the page and try again.', error);
   }

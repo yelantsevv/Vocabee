@@ -55,8 +55,10 @@ export function usePanelState(app) {
   useEffect(() => {
     const onToggle = (message, _sender, sendResponse) => {
       if (message?.type !== 'TOGGLE_VOCABEE_PANEL') return false;
+      let visible;
       update((current) => {
-        if (current.visible && !current.minimized) return { ...current, visible: false };
+        visible = !(current.visible && !current.minimized);
+        if (!visible) return { ...current, visible: false };
         return {
           ...current,
           ...(current.visible ? {} : { activeView: 'dictionary' }),
@@ -64,11 +66,25 @@ export function usePanelState(app) {
           minimized: false
         };
       });
-      sendResponse?.({ visible: true });
+      sendResponse?.({ visible });
       return false;
     };
     chrome.runtime.onMessage.addListener(onToggle);
     return () => chrome.runtime.onMessage.removeListener(onToggle);
+  }, [update]);
+
+  useEffect(() => {
+    const onAppStateChange = (message) => {
+      if (message?.type !== 'VOCABEE_APP_STATE_CHANGED') return;
+      update((current) => ({
+        ...current,
+        visible: Boolean(message.enabled),
+        minimized: false,
+        ...(!current.visible && message.enabled ? { activeView: 'dictionary' } : {})
+      }));
+    };
+    chrome.runtime.onMessage.addListener(onAppStateChange);
+    return () => chrome.runtime.onMessage.removeListener(onAppStateChange);
   }, [update]);
 
   useEffect(() => {

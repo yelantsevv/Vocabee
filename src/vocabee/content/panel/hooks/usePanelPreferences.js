@@ -22,7 +22,8 @@ export function usePanelPreferences(app) {
 
   const changeEnabled = useCallback((nextEnabled) => {
     setEnabled(nextEnabled);
-    app.state.enabled = nextEnabled;
+    app.userEnabled = nextEnabled;
+    app.state.enabled = nextEnabled && app.state.tabEnabled !== false;
     app.storage.set({ enabled: nextEnabled }, () => {
       if (chrome.runtime.lastError) {
         console.error('Vocabee: could not save translation setting', chrome.runtime.lastError.message);
