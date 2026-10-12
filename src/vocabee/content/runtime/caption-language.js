@@ -123,6 +123,7 @@
   }
 
   app.decorateCaptionNode = function (node) {
+    if (!app.state.enabled) return;
     if (!node || node.closest('.vocabee-word')) return;
 
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, {
@@ -145,4 +146,13 @@
   };
 
   app.makeCaptionTextSelectable = makeCaptionTextSelectable;
+
+  app.clearCaptionProcessing = function () {
+    document.querySelectorAll('.ytp-caption-window-container .caption-window[draggable="false"]')
+      .forEach((captionWindow) => captionWindow.removeAttribute('draggable'));
+    document.querySelectorAll('.ytp-caption-segment .vocabee-word').forEach((word) => {
+      word.replaceWith(document.createTextNode(word.textContent || ''));
+    });
+    document.querySelectorAll('.ytp-caption-segment').forEach((segment) => segment.normalize());
+  };
 })(globalThis.Vocabee);

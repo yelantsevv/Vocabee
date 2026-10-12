@@ -5,6 +5,7 @@
   let pauseAreaCheckTimer;
 
   function getPauseArea(target) {
+    if (!app.state.enabled) return null;
     if (!(target instanceof Element)) return null;
 
     const tooltip = target.closest('#vocabee-tooltip');

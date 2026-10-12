@@ -7,6 +7,7 @@
   }
 
   function processCaptions() {
+    if (!app.state.enabled) return;
     app.makeCaptionTextSelectable();
     findCaptionNodes().forEach(app.decorateCaptionNode);
   }
@@ -14,8 +15,16 @@
   function loadSettings() {
     app.storage.get({ enabled: true }, (settings) => {
       app.state = { ...app.state, enabled: Boolean(settings.enabled), lang: 'ru', sourceLang: 'en' };
+      if (app.state.enabled) processCaptions();
     });
   }
+
+  app.storage.onChanged.addListener((changes, areaName) => {
+    if ((areaName !== 'sync' && areaName !== 'local') || !changes.enabled) return;
+    app.state.enabled = Boolean(changes.enabled.newValue);
+    if (app.state.enabled) processCaptions();
+    else app.clearCaptionProcessing();
+  });
 
   function observePage() {
     const observer = new MutationObserver(processCaptions);
@@ -29,7 +38,6 @@
   }
 
   loadSettings();
-  processCaptions();
   observePage();
 
   document.addEventListener('keydown', (event) => {
