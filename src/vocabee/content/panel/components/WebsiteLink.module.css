@@ -1,0 +1,19 @@
+.websiteLink {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--vb-selected-border);
+  border-radius: 10px;
+  background: var(--vb-selected);
+  color: var(--vb-text);
+  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.websiteLink:hover {
+  background: var(--vb-hover);
+}

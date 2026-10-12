@@ -17,6 +17,8 @@ import { useStoredSetting } from './hooks/useStoredSetting.js';
 import { useTheme } from '../../shared/hooks/useTheme.js';
 import styles from './FloatingPanel.module.css';
 
+const normalizeBooleanSetting = (value) => value !== false;
+
 export function FloatingPanel({ app }) {
   const panelRef = useRef(null);
   const [theme, changeTheme] = useTheme();
@@ -33,6 +35,12 @@ export function FloatingPanel({ app }) {
     key: 'interfaceFontScale',
     initialValue: DEFAULT_INTERFACE_FONT_SCALE,
     normalize: normalizeInterfaceFontScale
+  });
+  const [showWebsiteLink, changeShowWebsiteLink] = useStoredSetting({
+    app,
+    key: 'showWebsiteLinkInDictionary',
+    initialValue: true,
+    normalize: normalizeBooleanSetting
   });
   const dictionary = useDictionary(app, hydrated && panelState.visible && !panelState.minimized && panelState.activeView === 'dictionary');
   const interactions = usePanelInteractions({ panelRef, panelState, setPanelState, save });
@@ -89,6 +97,8 @@ export function FloatingPanel({ app }) {
           ? <PanelSettings
               preferences={preferences}
               homepageUrl={app.homepageUrl}
+              showWebsiteLink={showWebsiteLink}
+              onShowWebsiteLinkChange={changeShowWebsiteLink}
               dictionaryFontSize={dictionaryFontSize}
               interfaceFontScale={interfaceFontScale}
               theme={theme}
@@ -96,7 +106,12 @@ export function FloatingPanel({ app }) {
               onDictionaryFontSizeChange={changeDictionaryFontSize}
               onInterfaceFontScaleChange={changeInterfaceFontScale}
             />
-          : <PanelDictionary {...dictionary} fill={Number.isFinite(panelState.width) && Number.isFinite(panelState.height)} />}
+          : <PanelDictionary
+              {...dictionary}
+              fill={Number.isFinite(panelState.width) && Number.isFinite(panelState.height)}
+              homepageUrl={app.homepageUrl}
+              showWebsiteLink={showWebsiteLink}
+            />}
       </div>
       {!panelState.minimized && ['left', 'right', 'bottom', 'bottom-left', 'bottom-right'].map((edge) => (
         <div

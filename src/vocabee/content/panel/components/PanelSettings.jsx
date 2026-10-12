@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { TranslationSettings } from '../../../shared/settings/TranslationSettings.jsx';
 import { SettingsSwitch } from '../../../shared/settings/SettingsSwitch.jsx';
 import { DictionaryWordCard } from './DictionaryWordCard.jsx';
+import { WebsiteLink } from './WebsiteLink.jsx';
 import styles from './PanelSettings.module.css';
 
 function FontSizeSetting({ id, label, value, unit, min, max, step, onChange, children }) {
@@ -17,10 +18,16 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, onChange, chi
   );
 }
 
-export function PanelSettings({ preferences, homepageUrl, dictionaryFontSize, interfaceFontScale, theme, onThemeChange, onDictionaryFontSizeChange, onInterfaceFontScaleChange, }) {
+export function PanelSettings({ preferences, homepageUrl, showWebsiteLink, onShowWebsiteLinkChange, dictionaryFontSize, interfaceFontScale, theme, onThemeChange, onDictionaryFontSizeChange, onInterfaceFontScaleChange, }) {
   return (
     <section className={styles.settingsRoot} data-panel-content="settings">
-      {homepageUrl && <a className={styles.websiteButton} href={homepageUrl} target="_blank" rel="noreferrer">Открыть сайт</a>}
+      <WebsiteLink href={homepageUrl} />
+      <SettingsSwitch
+        id="vocabee-show-website-link"
+        label="Показывать ссылку на сайт в словаре"
+        checked={showWebsiteLink}
+        onChange={onShowWebsiteLinkChange}
+      />
       <TranslationSettings
         idPrefix="panel"
         variant="panel"

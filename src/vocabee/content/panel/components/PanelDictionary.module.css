@@ -3,6 +3,10 @@
   flex-direction: column;
 }
 
+.dictionaryRoot > a {
+  margin-bottom: 8px;
+}
+
 .fill {
   flex: 1 1 auto;
   min-height: 0;
