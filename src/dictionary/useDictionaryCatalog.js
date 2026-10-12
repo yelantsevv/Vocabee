@@ -319,25 +319,38 @@ export function useDictionaryCatalog() {
           ? `${sourceId}:${entry.source_language || sourceMetadata[sourceId].language}`
           : sourceId
       })));
-    if (catalogView !== 'phrases') return entries;
+    if (catalogView !== 'phrases') {
+      return entries.filter((entry) => entry.part_of_speech !== 'phrase');
+    }
 
-    return entries.flatMap((entry) => (entry.examples || [])
-      .filter((example) => typeof example.phrase === 'string' && example.phrase.trim())
-      .map((example, index) => ({
-        word: example.phrase.trim(),
-        part_of_speech: entry.part_of_speech,
-        is_irregular: entry.is_irregular,
-        level: example.level || entry.level,
-        learning_level: Number.isInteger(example.learning_level) ? example.learning_level : 0,
-        frequency_rank: (entry.frequency_rank ?? 10000) + index / 100,
-        definitions: [example.translation || ''],
-        category: example.category || '',
-        _isPhrase: true,
-        _entryKey: `${entry.word}:${index}`,
-        _catalogId: entry._catalogId,
-        _catalogLanguage: entry._catalogLanguage,
-        _learningSource: `${entry._learningSource}:phrases`
-      })));
+    return entries.flatMap((entry) => {
+      const savedPhrase = entry.part_of_speech === 'phrase'
+        ? [{
+            ...entry,
+            _isPhrase: true,
+            _entryKey: `${entry.word}:saved-phrase`,
+            _learningSource: `${entry._learningSource}:phrases`
+          }]
+        : [];
+      const examplePhrases = (entry.examples || [])
+        .filter((example) => typeof example.phrase === 'string' && example.phrase.trim())
+        .map((example, index) => ({
+          word: example.phrase.trim(),
+          part_of_speech: entry.part_of_speech,
+          is_irregular: entry.is_irregular,
+          level: example.level || entry.level,
+          learning_level: Number.isInteger(example.learning_level) ? example.learning_level : 0,
+          frequency_rank: (entry.frequency_rank ?? 10000) + index / 100,
+          definitions: [example.translation || ''],
+          category: example.category || '',
+          _isPhrase: true,
+          _entryKey: `${entry.word}:${index}`,
+          _catalogId: entry._catalogId,
+          _catalogLanguage: entry._catalogLanguage,
+          _learningSource: `${entry._learningSource}:phrases`
+        }));
+      return [...savedPhrase, ...examplePhrases];
+    });
   }, [catalogView, importedDictionaries, selectedSourceLanguage, sourceConnections, sourceMetadata]);
 
   const progressCountEntries = catalogView === 'phrases'

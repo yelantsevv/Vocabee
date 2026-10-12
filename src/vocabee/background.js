@@ -10,6 +10,11 @@ const TARGET_LANGUAGES = ['en', 'ru', 'uk', 'de'];
 let myVocabularyDatabase;
 let legacyDictionaryMigration;
 
+function getDictionaryTextType(text) {
+  const wordCount = text.trim().split(/\s+/u).filter(Boolean).length;
+  return wordCount > 1 ? 'phrase' : 'noun';
+}
+
 function openExistingDatabase(databaseName) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(databaseName);
@@ -65,7 +70,7 @@ async function migrateLearningWordsToMyDictionary(database, legacyDatabase, data
       entry: {
         word: word.sourceText,
         definitions: [word.translatedText],
-        part_of_speech: /\s/.test(word.sourceText) ? 'phrase' : 'noun',
+        part_of_speech: getDictionaryTextType(word.sourceText),
         level: 'A1',
         learning_level: Math.max(0, Math.min(Number.isInteger(word.learning_level) ? word.learning_level : 0, 9)),
         frequency_rank: Number.isFinite(word.addedAt) ? word.addedAt : index + 1,
@@ -236,6 +241,7 @@ function normalizeWordPayload(payload, learningLevel = 0) {
     id: JSON.stringify([sourceLang, targetLang, normalizedSource]),
     sourceText,
     translatedText,
+    part_of_speech: getDictionaryTextType(sourceText),
     sourceLang,
     targetLang,
     learning_level: learningLevel,
@@ -295,10 +301,10 @@ async function addWordToMyDictionary(payload, { startLearning = false } = {}) {
 
       const entry = {
         word: word.sourceText,
-        definitions: [word.translatedText],
-        part_of_speech: /\s/.test(word.sourceText) ? 'phrase' : 'noun',
+        part_of_speech: word.part_of_speech,
         level: 'A1',
         learning_level: word.learning_level,
+        definitions: [word.translatedText],
         frequency_rank: entries.length + 1,
         source_language: word.sourceLang,
         target_language: word.targetLang
