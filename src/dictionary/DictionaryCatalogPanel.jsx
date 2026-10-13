@@ -80,7 +80,8 @@ export function DictionaryCatalogPanel({
     learningLevelOverrides,
     filteredSourceEntries,
     studySessionEntries,
-    setEntryLearningLevel
+    setEntryLearningLevel,
+    deleteDictionaryEntry
   } = catalog;
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
   const previousRefreshVersion = useRef(refreshVersion);
@@ -437,6 +438,15 @@ export function DictionaryCatalogPanel({
             learningLevelOverrides
           )}
           onSetLearningLevel={setEntryLearningLevel}
+          onDeleteEntry={async (entry) => {
+            const removed = await deleteDictionaryEntry(entry);
+            if (removed) {
+              setLearningSessionEntries((current) => current?.filter((item) => (
+                !(item.word === entry.word && item._catalogId === entry._catalogId)
+              )) || null);
+            }
+            return removed;
+          }}
           onClose={() => {
             exitMobileFullscreen();
             setLearningSessionEntries(null);

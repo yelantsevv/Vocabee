@@ -38,32 +38,69 @@
   margin-bottom: 18px;
 }
 
-.footer {
-  display: flex;
-  width: 100%;
-  flex: 0 0 auto;
-  margin-top: 14px;
-}
-
-.header .sessionTitle {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  margin: 0;
-  font-size: clamp(16px, 2vw, 21px);
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
 .headerActions {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
+}
+
+.headerActions .learnedButton,
+.deleteButton {
+  width: auto;
+  min-height: 40px;
+  flex: 0 1 auto;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.deleteButton {
+  border: 1px solid rgba(255, 115, 130, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 91, 111, 0.1);
+  color: #ffd5da;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.deleteButton:not(:disabled):hover {
+  border-color: rgba(255, 115, 130, 0.8);
+  background: rgba(255, 91, 111, 0.2);
+}
+
+.deleteButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.deleteError {
+  flex: 0 0 auto;
+  margin: 8px 0 0;
+  color: #ff9da9;
+  font-size: 13px;
 }
 
 .headerLearningLevel {
   display: grid;
   place-items: center;
+}
+
+.headerLearningLevel>span {
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px;
+}
+
+.headerLearningLevel>span>span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .closeButton {
@@ -108,7 +145,7 @@
   gap: clamp(12px, 2.5vh, 22px);
   align-self: center;
   overflow: auto;
-  padding: clamp(22px, 4vh, 40px) 18px 12px;
+  padding: 12px;
   scrollbar-gutter: stable;
 }
 
@@ -153,6 +190,14 @@
   overflow-wrap: anywhere;
 }
 
+.translationHint {
+  margin: auto;
+  color: #aeb5cb;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 .example {
   max-width: 720px;
   margin: 18px 0 0;
@@ -195,7 +240,7 @@
   overflow-wrap: anywhere;
 }
 
-.translationExampleList li > span:first-child {
+.translationExampleList li>span:first-child {
   color: #e2e5f2;
 }
 
@@ -237,10 +282,6 @@
   padding-top: 18px;
 }
 
-.footer .learnedButton {
-  width: 100%;
-}
-
 .knowledgeActions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -254,9 +295,20 @@
 }
 
 .knowledgeActions button {
+  position: relative;
+  z-index: 1;
   min-height: 56px;
   font-size: 17px;
   border-radius: 0;
+}
+
+.knowledgeActions button::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 200px;
+  content: '';
 }
 
 .knowledgeActions .dontKnowButton {
@@ -326,35 +378,47 @@
     height: 100vh;
     height: 100dvh;
     border-radius: 0;
-    padding: 16px;
+    padding: 5px;
   }
 
   .cardContent {
     grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
     gap: 10px;
-    padding: 48px 12px 12px;
+    padding: 12px;
   }
 
   .englishBlock,
   .translationBlock {
     border-radius: 12px;
-    padding: 14px;
   }
 
   .card h3 {
     font-size: clamp(28px, 9vw, 38px);
   }
 
-  .header .sessionTitle {
-    gap: 5px;
-    font-size: clamp(14px, 4.2vw, 18px);
+  .header {
+    flex-wrap: wrap;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-left: 0;
+  }
+
+  .headerActions .learnedButton,
+  .deleteButton {
+    min-height: 38px;
+    padding: 0 8px;
+    font-size: 11px;
+    white-space: normal;
+    line-height: 1.1;
   }
 
   .cardActions {
     padding-top: 18px;
   }
 
-  .footer {
-    margin-top: 10px;
-  }
 }

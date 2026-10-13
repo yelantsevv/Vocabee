@@ -32,16 +32,16 @@ export function DictionaryEntryHeader({
             <button
               className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
               type="button"
-              aria-label={`Повысить уровень знания «${word}»: ${learningLevel} из 9`}
+              aria-label={`Повысить уровень знания «${word}»: ${learningLevel}`}
               data-translation-trigger=""
-              title={`Повысить уровень знания: ${learningLevel}/9`}
+              title={`Повысить уровень знания: ${learningLevel}`}
               style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / 9 * 360}deg` } : undefined}
               onPointerEnter={onRevealTranslation}
               onClick={onAddToLearning}
             >
               {learningLevel === 0
                 ? <span aria-hidden="true">+</span>
-                : <span>{learningLevel}/9</span>}
+                : <span>{learningLevel}</span>}
             </button>
           ) : learningLevel === 9 ? (
             <span

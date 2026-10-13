@@ -7,7 +7,7 @@ import {
   writeCustomDictionary,
   writeCatalogDictionary
 } from './catalogDatabase.js';
-import { getMyVocabularyEntries } from './storage.js';
+import { deleteMyVocabularyEntry, getMyVocabularyEntries } from './storage.js';
 import { DEFAULT_DICTIONARY_URL } from './dictionaryConfig.js';
 import {
   getEntryLearningLevel,
@@ -585,6 +585,50 @@ export function useDictionaryCatalog() {
     updateEntryLearningLevel(entry, () => level);
   }
 
+  async function deleteDictionaryEntry(entry) {
+    const sourceId = entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
+    const metadata = sourceMetadata[sourceId];
+    if (!metadata) throw new Error('Не удалось определить словарь для удаления слова.');
+
+    if (sourceId === 'my-vocabee') {
+      const removed = await deleteMyVocabularyEntry({
+        word: entry.word,
+        sourceLang: entry.source_language || metadata.language,
+        targetLang: entry.target_language || metadata.targetLanguage || 'ru'
+      });
+      if (!removed) return false;
+    } else {
+      const normalizedWord = entry.word.toLocaleLowerCase(metadata.language || 'en');
+      const entries = importedDictionaries[sourceId] || [];
+      const nextEntries = entries.filter((candidate) => (
+        candidate.word.toLocaleLowerCase(metadata.language || 'en') !== normalizedWord
+      ));
+      if (nextEntries.length === entries.length) return false;
+
+      if (metadata.isCustom) {
+        await writeCustomDictionary({ ...metadata, catalogId: sourceId, entries: nextEntries });
+      } else if (sourceId === 'en' || sourceId === 'de') {
+        await writeCatalogDictionary(sourceId, nextEntries);
+      } else {
+        throw new Error('Удаление не поддерживается для этого словаря.');
+      }
+
+      catalogMutationRef.current += 1;
+      setImportedDictionaries((current) => ({ ...current, [sourceId]: nextEntries }));
+    }
+
+    const learningSource = entry._learningSource || sourceId;
+    const learningKey = getLearnedEntryKey(learningSource, entry.word);
+    setLearningLevelOverrides((current) => {
+      if (!(learningKey in current)) return current;
+      const next = { ...current };
+      delete next[learningKey];
+      localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+      return next;
+    });
+    return true;
+  }
+
   return {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -620,7 +664,8 @@ export function useDictionaryCatalog() {
     levelLearningProgress,
     filteredSourceEntries,
     addToLearning,
-    setEntryLearningLevel
+    setEntryLearningLevel,
+    deleteDictionaryEntry
   };
 }
 

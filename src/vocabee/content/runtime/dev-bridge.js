@@ -44,6 +44,23 @@
       return;
     }
 
+    if (message.action === 'DELETE_MY_VOCABEE_ENTRY' && message.entry) {
+      chrome.runtime.sendMessage({
+        type: 'DELETE_MY_VOCABEE_ENTRY',
+        entry: message.entry
+      }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? response.removed : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
     if (message.action === 'OPEN_EXTENSION_SETTINGS') {
       chrome.runtime.sendMessage({ type: 'OPEN_EXTENSION_SETTINGS' }, (response) => {
         const error = chrome.runtime.lastError?.message;

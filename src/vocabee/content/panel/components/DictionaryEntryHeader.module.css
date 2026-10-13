@@ -130,8 +130,9 @@
   border-radius: 50%;
   background: var(--vb-surface, #171b30);
   color: var(--vb-text, #e2d8ff);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .progressCircle:hover {

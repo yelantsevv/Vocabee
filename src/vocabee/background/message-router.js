@@ -6,6 +6,7 @@ import {
 } from './constants.js';
 import {
   addWordToMyDictionary,
+  deleteWordFromMyDictionary,
   deleteIndexedDatabase,
   getDictionaryWords,
   getMyVocabularyEntries,
@@ -53,6 +54,7 @@ export function registerMessageHandlers() {
       'START_DICTIONARY_WORD_LEARNING',
       'GET_DICTIONARY_WORDS',
       'GET_MY_VOCABEE_DICTIONARY',
+      'DELETE_MY_VOCABEE_ENTRY',
       'DELETE_INDEXED_DATABASE',
       'LIST_INDEXED_DATABASES'
     ].includes(message?.type)) {
@@ -111,6 +113,20 @@ export function registerMessageHandlers() {
           console.error('Vocabee: could not load my vocabulary database', error);
           sendResponse({ ok: false, error: error.message });
         });
+      return true;
+    }
+
+    if (message.type === 'DELETE_MY_VOCABEE_ENTRY') {
+      deleteWordFromMyDictionary(message.entry)
+        .then((removed) => {
+          sendResponse({ ok: true, removed });
+          if (removed) {
+            chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
+              void chrome.runtime.lastError;
+            });
+          }
+        })
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
       return true;
     }
 

@@ -60,6 +60,14 @@ export async function getMyVocabularyEntries() {
   return requestExtension('GET_MY_VOCABEE_DICTIONARY', {}, 5000);
 }
 
+export async function deleteMyVocabularyEntry(entry) {
+  if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
+    const response = await sendExtensionMessage({ type: 'DELETE_MY_VOCABEE_ENTRY', entry });
+    return response.removed;
+  }
+  return requestExtension('DELETE_MY_VOCABEE_ENTRY', { entry }, 5000);
+}
+
 export async function openBrowserExtensionSettings() {
   if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
     await sendExtensionMessage({ type: 'OPEN_EXTENSION_SETTINGS' });

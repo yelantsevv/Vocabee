@@ -310,6 +310,43 @@ async function addWordToMyDictionary(payload, { startLearning = false } = {}) {
   });
 }
 
+async function deleteWordFromMyDictionary({ word, sourceLang, targetLang }) {
+  if (typeof word !== 'string' || !word.trim()
+    || !SOURCE_LANGUAGES.includes(sourceLang)
+    || !TARGET_LANGUAGES.includes(targetLang)) {
+    throw new Error('Не удалось определить удаляемое слово и его языковую пару.');
+  }
+
+  const database = await openMyVocabularyDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction('dictionaries', 'readwrite');
+    const store = transaction.objectStore('dictionaries');
+    let removed = false;
+    transaction.oncomplete = () => resolve(removed);
+    transaction.onerror = () => reject(new Error(
+      `Не удалось удалить слово из «Мой словарь»: ${transaction.error?.message || 'ошибка IndexedDB'}`
+    ));
+    transaction.onabort = () => reject(new Error(
+      `Удаление отменено: ${transaction.error?.message || 'ошибка IndexedDB'}`
+    ));
+
+    const lookup = store.get(sourceLang);
+    lookup.onsuccess = () => {
+      const current = lookup.result;
+      if (!current) return;
+      const normalizedWord = word.trim().toLocaleLowerCase(sourceLang);
+      const entries = (current.entries || []).filter((entry) => {
+        const matches = entry.word?.toLocaleLowerCase(sourceLang) === normalizedWord
+          && (entry.target_language || current.targetLanguage || 'ru') === targetLang;
+        if (matches) removed = true;
+        return !matches;
+      });
+      if (removed) store.put({ ...current, entries, updatedAt: Date.now() });
+    };
+    lookup.onerror = () => transaction.abort();
+  });
+}
+
 async function getDictionaryWords() {
   const entries = await getMyVocabularyEntries();
   return entries.map((entry, index) => ({
@@ -367,6 +404,7 @@ async function listIndexedDatabases() {
 
 export {
   addWordToMyDictionary,
+  deleteWordFromMyDictionary,
   deleteIndexedDatabase,
   getDictionaryWords,
   getMyVocabularyEntries,

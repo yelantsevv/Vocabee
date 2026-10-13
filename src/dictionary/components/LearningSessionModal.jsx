@@ -8,9 +8,13 @@ export function LearningSessionModal({
   initialIndex = 0,
   getLearningLevel,
   onSetLearningLevel,
+  onDeleteEntry,
   onClose
 }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [translationVisible, setTranslationVisible] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const entry = entries[currentIndex];
   const learningLevel = entry ? getLearningLevel(entry) : 0;
   const example = entry?.examples?.[0];
@@ -51,28 +55,56 @@ export function LearningSessionModal({
   const forms = verbTypes.includes(entry.type) && entry.forms?.past_simple && entry.forms?.past_participle
     ? `${entry.word} · ${entry.forms.past_simple} · ${entry.forms.past_participle}`
     : null;
-  const itemKind = catalogView === 'phrases' ? 'Phrases' : 'Words';
-  const formattedEntryCount = new Intl.NumberFormat('en-US').format(entries.length - currentIndex);
-
   function rateAndContinue(nextLevel) {
     onSetLearningLevel(entry, nextLevel);
+    setTranslationVisible(false);
     if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
     else onClose();
+  }
+
+  async function deleteCurrentEntry() {
+    if (!window.confirm(`Удалить «${entry.word}» из словаря?`)) return;
+
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      const removed = await onDeleteEntry(entry);
+      if (!removed) return;
+      setTranslationVisible(false);
+      if (entries.length <= 1) onClose();
+      else setCurrentIndex((index) => Math.min(index, entries.length - 2));
+    } catch (error) {
+      setDeleteError(error.message || 'Не удалось удалить слово из словаря.');
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
     <div className={styles.backdrop} onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose();
     }}>
-      <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="learning-session-title">
+      <section
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-label={catalogView === 'phrases' ? 'Изучение фраз' : 'Изучение слов'}
+      >
         <header className={styles.header}>
-          <div>
-            <h2 id="learning-session-title" className={styles.sessionTitle}>
-              <span>Learning</span>
-              <span>{formattedEntryCount} {itemKind}</span>
-            </h2>
-          </div>
           <div className={styles.headerActions}>
+            <button
+              className={styles.learnedButton}
+              type="button"
+              onClick={() => rateAndContinue(9)}
+              disabled={learningLevel === 9}
+            >{learningLevel === 9 ? '✓ Изучено' : '✓  Изученное'}</button>
+            <button
+              className={styles.deleteButton}
+              type="button"
+              onClick={deleteCurrentEntry}
+              disabled={deleting}
+              aria-label={`Удалить ${entry.word} из словаря`}
+            >{deleting ? 'Удаление…' : 'Удалить'}</button>
             <div className={styles.headerLearningLevel}>
               {learningLevel === 9 ? (
                 <span className={entryHeaderStyles.learnedMark} aria-label="Слово изучено">✓</span>
@@ -80,13 +112,13 @@ export function LearningSessionModal({
                 <span
                   className={entryHeaderStyles.progressCircle}
                   role="progressbar"
-                  aria-label={`Уровень знания: ${learningLevel} из 9`}
+                  aria-label={`Уровень знания: ${learningLevel}`}
                   aria-valuemin={0}
                   aria-valuemax={9}
                   aria-valuenow={learningLevel}
                   style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
                 >
-                  <span>{learningLevel}/9</span>
+                  <span>{learningLevel}</span>
                 </span>
               )}
             </div>
@@ -95,23 +127,42 @@ export function LearningSessionModal({
         </header>
 
         <div className={styles.card}>
-          <div className={styles.cardContent}>
+          <div
+            className={styles.cardContent}
+            role="group"
+            tabIndex={0}
+            aria-label="Нажмите на карточку, чтобы показать перевод"
+            aria-expanded={translationVisible}
+            onClick={() => setTranslationVisible(true)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setTranslationVisible(true);
+              }
+            }}
+          >
             <section className={styles.englishBlock} aria-label="Английский текст">
               <h3>{entry.word}</h3>
               {forms && <p className={styles.forms}>{forms}</p>}
               {example && <p className={styles.example}>{example.phrase || example.example}</p>}
             </section>
             <section className={styles.translationBlock} aria-label="Перевод">
-              <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
-              {translationExamples.length > 0 && (
-                <ul className={styles.translationExampleList}>
-                  {translationExamples.map((item, index) => (
-                    <li key={`${item.phrase}-${index}`}>
-                      <span>{item.phrase}</span>
-                      {item.translation && <span className={styles.exampleTranslation}>{item.translation}</span>}
-                    </li>
-                  ))}
-                </ul>
+              {translationVisible ? (
+                <>
+                  <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
+                  {translationExamples.length > 0 && (
+                    <ul className={styles.translationExampleList}>
+                      {translationExamples.map((item, index) => (
+                        <li key={`${item.phrase}-${index}`}>
+                          <span>{item.phrase}</span>
+                          {item.translation && <span className={styles.exampleTranslation}>{item.translation}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <p className={styles.translationHint}></p>
               )}
             </section>
           </div>
@@ -127,14 +178,7 @@ export function LearningSessionModal({
             </div>
           </div>
         </div>
-        <footer className={styles.footer}>
-          <button
-            className={styles.learnedButton}
-            type="button"
-            onClick={() => rateAndContinue(9)}
-            disabled={learningLevel === 9}
-          >{learningLevel === 9 ? '✓ Слово изучено' : '✓ Отметить как изученное'}</button>
-        </footer>
+        {deleteError && <p className={styles.deleteError} role="alert">{deleteError}</p>}
       </section>
     </div>
   );
