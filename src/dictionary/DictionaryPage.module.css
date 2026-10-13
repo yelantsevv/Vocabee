@@ -279,13 +279,6 @@
   text-align: center;
 }
 
-.footer {
-  width: min(100%, 1120px);
-  align-self: center;
-  padding: 0 clamp(20px, 5vw, 64px) 22px;
-  color: #929bb7;
-  font-size: 13px;
-}
 
 @media (max-width: 640px) {
   .settingsModalBackdrop {

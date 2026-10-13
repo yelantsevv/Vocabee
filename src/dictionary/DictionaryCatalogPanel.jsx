@@ -376,12 +376,6 @@ export function DictionaryCatalogPanel({
                 onRevealTranslation={() => revealTranslation(entry.word)}
                 onHideTranslation={hideTranslation}
               >
-                {catalogView === 'phrases' && (
-                  <p className={styles.phraseMetadata}>
-                    Уровень {entry.level}
-                    {entry.category && ` · ${phraseCategories.find(({ id }) => id === entry.category)?.label || entry.category}`}
-                  </p>
-                )}
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">
                     <ul className={styles.exampleList}>

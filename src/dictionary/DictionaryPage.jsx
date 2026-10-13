@@ -147,9 +147,6 @@ export function DictionaryPage() {
         </div>
       ), document.body)}
 
-      <footer className={styles.footer}>
-        Карточки и языковые базы отображаются в разделе «Словари».
-      </footer>
     </main>
   );
 }
