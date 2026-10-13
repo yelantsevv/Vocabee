@@ -350,26 +350,6 @@ export function useDictionaryCatalog() {
     });
   }, [catalogView, importedDictionaries, selectedSourceLanguage, sourceConnections, sourceMetadata]);
 
-  const progressCountEntries = catalogView === 'phrases'
-    ? selectedSourceDictionary.filter((entry) => {
-      const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
-      const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
-      const matchesType = sourceVerbTypes.length === 0
-        || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
-      const matchesCategory = sourceCategories.length === 0 || sourceCategories.includes(entry.category);
-      return matchesLevel && matchesType && matchesCategory;
-    })
-    : selectedSourceDictionary;
-  const learnedCount = progressCountEntries.filter((entry) => (
-    getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides) === 9
-  )).length;
-  const inProgressCount = progressCountEntries.filter((entry) => {
-    const level = getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
-    return level > 0 && level < 9;
-  }).length;
-  const remainingCount = progressCountEntries.filter((entry) => (
-    getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage, learningLevelOverrides) === 0
-  )).length;
   const overallDictionaryProgress = getAverageProgress(
     selectedSourceDictionary,
     selectedSourceLanguage,
@@ -574,9 +554,6 @@ export function useDictionaryCatalog() {
     importDictionaryFile,
     learningLevelOverrides,
     selectedSourceDictionary,
-    learnedCount,
-    inProgressCount,
-    remainingCount,
     overallDictionaryProgress,
     selectedLevelEntries,
     levelLearningProgress,

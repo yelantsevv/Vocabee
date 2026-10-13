@@ -32,7 +32,8 @@ function FilterButtonIcon({ name }) {
     start: <><path d="M4 5.5c2.8-1 5.5-.6 8 1.1v13c-2.5-1.7-5.2-2.1-8-1.1v-13Z" /><path d="M20 5.5c-2.8-1-5.5-.6-8 1.1v13c2.5-1.7 5.2-2.1 8-1.1v-13Z" /></>,
     learning: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5l3.2 2" /></>,
     learned: <><path d="M12 3.5 14.6 5l3-.1.9 2.9 2 2.2-1.2 2.8.3 3-2.7 1.4-1.8 2.4-3-.7-2.9.7-1.8-2.4-2.7-1.4.3-3L2.8 10l2-2.2.9-2.9 3 .1L12 3.5Z" /><path d="m8.5 12 2.2 2.2 4.8-4.8" /></>,
-    new: <><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" /><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" /></>
+    new: <><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" /><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" /></>,
+    settings: <><path d="M12.22 2h-.44a2 2 0 0 0-2 1.72l-.14 1.04a8 8 0 0 0-1.64.95l-.99-.4a2 2 0 0 0-2.47.93l-.22.38a2 2 0 0 0 .48 2.58l.82.64a8 8 0 0 0 0 1.9l-.82.64a2 2 0 0 0-.48 2.58l.22.38a2 2 0 0 0 2.47.93l.99-.4c.5.39 1.05.71 1.64.95l.14 1.04a2 2 0 0 0 2 1.72h.44a2 2 0 0 0 2-1.72l.14-1.04a8 8 0 0 0 1.64-.95l.99.4a2 2 0 0 0 2.47-.93l.22-.38a2 2 0 0 0-.48-2.58l-.82-.64a8 8 0 0 0 0-1.9l.82-.64a2 2 0 0 0 .48-2.58l-.22-.38a2 2 0 0 0-2.47-.93l-.99.4a8 8 0 0 0-1.64-.95l-.14-1.04a2 2 0 0 0-2-1.72Z" /><circle cx="12" cy="12" r="3" /></>
   };
 
   return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>;
@@ -74,9 +75,6 @@ export function DictionaryCatalogPanel({
     setSourceConnections,
     overallDictionaryProgress,
     selectedSourceDictionary,
-    learnedCount,
-    inProgressCount,
-    remainingCount,
     learningLevelOverrides,
     filteredSourceEntries
   } = catalog;
@@ -283,22 +281,21 @@ export function DictionaryCatalogPanel({
                 }}
               ><FilterButtonIcon name="start" /><span>Start</span></button>
               {[
-                ['learning', 'Learning', 'Изучаю', inProgressCount, 'learning'],
-                ['learned', 'Learned', 'Изученные', learnedCount, 'learned'],
-                ['remaining', 'New', 'Не изученные', remainingCount, 'new']
-              ].map(([view, label, russianLabel, count, icon]) => (
+                ['learning', 'Learning', 'Изучаю', 'learning'],
+                ['learned', 'Learned', 'Изученные', 'learned'],
+                ['remaining', 'New', 'Не изученные', 'new']
+              ].map(([view, label, russianLabel, icon]) => (
                 <button
                   className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
                   key={view}
                   type="button"
-                  aria-label={`${russianLabel} (${count})`}
-                  title={`${russianLabel} (${count}) · ${label}`}
+                  aria-label={russianLabel}
+                  title={`${russianLabel} · ${label}`}
                   aria-pressed={progressViews.includes(view)}
                   onClick={() => toggleValue(progressViews, setProgressViews, view)}
                 >
                   <FilterButtonIcon name={icon} />
                   <span>{label}</span>
-                  <span className={styles.progressCount}>{count}</span>
                 </button>
               ))}
               <button
@@ -307,7 +304,7 @@ export function DictionaryCatalogPanel({
                 aria-label="Открыть настройки"
                 title="Настройки"
                 onClick={onOpenSettings}
-              >⚙</button>
+              ><FilterButtonIcon name="settings" /></button>
             </div>
           </div>
         </div>
