@@ -95,7 +95,7 @@
   font-size: 24px;
 }
 
-.settingsModal > :last-child {
+.settingsModal> :last-child {
   width: 100%;
   max-width: none;
   min-height: 0;
@@ -287,6 +287,10 @@
     padding: 0;
   }
 
+  .content {
+    padding: 5px;
+  }
+
   .settingsModal {
     width: 100%;
     min-height: 100vh;
@@ -300,7 +304,7 @@
     padding-left: 16px;
   }
 
-  .settingsModal > :last-child {
+  .settingsModal> :last-child {
     padding: 12px;
   }
 

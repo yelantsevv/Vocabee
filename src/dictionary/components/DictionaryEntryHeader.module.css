@@ -158,4 +158,10 @@
   .entryTranslationBlock {
     justify-content: flex-start;
   }
+
+  .addToLearningButton,
+  .progressCircle,
+  .learnedMark {
+    display: none;
+  }
 }

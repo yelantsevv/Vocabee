@@ -84,14 +84,6 @@
   max-width: 100%;
 }
 
-.refreshCardsSticky {
-  position: sticky;
-  z-index: 20;
-  top: 2px;
-  height: 0;
-  pointer-events: none;
-}
-
 .emptyCatalog {
   margin: 24px 2px;
   color: #a5acc4;
@@ -402,42 +394,6 @@
 .startLearningButton:disabled {
   cursor: default;
   opacity: 0.45;
-}
-
-.refreshCardsButton {
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  display: grid;
-  box-sizing: border-box;
-  width: var(--square-filter-control);
-  min-width: var(--square-filter-control);
-  height: var(--square-filter-control);
-  min-height: var(--square-filter-control);
-  flex: 0 0 var(--square-filter-control);
-  place-items: center;
-  border: 1px solid rgba(173, 183, 220, 0.2);
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #dce0f1;
-  cursor: pointer;
-  pointer-events: auto;
-  transform: translateX(-50%);
-}
-
-.refreshCardsButton:hover {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
-}
-
-.refreshCardsButton svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
 }
 
 .progressButton:hover,

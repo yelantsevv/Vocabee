@@ -9,6 +9,7 @@ import { DictionaryWordCard } from './components/DictionaryWordCard.jsx';
 import { LearningSessionModal } from './components/LearningSessionModal.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
 import { enterMobileFullscreen, exitMobileFullscreen } from './mobileFullscreen.js';
+import { RefreshCardsButton } from './RefreshCardsButton.jsx';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -47,6 +48,9 @@ export function DictionaryCatalogPanel({
   onAddToLearning,
   onOpenSettings,
   onRefreshCards,
+  refreshButtonPosition,
+  refreshButtonPositionEditing,
+  onRefreshButtonPositionChange,
   cardsPerLoad,
   hideTranslationsUntilHover,
   refreshVersion
@@ -317,20 +321,12 @@ export function DictionaryCatalogPanel({
         </div>
       </section>
 
-      <div className={styles.refreshCardsSticky}>
-        <button
-          className={styles.refreshCardsButton}
-          type="button"
-          aria-label="Обновить список карточек"
-          title="Обновить список карточек"
-          onClick={onRefreshCards}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 7v5h-5M4 17v-5h5" />
-            <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
-          </svg>
-        </button>
-      </div>
+      <RefreshCardsButton
+        position={refreshButtonPosition}
+        positionEditing={refreshButtonPositionEditing}
+        onPositionChange={onRefreshButtonPositionChange}
+        onRefresh={onRefreshCards}
+      />
 
       {catalogLoading ? (
         <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
@@ -424,7 +420,7 @@ export function DictionaryCatalogPanel({
           type="button"
           onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
         >
-          Показать ещё {cardsPerLoad} · {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
+           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
         </button>
       )}
       </>}

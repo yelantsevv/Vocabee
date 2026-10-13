@@ -57,6 +57,17 @@ function getCatalogSourceIds(language, sourceConnections) {
   ];
 }
 
+function createLearningStats() {
+  return { total: 0, inProgress: 0, learned: 0 };
+}
+
+function addLearningStat(stats, entry, language, overrides) {
+  const level = getEntryLearningLevel(entry, language, overrides);
+  stats.total += 1;
+  if (level === 9) stats.learned += 1;
+  else if (level > 0) stats.inProgress += 1;
+}
+
 function readCatalogFilters() {
   const defaults = {
     catalogView: 'words',
@@ -311,7 +322,37 @@ export function useDictionaryCatalog() {
 
   const availableSources = useMemo(() => Object.keys(importedDictionaries)
     .filter((sourceId) => sourceMetadata[sourceId])
-    .map((sourceId) => ({ id: sourceId, ...sourceMetadata[sourceId] })), [importedDictionaries, sourceMetadata]);
+    .map((sourceId) => {
+      const entries = importedDictionaries[sourceId] || [];
+      const words = createLearningStats();
+      const phrases = createLearningStats();
+
+      for (const entry of entries) {
+        const learningSource = sourceId === 'my-vocabee'
+          ? `${sourceId}:${entry.source_language || sourceMetadata[sourceId].language}`
+          : sourceId;
+        if (entry.part_of_speech === 'phrase') {
+          addLearningStat(phrases, entry, `${learningSource}:phrases`, learningLevelOverrides);
+        } else {
+          addLearningStat(words, entry, learningSource, learningLevelOverrides);
+        }
+
+        for (const example of entry.examples || []) {
+          if (typeof example.phrase !== 'string' || !example.phrase.trim()) continue;
+          addLearningStat(phrases, {
+            word: example.phrase.trim(),
+            learning_level: Number.isInteger(example.learning_level) ? example.learning_level : 0
+          }, `${learningSource}:phrases`, learningLevelOverrides);
+        }
+      }
+
+      return {
+        id: sourceId,
+        ...sourceMetadata[sourceId],
+        words,
+        phrases
+      };
+    }), [importedDictionaries, learningLevelOverrides, sourceMetadata]);
   const selectedSourceDictionary = useMemo(() => {
     const sourceIds = getCatalogSourceIds(selectedSourceLanguage, sourceConnections);
     const entries = sourceIds.flatMap((sourceId) => (importedDictionaries[sourceId] || [])

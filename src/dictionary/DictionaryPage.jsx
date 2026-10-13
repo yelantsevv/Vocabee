@@ -9,7 +9,8 @@ import {
   DEFAULT_DICTIONARY_FONT_SIZE,
   DEFAULT_INTERFACE_FONT_SCALE,
   normalizeDictionaryFontSize,
-  normalizeInterfaceFontScale
+  normalizeInterfaceFontScale,
+  normalizeRefreshButtonPosition
 } from './settings.js';
 import { targetLanguages } from './dictionaryUtils.js';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
@@ -23,11 +24,13 @@ const DEFAULT_SETTINGS = {
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
   cardsPerLoad: 20,
-  hideTranslationsUntilHover: true
+  hideTranslationsUntilHover: true,
+  refreshButtonPosition: null
 };
 
 export function DictionaryPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [refreshButtonPositionEditing, setRefreshButtonPositionEditing] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [appliedSettings, setAppliedSettings] = useState(DEFAULT_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
@@ -37,6 +40,7 @@ export function DictionaryPage() {
   settingsRef.current = settings;
   const closeSettings = useCallback(() => {
     setAppliedSettings(settingsRef.current);
+    setRefreshButtonPositionEditing(false);
     setSettingsOpen(false);
     exitMobileFullscreen();
   }, []);
@@ -68,7 +72,8 @@ export function DictionaryPage() {
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
           : DEFAULT_SETTINGS.cardsPerLoad,
-        hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false
+        hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false,
+        refreshButtonPosition: normalizeRefreshButtonPosition(result.refreshButtonPosition)
       };
       setSettings(loadedSettings);
       setAppliedSettings(loadedSettings);
@@ -85,11 +90,15 @@ export function DictionaryPage() {
     const normalizers = {
       dictionaryFontSize: normalizeDictionaryFontSize,
       interfaceFontScale: normalizeInterfaceFontScale,
+      refreshButtonPosition: normalizeRefreshButtonPosition,
       cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
     };
     const nextValue = normalizers[key] ? normalizers[key](value) : value;
     const nextSettings = { ...settings, [key]: nextValue };
     setSettings(nextSettings);
+    if (key === 'refreshButtonPosition') {
+      setAppliedSettings((current) => ({ ...current, refreshButtonPosition: nextValue }));
+    }
 
     try {
       await saveDictionarySettings(nextSettings);
@@ -118,6 +127,9 @@ export function DictionaryPage() {
         onAddToLearning={catalog.addToLearning}
         onOpenSettings={openSettings}
         onRefreshCards={refreshCards}
+        refreshButtonPosition={appliedSettings.refreshButtonPosition}
+        refreshButtonPositionEditing={refreshButtonPositionEditing}
+        onRefreshButtonPositionChange={(position) => updateSetting('refreshButtonPosition', position)}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
         refreshVersion={cardRefreshVersion}
@@ -147,6 +159,13 @@ export function DictionaryPage() {
               updateSetting={updateSetting}
               settingsStatus={settingsStatus}
               catalog={catalog}
+              refreshButtonPosition={settings.refreshButtonPosition}
+              refreshButtonPositionEditing={refreshButtonPositionEditing}
+              onRefreshButtonPositionEditingChange={setRefreshButtonPositionEditing}
+              onResetRefreshButtonPosition={() => {
+                setRefreshButtonPositionEditing(false);
+                updateSetting('refreshButtonPosition', null);
+              }}
               modal
             />
           </section>

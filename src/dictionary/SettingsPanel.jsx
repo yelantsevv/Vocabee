@@ -5,8 +5,19 @@ import { SettingsActionButtons } from './SettingsActionButtons.jsx';
 import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
+import { DictionaryStats } from './DictionaryStats.jsx';
 
-export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog, modal = false }) {
+export function SettingsPanel({
+  settings,
+  updateSetting,
+  settingsStatus,
+  catalog,
+  refreshButtonPosition,
+  refreshButtonPositionEditing,
+  onRefreshButtonPositionEditingChange,
+  onResetRefreshButtonPosition,
+  modal = false
+}) {
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const loadedSourceActions = dictionaryQuickActions
     .filter((action) => loadedSources.has(action.id.slice('words-'.length)))
@@ -45,6 +56,7 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
             />
           )}
         />
+        <DictionaryStats sources={catalog.availableSources} />
         {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
         <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
           <span>Карточек за загрузку</span>
@@ -67,6 +79,27 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
           />
         </label>
+        <section className={panelStyles.positionSetting} aria-labelledby="refresh-button-position-title">
+          <h2 id="refresh-button-position-title">Положение кнопки обновления</h2>
+          <label className={panelStyles.positionToggle} htmlFor="edit-refresh-button-position">
+            <span>Перемещать кнопку</span>
+            <input
+              id="edit-refresh-button-position"
+              type="checkbox"
+              checked={refreshButtonPositionEditing}
+              onChange={(event) => onRefreshButtonPositionEditingChange(event.target.checked)}
+            />
+          </label>
+          <p className={panelStyles.positionHint}>
+            Включите настройку, перетащите появившуюся кнопку в нужное место и выключите её.
+          </p>
+          <button
+            className={panelStyles.positionReset}
+            type="button"
+            onClick={onResetRefreshButtonPosition}
+            disabled={!refreshButtonPosition}
+          >Сбросить положение</button>
+        </section>
         {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
         <DatabaseManager />
       </section>

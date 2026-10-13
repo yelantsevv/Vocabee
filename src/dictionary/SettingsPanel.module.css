@@ -50,6 +50,58 @@
   cursor: pointer;
 }
 
+.positionSetting {
+  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
+  padding: 18px 2px;
+}
+
+.positionSetting h2 {
+  margin: 0 0 10px;
+  color: #f3f4fc;
+  font-size: calc(15px * var(--vocabee-ui-font-scale, 1));
+}
+
+.positionToggle {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #f3f4fc;
+  font-size: calc(14px * var(--vocabee-ui-font-scale, 1));
+  cursor: pointer;
+}
+
+.positionToggle input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  accent-color: #a15cff;
+}
+
+.positionHint {
+  margin: 2px 0 12px;
+  color: #a5acc4;
+  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
+  line-height: 1.5;
+}
+
+.positionReset {
+  min-height: 40px;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dce0f1;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.positionReset:disabled {
+  color: #7f879e;
+  cursor: default;
+  opacity: 0.6;
+}
+
 .settingsStatus {
   margin: 14px 2px 0;
   color: #a5acc4;

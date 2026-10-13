@@ -1,0 +1,70 @@
+.sticky {
+  position: sticky;
+  z-index: 20;
+  top: 2px;
+  height: 0;
+  pointer-events: none;
+}
+
+.sticky[data-position-editing='true'] {
+  z-index: 10020;
+}
+
+.button {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  display: grid;
+  box-sizing: border-box;
+  width: var(--square-filter-control, 46px);
+  min-width: var(--square-filter-control, 46px);
+  height: var(--square-filter-control, 46px);
+  min-height: var(--square-filter-control, 46px);
+  flex: 0 0 var(--square-filter-control, 46px);
+  place-items: center;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dce0f1;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
+
+.button:hover {
+  border-color: rgba(169, 91, 255, 0.72);
+  background: rgba(119, 82, 255, 0.2);
+}
+
+.button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.button.customPosition,
+.button[data-drag-position='true'] {
+  position: fixed;
+  z-index: 30;
+  transform: none;
+}
+
+.button.editing {
+  border-color: rgba(67, 213, 176, 0.85);
+  background: #202b39;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(67, 213, 176, 0.2);
+  cursor: grab;
+  touch-action: none;
+}
+
+.button.editing:active {
+  cursor: grabbing;
+}
+
+.button[data-drag-position='true'] {
+  z-index: 10020;
+}
