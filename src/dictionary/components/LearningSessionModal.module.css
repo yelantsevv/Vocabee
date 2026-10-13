@@ -12,9 +12,9 @@
 
 .modal {
   display: flex;
-  width: 80vw;
-  height: 80vh;
-  height: 80dvh;
+  width: 90vw;
+  height: 90vh;
+  height: 100dvh;
   min-width: 0;
   flex-direction: column;
   flex: 0 0 auto;
@@ -55,6 +55,17 @@
   white-space: nowrap;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerLearningLevel {
+  display: grid;
+  place-items: center;
+}
+
 .closeButton {
   display: grid;
   min-width: 42px;
@@ -93,11 +104,11 @@
   max-width: 960px;
   flex: 1 1 auto;
   min-height: 0;
-  grid-template-rows: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
   gap: clamp(12px, 2.5vh, 22px);
   align-self: center;
   overflow: auto;
-  padding: clamp(22px, 4vh, 40px) clamp(18px, 4vw, 48px);
+  padding: clamp(22px, 4vh, 40px) 18px 12px;
   scrollbar-gutter: stable;
 }
 
@@ -107,17 +118,10 @@
   min-height: 0;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
 }
 
-
-.cardLearningLevel {
-  position: absolute;
-  z-index: 1;
-  top: 16px;
-  right: 16px;
-}
 
 .card h3 {
   margin: 0;
@@ -230,7 +234,7 @@
   flex: 0 0 auto;
   gap: 0;
   margin-top: auto;
-  padding-top: clamp(18px, 4vh, 32px);
+  padding-top: 18px;
 }
 
 .footer .learnedButton {
@@ -316,14 +320,14 @@
   }
 
   .modal {
-    width: 92vw;
-    height: 80dvh;
+    width: 95vw;
+    /* height: 80dvh; */
     border-radius: 16px;
     padding: 16px;
   }
 
   .cardContent {
-    grid-template-rows: minmax(0, 1fr) minmax(0, 0.8fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
     gap: 10px;
     padding: 48px 12px 12px;
   }

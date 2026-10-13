@@ -72,27 +72,29 @@ export function LearningSessionModal({
               <span>{formattedEntryCount} {itemKind}</span>
             </h2>
           </div>
-          <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">×</button>
+          <div className={styles.headerActions}>
+            <div className={styles.headerLearningLevel}>
+              {learningLevel === 9 ? (
+                <span className={entryHeaderStyles.learnedMark} aria-label="Слово изучено">✓</span>
+              ) : (
+                <span
+                  className={entryHeaderStyles.progressCircle}
+                  role="progressbar"
+                  aria-label={`Уровень знания: ${learningLevel} из 9`}
+                  aria-valuemin={0}
+                  aria-valuemax={9}
+                  aria-valuenow={learningLevel}
+                  style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
+                >
+                  <span>{learningLevel}/9</span>
+                </span>
+              )}
+            </div>
+            <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">×</button>
+          </div>
         </header>
 
         <div className={styles.card}>
-          <div className={styles.cardLearningLevel}>
-            {learningLevel === 9 ? (
-              <span className={entryHeaderStyles.learnedMark} aria-label="Слово изучено">✓</span>
-            ) : (
-              <span
-                className={entryHeaderStyles.progressCircle}
-                role="progressbar"
-                aria-label={`Уровень знания: ${learningLevel} из 9`}
-                aria-valuemin={0}
-                aria-valuemax={9}
-                aria-valuenow={learningLevel}
-                style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
-              >
-                <span>{learningLevel}/9</span>
-              </span>
-            )}
-          </div>
           <div className={styles.cardContent}>
             <section className={styles.englishBlock} aria-label="Английский текст">
               <h3>{entry.word}</h3>
