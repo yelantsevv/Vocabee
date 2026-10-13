@@ -222,18 +222,6 @@ export function DictionaryCatalogPanel({
                   >{level}</button>
                 ))}
               </div>
-              <button
-                className={styles.refreshCardsButton}
-                type="button"
-                aria-label="Обновить список карточек"
-                title="Обновить список карточек"
-                onClick={onRefreshCards}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20 7v5h-5M4 17v-5h5" />
-                  <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
-                </svg>
-              </button>
             </div>
           </fieldset>
             </div>
@@ -325,6 +313,21 @@ export function DictionaryCatalogPanel({
         </div>
       </section>
 
+      <div className={styles.refreshCardsSticky}>
+        <button
+          className={styles.refreshCardsButton}
+          type="button"
+          aria-label="Обновить список карточек"
+          title="Обновить список карточек"
+          onClick={onRefreshCards}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 7v5h-5M4 17v-5h5" />
+            <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
+          </svg>
+        </button>
+      </div>
+
       {catalogLoading ? (
         <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
       ) : catalogError ? (
@@ -348,9 +351,6 @@ export function DictionaryCatalogPanel({
           )}
         </div>
       ) : <>
-      <p className={styles.dictionaryCount}>
-        Показано {Math.min(displayedCardCount, shuffledEntries.length)} из {shuffledEntries.length} {catalogView === 'phrases' ? 'фраз' : 'слов'}
-      </p>
       <section
         className={commonStyles.wordList}
         aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}

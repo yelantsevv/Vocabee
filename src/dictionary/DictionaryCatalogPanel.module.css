@@ -1,4 +1,7 @@
 .dictionaryContent.dictionaryContent {
+  --square-filter-control: 46px;
+  --text-filter-control-width: clamp(48px, 8vw, 140px);
+  --source-text-control-width: clamp(64px, 8vw, 140px);
   width: 100%;
   max-width: 1900px;
   align-self: center;
@@ -6,16 +9,14 @@
 }
 
 .dictionaryFilters {
-  --square-filter-control: 46px;
-  --text-filter-control-width: clamp(48px, 8vw, 140px);
-  --source-text-control-width: clamp(64px, 8vw, 140px);
+  container: dictionary-filters / inline-size;
   position: relative;
   display: grid;
-  gap: 16px;
+  gap: clamp(12px, 1.5vw, 20px);
   border: 1px solid rgba(173, 183, 220, 0.14);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.035);
-  padding: 18px;
+  padding: clamp(12px, 1.5vw, 20px);
 }
 
 .overallProgress {
@@ -39,9 +40,9 @@
 
 .filterLayout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: clamp(14px, 2vw, 30px);
+  gap: clamp(12px, 1.5vw, 20px);
 }
 
 .filterLeftGroup,
@@ -49,7 +50,7 @@
   display: grid;
   width: 100%;
   min-width: 0;
-  grid-template-rows: minmax(46px, 1fr) minmax(46px, 1fr);
+  grid-template-rows: auto auto;
   align-content: stretch;
   justify-items: center;
   gap: 10px;
@@ -60,10 +61,11 @@
   display: grid;
   width: max-content;
   min-width: 0;
-  grid-template-columns: auto auto;
+  grid-template-columns: max-content;
   align-items: center;
+  justify-items: center;
   justify-self: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .filterLeftBottomRow {
@@ -77,14 +79,19 @@
 }
 
 .filterLeftBottomRow .filterField {
-  width: min(100%, calc(
-    var(--square-filter-control) + var(--square-filter-control) +
-    var(--source-text-control-width) + var(--source-text-control-width) +
-    var(--square-filter-control) + var(--square-filter-control) +
-    var(--square-filter-control) + var(--square-filter-control) +
-    var(--square-filter-control) + 54px
+  width: min(100%, max(
+    calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
+    calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 18px)
   ));
   max-width: 100%;
+}
+
+.refreshCardsSticky {
+  position: sticky;
+  z-index: 20;
+  top: 2px;
+  height: 0;
+  pointer-events: none;
 }
 
 .emptyCatalog {
@@ -336,15 +343,17 @@
 }
 
 .progressButton {
-  display: flex;
+  display: grid;
   box-sizing: border-box;
   width: var(--text-filter-control-width);
   min-width: 0;
   min-height: 46px;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
-  gap: 4px;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 4px;
+  row-gap: 1px;
   border: 1px solid rgba(173, 183, 220, 0.2);
   border-radius: 9px;
   background: rgba(255, 255, 255, 0.04);
@@ -392,6 +401,9 @@
 }
 
 .refreshCardsButton {
+  position: absolute;
+  top: 30px;
+  left: 50%;
   display: grid;
   box-sizing: border-box;
   width: var(--square-filter-control);
@@ -405,6 +417,8 @@
   background: rgba(255, 255, 255, 0.04);
   color: #dce0f1;
   cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
 }
 
 .refreshCardsButton:hover {
@@ -430,6 +444,7 @@
 }
 
 .progressCount {
+  grid-column: 1 / -1;
   color: #929bb7;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
@@ -439,12 +454,6 @@
 .progressButton:hover .progressCount,
 .progressButton.selected .progressCount {
   color: #dce0f1;
-}
-
-.dictionaryCount {
-  margin: 12px 2px 0;
-  color: #929bb7;
-  font-size: 13px;
 }
 
 .phraseMetadata {
@@ -548,44 +557,12 @@
 }
 
 @media (max-width: 640px) {
+  .dictionaryContent.dictionaryContent {
+    --text-filter-control-width: clamp(42px, 8vw, 48px);
+  }
+
   .dictionaryFilters {
     padding: 14px;
-  }
-
-  .filterLayout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .filterLeftGroup,
-  .filterRightGroup {
-    grid-template-rows: auto auto;
-  }
-
-  .filterLeftTopRow {
-    grid-template-columns: max-content;
-    justify-items: center;
-    gap: 8px;
-  }
-
-  .typeChip > span,
-  .progressButton > span,
-  .startLearningButton > span {
-    display: none;
-  }
-
-  .typeChip,
-  .progressButton,
-  .startLearningButton {
-    gap: 0;
-    padding-right: 0;
-    padding-left: 0;
-  }
-
-  .filterLeftBottomRow .filterField {
-    width: min(100%, max(
-      calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
-      calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 24px)
-    ));
   }
 
   .sourceViewButtons {
@@ -641,29 +618,40 @@
 
 }
 
-@media (min-width: 641px) and (max-width: 1250px) {
+@media (max-width: 900px) {
+  .typeChip > span,
+  .progressButton > span,
+  .startLearningButton > span {
+    display: none;
+  }
+
+  .typeChip,
+  .progressButton,
+  .startLearningButton {
+    gap: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@container dictionary-filters (min-width: 1200px) {
   .filterLayout {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 30px);
   }
 
   .filterLeftTopRow {
-    grid-template-columns: max-content;
-    justify-items: center;
+    grid-template-columns: max-content max-content;
     gap: 12px;
   }
 
   .filterLeftBottomRow .filterField {
-    width: min(100%, max(
-      calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
-      calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 24px)
+    width: min(100%, calc(
+      var(--square-filter-control) + var(--square-filter-control) +
+      var(--source-text-control-width) + var(--source-text-control-width) +
+      var(--square-filter-control) + var(--square-filter-control) +
+      var(--square-filter-control) + var(--square-filter-control) +
+      48px
     ));
-  }
-
-  .filterRightGroup .verbTypeChips {
-    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
-  }
-
-  .filterRightGroup .progressFilters {
-    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   }
 }
