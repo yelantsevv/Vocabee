@@ -88,6 +88,7 @@ export function DictionaryCatalogPanel({
   ));
   const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
   const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
+  const numberFormat = new Intl.NumberFormat('ru-RU');
   const loadedLanguages = availableSources.filter(({ id }) => ['en', 'de'].includes(id));
   const hasMyDictionary = availableSources.some(({ id }) => id === 'my-vocabee');
   const activeLanguage = loadedLanguages.find(({ id }) => id === selectedSourceLanguage)
@@ -418,7 +419,7 @@ export function DictionaryCatalogPanel({
           type="button"
           onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
         >
-          Показать ещё {cardsPerLoad}
+          Показать ещё {cardsPerLoad} · {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
         </button>
       )}
       </>}
