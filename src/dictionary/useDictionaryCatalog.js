@@ -364,15 +364,10 @@ export function useDictionaryCatalog() {
     learningLevelOverrides
   );
 
-  const filteredSourceEntries = useMemo(() => {
+  const sourceEntriesByFilters = useMemo(() => {
     const query = sourceSearch.trim().toLocaleLowerCase();
     const entries = selectedSourceDictionary.filter((entry) => {
       const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
-      const learningLevel = getEntryLearningLevel(
-        entry,
-        entry._learningSource || entry._catalogId || entryLanguage,
-        learningLevelOverrides
-      );
       const searchableText = [
         entry.word,
         ...entry.definitions,
@@ -396,20 +391,12 @@ export function useDictionaryCatalog() {
           || entry.part_of_speech === 'phrase'
           || sourceVerbTypes.length === 0
           || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
-      const progressCategory = learningLevel === 9
-        ? 'learned'
-        : learningLevel > 0
-          ? 'learning'
-          : 'remaining';
-      const matchesProgress = progressViews.length === 0 || progressViews.includes(progressCategory);
       return matchesLevel && matchesType && matchesCategory
-        && (!query || searchableText.includes(query)) && matchesProgress;
+        && (!query || searchableText.includes(query));
     });
 
     return entries.sort((a, b) => (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity));
   }, [
-    learningLevelOverrides,
-    progressViews,
     selectedSourceDictionary,
     selectedSourceLanguage,
     sourceSearch,
@@ -418,6 +405,45 @@ export function useDictionaryCatalog() {
     sourceVerbTypes,
     sourceMetadata
   ]);
+
+  const filteredSourceEntries = useMemo(() => sourceEntriesByFilters.filter((entry) => {
+    const learningLevel = getEntryLearningLevel(
+      entry,
+      entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
+      learningLevelOverrides
+    );
+    const progressCategory = learningLevel === 9
+      ? 'learned'
+      : learningLevel > 0
+        ? 'learning'
+        : 'remaining';
+    return progressViews.length === 0 || progressViews.includes(progressCategory);
+  }), [sourceEntriesByFilters, progressViews, learningLevelOverrides, selectedSourceLanguage]);
+
+  const studySessionEntries = useMemo(() => sourceEntriesByFilters
+    .filter((entry) => {
+      const learningLevel = getEntryLearningLevel(
+        entry,
+        entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
+        learningLevelOverrides
+      );
+      const progressCategory = learningLevel === 9
+        ? 'learned'
+        : learningLevel > 0
+          ? 'learning'
+          : 'remaining';
+      return learningLevel < 9
+        && (progressViews.length === 0 || progressViews.includes(progressCategory));
+    })
+    .sort((left, right) => {
+      const leftLevel = getEntryLearningLevel(left, left._learningSource || left._catalogId || left._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
+      const rightLevel = getEntryLearningLevel(right, right._learningSource || right._catalogId || right._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
+      const leftInProgress = leftLevel > 0 ? 0 : 1;
+      const rightInProgress = rightLevel > 0 ? 0 : 1;
+      return leftInProgress - rightInProgress
+        || leftLevel - rightLevel
+        || (left.frequency_rank ?? Infinity) - (right.frequency_rank ?? Infinity);
+    }), [sourceEntriesByFilters, learningLevelOverrides, selectedSourceLanguage, progressViews]);
 
   async function importDictionaryFile(event) {
     const file = event.target.files?.[0];
@@ -511,20 +537,27 @@ export function useDictionaryCatalog() {
     }
   }
 
-  function addToLearning(entry) {
+  function updateEntryLearningLevel(entry, getNextLevel) {
     const learningSource = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
     const key = getLearnedEntryKey(learningSource, entry.word);
     setLearningLevelOverrides((current) => {
       const currentLevel = getEntryLearningLevel(entry, learningSource, current);
-      if (currentLevel >= 9) return current;
-
-      const nextLevel = Math.min(currentLevel + 1, 9);
+      const nextLevel = Math.max(0, Math.min(9, getNextLevel(currentLevel)));
+      if (nextLevel === currentLevel) return current;
       const next = { ...current };
       if (nextLevel === (entry.learning_level ?? 0)) delete next[key];
       else next[key] = nextLevel;
       localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
       return next;
     });
+  }
+
+  function addToLearning(entry) {
+    updateEntryLearningLevel(entry, (level) => level + 1);
+  }
+
+  function setEntryLearningLevel(entry, level) {
+    updateEntryLearningLevel(entry, () => level);
   }
 
   return {
@@ -553,12 +586,14 @@ export function useDictionaryCatalog() {
     importInputRef,
     importDictionaryFile,
     learningLevelOverrides,
+    studySessionEntries,
     selectedSourceDictionary,
     overallDictionaryProgress,
     selectedLevelEntries,
     levelLearningProgress,
     filteredSourceEntries,
-    addToLearning
+    addToLearning,
+    setEntryLearningLevel
   };
 }
 

@@ -6,6 +6,7 @@ import { getEntryLearningLevel } from './dictionaryUtils.js';
 import { openBrowserExtensionSettings } from './storage.js';
 import phraseCategories from './phrase-categories.json';
 import { DictionaryWordCard } from './components/DictionaryWordCard.jsx';
+import { LearningSessionModal } from './components/LearningSessionModal.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
 
 function toggleValue(values, setter, value) {
@@ -51,8 +52,8 @@ export function DictionaryCatalogPanel({
 }) {
   const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
+  const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const revealTranslationTimer = useRef(null);
-  const cardListRef = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -76,7 +77,9 @@ export function DictionaryCatalogPanel({
     overallDictionaryProgress,
     selectedSourceDictionary,
     learningLevelOverrides,
-    filteredSourceEntries
+    filteredSourceEntries,
+    studySessionEntries,
+    setEntryLearningLevel
   } = catalog;
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
   const previousRefreshVersion = useRef(refreshVersion);
@@ -275,10 +278,8 @@ export function DictionaryCatalogPanel({
                 type="button"
                 aria-label="Начать изучение"
                 title="Начать изучение · Start"
-                onClick={() => {
-                  setProgressViews(['remaining']);
-                  requestAnimationFrame(() => cardListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-                }}
+                disabled={studySessionEntries.length === 0}
+                onClick={() => setLearningSessionEntries([...studySessionEntries])}
               ><FilterButtonIcon name="start" /><span>Start</span></button>
               {[
                 ['learning', 'Learning', 'Изучаю', 'learning'],
@@ -351,7 +352,6 @@ export function DictionaryCatalogPanel({
       <section
         className={commonStyles.wordList}
         aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}
-        ref={cardListRef}
       >
         <ul>
           {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
@@ -428,6 +428,19 @@ export function DictionaryCatalogPanel({
         </button>
       )}
       </>}
+      {learningSessionEntries && (
+        <LearningSessionModal
+          entries={learningSessionEntries}
+          catalogView={catalogView}
+          getLearningLevel={(entry) => getEntryLearningLevel(
+            entry,
+            entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
+            learningLevelOverrides
+          )}
+          onSetLearningLevel={setEntryLearningLevel}
+          onClose={() => setLearningSessionEntries(null)}
+        />
+      )}
     </section>
   );
 }

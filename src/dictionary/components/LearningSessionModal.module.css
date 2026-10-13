@@ -1,0 +1,309 @@
+.backdrop {
+  position: fixed;
+  z-index: 10010;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  background: rgba(5, 8, 20, 0.78);
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+
+.modal {
+  display: flex;
+  width: 80vw;
+  height: 80vh;
+  height: 80dvh;
+  min-width: 0;
+  flex-direction: column;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 18px;
+  background: #141a2d;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  color: #f3f4fc;
+  padding: 22px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header {
+  margin-bottom: 18px;
+}
+
+.footer {
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto;
+  margin-top: 14px;
+}
+
+.header .sessionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 0;
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.closeButton {
+  display: grid;
+  min-width: 42px;
+  min-height: 42px;
+  place-items: center;
+  border: 1px solid rgba(173, 183, 220, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e8eafa;
+  cursor: pointer;
+}
+
+.closeButton {
+  width: 42px;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  border: 1px solid rgba(169, 91, 255, 0.3);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(119, 82, 255, 0.12), rgba(67, 213, 176, 0.045));
+  overflow: hidden;
+  text-align: center;
+}
+
+.cardContent {
+  display: grid;
+  width: 100%;
+  max-width: 960px;
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(12px, 2.5vh, 22px);
+  align-self: center;
+  overflow: auto;
+  padding: clamp(22px, 4vh, 40px) clamp(18px, 4vw, 48px);
+  scrollbar-gutter: stable;
+}
+
+.englishBlock,
+.translationBlock {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+.cardLearningLevel {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  right: 16px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.forms {
+  margin: 12px 0 0;
+  color: #aeb5cb;
+  font-size: clamp(13px, 1.5vw, 16px);
+}
+
+.synonyms {
+  margin: 12px 0 0;
+  color: #929bb7;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.translation {
+  margin: 0;
+  color: #f3f4fc;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 650;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.example {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: #dce0f1;
+  font-size: clamp(14px, 1.7vw, 18px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.exampleTranslation {
+  max-width: 720px;
+  margin: 12px 0 0;
+  color: #929bb7;
+  font-size: clamp(13px, 1.4vw, 16px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.learnedButton,
+.knowledgeActions button {
+  box-sizing: border-box;
+  min-height: 42px;
+  border: 1px solid rgba(169, 91, 255, 0.55);
+  border-radius: 10px;
+  background: rgba(119, 82, 255, 0.2);
+  color: #f3f4fc;
+  cursor: pointer;
+  padding: 0 16px;
+  font-weight: 650;
+}
+
+.cardActions {
+  display: grid;
+  width: 100%;
+  flex: 0 0 auto;
+  gap: 0;
+  margin-top: auto;
+  padding-top: clamp(18px, 4vh, 32px);
+}
+
+.footer .learnedButton {
+  width: 100%;
+}
+
+.knowledgeActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  width: 100%;
+}
+
+.knowledgeActions button,
+.learnedButton {
+  width: 100%;
+}
+
+.knowledgeActions button {
+  min-height: 56px;
+  font-size: 17px;
+  border-radius: 0;
+}
+
+.knowledgeActions .dontKnowButton {
+  border-bottom-left-radius: 13px;
+}
+
+.knowledgeActions .knowButton {
+  border-bottom-right-radius: 13px;
+}
+
+.dontKnowButton {
+  border-color: rgba(255, 173, 97, 0.48) !important;
+  background: rgba(255, 173, 97, 0.1) !important;
+}
+
+.knowButton {
+  border-color: rgba(67, 213, 176, 0.5) !important;
+  background: rgba(67, 213, 176, 0.12) !important;
+}
+
+.knowledgeActions button:disabled,
+.learnedButton:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.learnedButton {
+  min-height: 46px;
+  border-color: rgba(173, 183, 220, 0.22);
+  background: rgba(255, 255, 255, 0.045);
+  color: #b8bfd2;
+  font-size: 13px;
+}
+
+.closeButton:hover,
+.knowledgeActions button:not(:disabled):hover,
+.learnedButton:not(:disabled):hover {
+  border-color: rgba(169, 91, 255, 0.72);
+  background: rgba(119, 82, 255, 0.2);
+}
+
+.dontKnowButton:not(:disabled):hover {
+  border-color: rgba(255, 173, 97, 0.75) !important;
+  background: rgba(255, 173, 97, 0.18) !important;
+}
+
+.knowButton:not(:disabled):hover {
+  border-color: rgba(67, 213, 176, 0.75) !important;
+  background: rgba(67, 213, 176, 0.2) !important;
+}
+
+.learnedButton:not(:disabled):hover {
+  border-color: rgba(173, 183, 220, 0.38);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8eafa;
+}
+
+@media (max-width: 520px) {
+  .backdrop {
+    padding: 12px;
+  }
+
+  .modal {
+    width: 92vw;
+    height: 80dvh;
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .cardContent {
+    grid-template-rows: minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: 10px;
+    padding: 48px 12px 12px;
+  }
+
+  .englishBlock,
+  .translationBlock {
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .card h3 {
+    font-size: clamp(28px, 9vw, 38px);
+  }
+
+  .header .sessionTitle {
+    gap: 5px;
+    font-size: clamp(14px, 4.2vw, 18px);
+  }
+
+  .cardActions {
+    padding-top: 18px;
+  }
+
+  .footer {
+    margin-top: 10px;
+  }
+}

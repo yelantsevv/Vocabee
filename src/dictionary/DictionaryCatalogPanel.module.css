@@ -401,6 +401,11 @@
   background: rgba(119, 82, 255, 0.36);
 }
 
+.startLearningButton:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
 .refreshCardsButton {
   position: absolute;
   top: 30px;
