@@ -556,6 +556,31 @@
     gap: 5px;
   }
 
+  .progressFilters .startLearningButton {
+    grid-column: 4;
+    grid-row: 1;
+  }
+
+  .progressFilters .progressButton[aria-label='Изучаю'] {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .progressFilters .progressButton[aria-label='Изученные'] {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .progressFilters .progressButton[aria-label='Не изученные'] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .progressFilters .settingsButton {
+    grid-column: 5;
+    grid-row: 1;
+  }
+
   .progressFilters .progressButton {
     padding: 3px 1px;
   }
