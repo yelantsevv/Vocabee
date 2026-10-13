@@ -1,4 +1,7 @@
 (function (app) {
+  if (app.mainInitialized) return;
+  app.mainInitialized = true;
+
   function findCaptionNodes() {
     return [...new Set(Array.from(document.querySelectorAll('#ytp-caption-window-container .ytp-caption-segment')))].filter((node) => {
       const text = (node.textContent || '').trim();
@@ -68,6 +71,7 @@
 
   loadSettings();
   observePage();
+  app.contentRuntimeReady = true;
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') app.hideTooltip(true);

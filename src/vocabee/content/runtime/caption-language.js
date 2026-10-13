@@ -1,4 +1,7 @@
 (function (app) {
+  if (app.captionLanguageInitialized) return;
+  app.captionLanguageInitialized = true;
+
   function getSelectionScope(node) {
     const element = node instanceof Element ? node : node?.parentElement;
     return element?.closest('#ytp-caption-window-container .ytp-caption-segment') || null;

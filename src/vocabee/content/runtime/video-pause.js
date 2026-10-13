@@ -1,4 +1,7 @@
 (function (app) {
+  if (app.videoPauseInitialized) return;
+  app.videoPauseInitialized = true;
+
   let pointerInPauseArea = false;
   let pointerX = -1;
   let pointerY = -1;

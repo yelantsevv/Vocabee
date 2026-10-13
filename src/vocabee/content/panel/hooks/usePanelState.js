@@ -70,7 +70,11 @@ export function usePanelState(app) {
       return false;
     };
     chrome.runtime.onMessage.addListener(onToggle);
-    return () => chrome.runtime.onMessage.removeListener(onToggle);
+    app.panelStateListenerReady = true;
+    return () => {
+      chrome.runtime.onMessage.removeListener(onToggle);
+      app.panelStateListenerReady = false;
+    };
   }, [update]);
 
   useEffect(() => {

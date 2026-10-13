@@ -178,24 +178,39 @@ function sendPanelToggle(tabId, recoverIfUnavailable = false) {
 
 async function restoreYouTubeContentScript(tabId, toggleApp = false) {
   try {
-    const [panelRoot] = await chrome.scripting.executeScript({
+    const [contentReady] = await chrome.scripting.executeScript({
       target: { tabId },
-      func: () => Boolean(document.getElementById('vocabee-react-panel-root'))
+      func: () => Boolean(
+        globalThis.Vocabee?.contentRuntimeReady
+        && globalThis.Vocabee?.panelStateListenerReady
+      )
     });
 
-    if (panelRoot?.result) {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      if (toggleApp) sendAppToggle(tabId);
-      else sendPanelToggle(tabId);
-      return;
+    if (!contentReady?.result) {
+      await chrome.scripting.insertCSS({
+        target: { tabId },
+        files: ['content/content.css', 'content/content-app.css']
+      });
+      await chrome.scripting.executeScript({ target: { tabId }, files: YOUTUBE_CONTENT_FILES });
     }
 
-    await chrome.scripting.insertCSS({
-      target: { tabId },
-      files: ['content/content.css', 'content/content-app.css']
-    });
-    await chrome.scripting.executeScript({ target: { tabId }, files: YOUTUBE_CONTENT_FILES });
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    let panelReady = false;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const [ready] = await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => Boolean(
+          globalThis.Vocabee?.contentRuntimeReady
+          && globalThis.Vocabee?.panelStateListenerReady
+        )
+      });
+      if (ready?.result) {
+        panelReady = true;
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!panelReady) throw new Error('Панель Vocabee не успела запуститься. Обновите страницу YouTube и попробуйте снова.');
+
     if (toggleApp) sendAppToggle(tabId);
     else sendPanelToggle(tabId);
   } catch (error) {

@@ -1,6 +1,9 @@
 globalThis.Vocabee = globalThis.Vocabee || {};
 
 (function (app) {
+  if (app.coreInitialized) return;
+  app.coreInitialized = true;
+
   const API_URL = 'https://translate.googleapis.com/translate_a/single';
   const translationCache = new Map();
 
