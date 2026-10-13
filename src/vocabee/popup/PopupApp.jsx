@@ -26,7 +26,7 @@ export function PopupApp() {
       </label>
       <DictionaryNotice
         onOpen={() => chrome.tabs.create({
-          url: chrome.runtime.getURL('dictionary/dictionary.html')
+          url: 'https://yelantsevv.github.io/Vocabee/'
         })}
       />
       <PopupFooter />
