@@ -192,7 +192,7 @@
 
 .filterField {
   display: grid;
-  min-width: 0;
+  min-width: 335px;
   gap: 8px;
   color: #a5acc4;
   font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
@@ -551,7 +551,7 @@
 
 @media (max-width: 640px) {
   .dictionaryContent.dictionaryContent {
-    --text-filter-control-width: clamp(42px, 8vw, 48px);
+    --text-filter-control-width: clamp(66px, 8vw, 48px);
   }
 
   .dictionaryFilters {
