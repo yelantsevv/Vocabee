@@ -316,13 +316,16 @@
 
 @media (max-width: 520px) {
   .backdrop {
-    padding: 12px;
+    display: block;
+    overflow: auto;
+    padding: 0;
   }
 
   .modal {
-    width: 95vw;
-    /* height: 80dvh; */
-    border-radius: 16px;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
     padding: 16px;
   }
 

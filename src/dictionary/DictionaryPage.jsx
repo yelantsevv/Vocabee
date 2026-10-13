@@ -15,6 +15,7 @@ import { targetLanguages } from './dictionaryUtils.js';
 import { DictionaryCatalogPanel } from './DictionaryCatalogPanel.jsx';
 import { SettingsPanel } from './SettingsPanel.jsx';
 import { useDictionaryCatalog } from './useDictionaryCatalog.js';
+import { enterMobileFullscreen, exitMobileFullscreen } from './mobileFullscreen.js';
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -37,6 +38,11 @@ export function DictionaryPage() {
   const closeSettings = useCallback(() => {
     setAppliedSettings(settingsRef.current);
     setSettingsOpen(false);
+    exitMobileFullscreen();
+  }, []);
+  const openSettings = useCallback(() => {
+    enterMobileFullscreen();
+    setSettingsOpen(true);
   }, []);
   const catalog = useDictionaryCatalog();
 
@@ -110,7 +116,7 @@ export function DictionaryPage() {
           ['my', 'words', 'phrases'].includes(catalog.catalogView) ? 'my-vocabee' : null
         )}
         onAddToLearning={catalog.addToLearning}
-        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenSettings={openSettings}
         onRefreshCards={refreshCards}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}

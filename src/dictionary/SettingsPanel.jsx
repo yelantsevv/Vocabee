@@ -21,12 +21,21 @@ export function SettingsPanel({ settings, updateSetting, settingsStatus, catalog
         onClick: () => catalog.setSelectedSourceLanguage(sourceId)
       };
     });
+  const hasEnglishDictionary = loadedSources.has('en');
+  const actions = [
+    ...(!hasEnglishDictionary ? [{
+      label: catalog.remoteImportLoading ? 'Загружаю словарь EN → RU…' : 'Загрузить словарь EN → RU',
+      disabled: catalog.catalogLoading || catalog.remoteImportLoading,
+      onClick: catalog.importDictionaryFromUrl
+    }] : []),
+    ...loadedSourceActions
+  ];
 
   return (
     <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label="Настройки">
       <section className={panelStyles.settings} aria-label="Настройки Vocabee">
         <SettingsActionButtons
-          actions={loadedSourceActions}
+          actions={actions}
           firstAction={(
             <DictionaryImportButton
               key="import-dictionary"

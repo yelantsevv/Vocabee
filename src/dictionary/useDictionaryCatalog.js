@@ -8,6 +8,7 @@ import {
   writeCatalogDictionary
 } from './catalogDatabase.js';
 import { getMyVocabularyEntries } from './storage.js';
+import { DEFAULT_DICTIONARY_URL } from './dictionaryConfig.js';
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
@@ -123,6 +124,7 @@ export function useDictionaryCatalog() {
   const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
   const [catalogView, setCatalogView] = useState('words');
   const [importStatus, setImportStatus] = useState('');
+  const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
   const importInputRef = useRef(null);
   const catalogMutationRef = useRef(0);
@@ -445,68 +447,91 @@ export function useDictionaryCatalog() {
         || (left.frequency_rank ?? Infinity) - (right.frequency_rank ?? Infinity);
     }), [sourceEntriesByFilters, learningLevelOverrides, selectedSourceLanguage, progressViews]);
 
+  async function saveImportedDictionary(payload, sourceName, forcedLanguage) {
+    const declaredLanguage = [
+      payload?.language,
+      payload?.source_language,
+      payload?.sourceLang,
+      payload?.dictionary,
+      sourceName
+    ].map((value) => String(value || '').toLowerCase())
+      .map((value) => value.match(/(?:^|[^a-z])(en|de)(?:[-_.]|$)/)?.[1])
+      .find(Boolean);
+    const selectedMetadata = sourceMetadata[selectedSourceLanguage];
+    const fallbackLanguage = selectedMetadata?.language;
+    const language = forcedLanguage
+      || (['en', 'de'].includes(declaredLanguage) ? declaredLanguage : fallbackLanguage);
+    if (!language) throw new Error('Укажите язык базы в JSON (language: "en" или "de").');
+    const importedEntries = normalizeImportedEntries(payload);
+    if (!forcedLanguage && selectedMetadata?.isCustom) {
+      if (selectedSourceLanguage !== 'my-vocabee' && language !== selectedMetadata.language) {
+        throw new Error('Язык файла не совпадает с языком пользовательского словаря.');
+      }
+      const entryKey = (entry) => selectedSourceLanguage === 'my-vocabee'
+        ? `${entry.source_language || selectedMetadata.language}:${entry.word.toLocaleLowerCase()}`
+        : entry.word.toLocaleLowerCase();
+      const nextEntries = new Map((importedDictionaries[selectedSourceLanguage] || [])
+        .map((entry) => [entryKey(entry), entry]));
+      for (const entry of importedEntries) {
+        const importedEntry = selectedSourceLanguage === 'my-vocabee'
+          ? { ...entry, source_language: language, target_language: selectedMetadata.targetLanguage || 'ru' }
+          : entry;
+        nextEntries.set(entryKey(importedEntry), importedEntry);
+      }
+      const entries = [...nextEntries.values()];
+      catalogMutationRef.current += 1;
+      await writeCustomDictionary({ ...selectedMetadata, catalogId: selectedSourceLanguage, entries });
+      setImportedDictionaries((current) => ({ ...current, [selectedSourceLanguage]: entries }));
+      setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
+      return;
+    }
+    const nextLanguageEntries = new Map(
+      (importedDictionaries[language] || [])
+        .map((entry) => [entry.word.toLocaleLowerCase(), entry])
+    );
+    for (const entry of importedEntries) {
+      nextLanguageEntries.set(entry.word.toLocaleLowerCase(), entry);
+    }
+    const nextDictionaries = {
+      ...importedDictionaries,
+      [language]: [...nextLanguageEntries.values()]
+    };
+    catalogMutationRef.current += 1;
+    await writeCatalogDictionary(language, nextDictionaries[language]);
+    setImportedDictionaries(nextDictionaries);
+    setSelectedSourceLanguage(language);
+    setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
+  }
+
   async function importDictionaryFile(event) {
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
-      const payload = JSON.parse(await file.text());
-      const declaredLanguage = [
-        payload?.language,
-        payload?.source_language,
-        payload?.sourceLang,
-        payload?.dictionary,
-        file.name
-      ].map((value) => String(value || '').toLowerCase())
-        .map((value) => value.match(/(?:^|[^a-z])(en|de)(?:[-_.]|$)/)?.[1])
-        .find(Boolean);
-      const selectedMetadata = sourceMetadata[selectedSourceLanguage];
-      const fallbackLanguage = selectedMetadata?.language;
-      const language = ['en', 'de'].includes(declaredLanguage) ? declaredLanguage : fallbackLanguage;
-      if (!language) throw new Error('Укажите язык базы в JSON (language: "en" или "de").');
-      const importedEntries = normalizeImportedEntries(payload);
-      if (selectedMetadata?.isCustom) {
-        if (selectedSourceLanguage !== 'my-vocabee' && language !== selectedMetadata.language) {
-          throw new Error('Язык файла не совпадает с языком пользовательского словаря.');
-        }
-        const entryKey = (entry) => selectedSourceLanguage === 'my-vocabee'
-          ? `${entry.source_language || selectedMetadata.language}:${entry.word.toLocaleLowerCase()}`
-          : entry.word.toLocaleLowerCase();
-        const nextEntries = new Map((importedDictionaries[selectedSourceLanguage] || [])
-          .map((entry) => [entryKey(entry), entry]));
-        for (const entry of importedEntries) {
-          const importedEntry = selectedSourceLanguage === 'my-vocabee'
-            ? { ...entry, source_language: language, target_language: selectedMetadata.targetLanguage || 'ru' }
-            : entry;
-          nextEntries.set(entryKey(importedEntry), importedEntry);
-        }
-        const entries = [...nextEntries.values()];
-        catalogMutationRef.current += 1;
-        await writeCustomDictionary({ ...selectedMetadata, catalogId: selectedSourceLanguage, entries });
-        setImportedDictionaries((current) => ({ ...current, [selectedSourceLanguage]: entries }));
-        setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
-        return;
-      }
-      const nextLanguageEntries = new Map(
-        (importedDictionaries[language] || [])
-          .map((entry) => [entry.word.toLocaleLowerCase(), entry])
-      );
-      for (const entry of importedEntries) {
-        nextLanguageEntries.set(entry.word.toLocaleLowerCase(), entry);
-      }
-      const nextDictionaries = {
-        ...importedDictionaries,
-        [language]: [...nextLanguageEntries.values()]
-      };
-      catalogMutationRef.current += 1;
-      await writeCatalogDictionary(language, nextDictionaries[language]);
-      setImportedDictionaries(nextDictionaries);
-      setSelectedSourceLanguage(language);
-      setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
+      await saveImportedDictionary(JSON.parse(await file.text()), file.name);
     } catch (error) {
       setImportStatus(`Не удалось импортировать базу: ${error.message}`);
     } finally {
       event.target.value = '';
+    }
+  }
+
+  async function importDictionaryFromUrl() {
+    if (remoteImportLoading) return;
+    setRemoteImportLoading(true);
+    setImportStatus('Скачиваю базу EN → RU…');
+
+    try {
+      const response = await fetch(DEFAULT_DICTIONARY_URL, { cache: 'no-cache' });
+      if (!response.ok) {
+        throw new Error(`Сервер вернул HTTP ${response.status}.`);
+      }
+      const payload = await response.json();
+      await saveImportedDictionary(payload, 'en-ru.json', 'en');
+    } catch (error) {
+      setImportStatus(`Не удалось загрузить базу EN → RU: ${error.message}`);
+    } finally {
+      setRemoteImportLoading(false);
     }
   }
 
@@ -585,6 +610,8 @@ export function useDictionaryCatalog() {
     createCustomDictionary,
     importInputRef,
     importDictionaryFile,
+    importDictionaryFromUrl,
+    remoteImportLoading,
     learningLevelOverrides,
     studySessionEntries,
     selectedSourceDictionary,

@@ -8,6 +8,7 @@ import phraseCategories from './phrase-categories.json';
 import { DictionaryWordCard } from './components/DictionaryWordCard.jsx';
 import { LearningSessionModal } from './components/LearningSessionModal.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
+import { enterMobileFullscreen, exitMobileFullscreen } from './mobileFullscreen.js';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -280,7 +281,10 @@ export function DictionaryCatalogPanel({
                 aria-label="Начать изучение"
                 title="Начать изучение · Start"
                 disabled={studySessionEntries.length === 0}
-                onClick={() => setLearningSessionEntries(shuffleEntries(studySessionEntries))}
+                onClick={() => {
+                  enterMobileFullscreen();
+                  setLearningSessionEntries(shuffleEntries(studySessionEntries));
+                }}
               ><FilterButtonIcon name="start" /><span>Start</span></button>
               {[
                 ['learning', 'Learning', 'Изучаю', 'learning'],
@@ -433,7 +437,10 @@ export function DictionaryCatalogPanel({
             learningLevelOverrides
           )}
           onSetLearningLevel={setEntryLearningLevel}
-          onClose={() => setLearningSessionEntries(null)}
+          onClose={() => {
+            exitMobileFullscreen();
+            setLearningSessionEntries(null);
+          }}
         />
       )}
     </section>

@@ -282,12 +282,17 @@
 
 @media (max-width: 640px) {
   .settingsModalBackdrop {
-    padding: 12px;
+    display: block;
+    overflow: auto;
+    padding: 0;
   }
 
   .settingsModal {
-    max-height: calc(100vh - 24px);
-    max-height: calc(100dvh - 24px);
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-height: none;
+    border-radius: 0;
   }
 
   .settingsModalHeader {
