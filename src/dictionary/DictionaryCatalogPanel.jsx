@@ -55,10 +55,8 @@ export function DictionaryCatalogPanel({
   hideTranslationsUntilHover,
   refreshVersion
 }) {
-  const [revealedTranslationWord, setRevealedTranslationWord] = useState(null);
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
-  const revealTranslationTimer = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -131,17 +129,6 @@ export function DictionaryCatalogPanel({
     setDisplayedCardCount(cardsPerLoad);
   }, [cardsPerLoad, filteredEntrySignature, refreshVersion]);
 
-  function revealTranslation(word) {
-    clearTimeout(revealTranslationTimer.current);
-    revealTranslationTimer.current = setTimeout(() => setRevealedTranslationWord(word), 300);
-  }
-
-  function hideTranslation() {
-    clearTimeout(revealTranslationTimer.current);
-    revealTranslationTimer.current = null;
-    setRevealedTranslationWord(null);
-  }
-
   async function openExtensionSettings() {
     setExtensionSettingsError('');
     try {
@@ -150,8 +137,6 @@ export function DictionaryCatalogPanel({
       setExtensionSettingsError(error.message || 'Не удалось открыть настройки расширений.');
     }
   }
-
-  useEffect(() => () => clearTimeout(revealTranslationTimer.current), []);
 
   function toggleSourceConnection(source) {
     setSourceConnections((current) => ({ ...current, [source]: !current[source] }));
@@ -357,6 +342,7 @@ export function DictionaryCatalogPanel({
       >
         <ul>
           {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
+            const translationVisible = !hideTranslationsUntilHover;
             const learningLevel = getEntryLearningLevel(
               entry,
               entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
@@ -373,10 +359,8 @@ export function DictionaryCatalogPanel({
                   && entry.forms?.past_simple && entry.forms?.past_participle
                   ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
                   : undefined}
-                translationVisible={!hideTranslationsUntilHover || revealedTranslationWord === entry.word}
+                translationVisible={translationVisible}
                 onAddToLearning={() => onAddToLearning(entry)}
-                onRevealTranslation={() => revealTranslation(entry.word)}
-                onHideTranslation={hideTranslation}
               >
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">
@@ -390,8 +374,10 @@ export function DictionaryCatalogPanel({
                         <li key={`${example.phrase}-${index}`}>
                           <span>{example.phrase}</span>
                           <span
-                            className={clsx(styles.exampleTranslation, (!hideTranslationsUntilHover || revealedTranslationWord === entry.word) && styles.exampleTranslationVisible)}
-                            aria-hidden={hideTranslationsUntilHover && revealedTranslationWord !== entry.word}
+                            className={translationVisible
+                              ? styles.exampleTranslation
+                              : `${styles.exampleTranslation} ${styles.exampleTranslationHidden}`}
+                            data-translation-hidden={!translationVisible || undefined}
                           >{example.translation}</span>
                         </li>
                       ))}

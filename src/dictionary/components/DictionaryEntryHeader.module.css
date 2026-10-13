@@ -20,7 +20,7 @@
 
 .entryWordBlock h2 {
   margin: 0;
-  color: #f3f4fc;
+  color: var(--theme-text, #f3f4fc);
   font-size: clamp(22px, 2.6vw, 30px);
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -28,7 +28,7 @@
 
 .inlineForms {
   margin: 0;
-  color: #aeb5cb;
+  color: var(--theme-muted, #aeb5cb);
   font-size: 14px;
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -38,22 +38,15 @@
   min-width: 0;
   flex: 1 1 auto;
   margin: 0;
-  color: #d2c4ff;
+  color: var(--theme-accent-text, #d2c4ff);
   font-size: 18px;
   line-height: 1.5;
   text-align: right;
   overflow-wrap: anywhere;
-  opacity: 0;
-  transform: translateX(8px);
-  visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
 }
 
-.entryTranslationVisible {
-  opacity: 1;
-  transform: translateX(0);
-  visibility: visible;
-  transition-delay: 0s;
+.entryTranslationHidden {
+  visibility: hidden;
 }
 
 .entryTranslationBlock {
@@ -72,10 +65,10 @@
   height: 58px;
   flex: 0 0 58px;
   place-items: center;
-  border: 1px solid rgba(169, 91, 255, 0.5);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 50%, transparent);
   border-radius: 50%;
-  background: rgba(119, 82, 255, 0.15);
-  color: #e2d8ff;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 15%, transparent);
+  color: var(--theme-accent-text, #e2d8ff);
   cursor: pointer;
   padding: 0;
   transition: background 0.16s ease, border-color 0.16s ease;
@@ -88,8 +81,8 @@
 }
 
 .addToLearningButton:hover {
-  border-color: rgba(169, 91, 255, 0.85);
-  background: rgba(119, 82, 255, 0.28);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 85%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 28%, transparent);
 }
 
 .learnedMark {
@@ -117,7 +110,7 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: conic-gradient(#8b5cf6 var(--progress-angle), rgba(173, 183, 220, 0.15) 0);
+  background: conic-gradient(var(--theme-accent-solid, #8b5cf6) var(--progress-angle), color-mix(in srgb, var(--theme-text, #aeb5cb) 15%, transparent) 0);
   color: inherit;
   cursor: pointer;
 }
@@ -128,8 +121,8 @@
   height: 46px;
   place-items: center;
   border-radius: 50%;
-  background: #171b30;
-  color: #e2d8ff;
+  background: var(--theme-surface, #171b30);
+  color: var(--theme-accent-text, #e2d8ff);
   font-size: 21px;
   font-weight: 800;
   line-height: 1;
@@ -141,7 +134,7 @@
 
 .progressCircle:focus-visible,
 .addToLearningButton:focus-visible {
-  outline: 2px solid #d2c4ff;
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
   outline-offset: 3px;
 }
 

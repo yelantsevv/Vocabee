@@ -13,9 +13,9 @@
   position: relative;
   display: grid;
   gap: clamp(12px, 1.5vw, 20px);
-  border: 1px solid rgba(173, 183, 220, 0.14);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.035);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
   padding: clamp(12px, 1.5vw, 20px);
 }
 
@@ -27,14 +27,14 @@
   height: 4px;
   overflow: hidden;
   border-radius: 16px 16px 0 0;
-  background: rgba(173, 183, 220, 0.16);
+  background: color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
 }
 
 .overallProgress span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #8b5cf6, #43d5b0);
+  background: linear-gradient(90deg, var(--theme-accent-solid, #8b5cf6), var(--theme-success, #43d5b0));
   transition: width 0.2s ease;
 }
 
@@ -86,7 +86,7 @@
 
 .emptyCatalog {
   margin: 24px 2px;
-  color: #a5acc4;
+  color: var(--theme-muted, #a5acc4);
   font-size: 15px;
 }
 
@@ -96,10 +96,10 @@
 
 .emptyCatalog button {
   min-height: 42px;
-  border: 1px solid rgba(169, 91, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 10px;
-  background: rgba(119, 82, 255, 0.18);
-  color: #f3f4fc;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%, transparent);
+  color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 0 14px;
 }
@@ -126,10 +126,10 @@
   height: var(--square-filter-control);
   min-height: var(--square-filter-control);
   place-items: center;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #aeb5cb;
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 0 8px;
   font-size: 12px;
@@ -166,16 +166,16 @@
 
 .sourceViewButton:hover,
 .sourceViewButton.selected {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
-  color: #f3f4fc;
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  color: var(--theme-text, #f3f4fc);
 }
 
 .sourceBadge {
   display: flex;
   min-height: 46px;
   align-items: center;
-  color: #dce0f1;
+  color: var(--theme-text-soft, #dce0f1);
   font-size: 14px;
   font-weight: 650;
 }
@@ -184,7 +184,7 @@
   display: grid;
   min-width: 290px;
   gap: 8px;
-  color: #a5acc4;
+  color: var(--theme-muted, #a5acc4);
   font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
 }
 
@@ -195,18 +195,18 @@
   box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid rgba(176, 186, 222, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 10px;
-  background-color: #202640;
+  background-color: var(--theme-surface-raised, #202640);
   background-image:
-    linear-gradient(45deg, transparent 50%, #aeb5cb 50%),
-    linear-gradient(135deg, #aeb5cb 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--theme-muted, #aeb5cb) 50%),
+    linear-gradient(135deg, var(--theme-muted, #aeb5cb) 50%, transparent 50%);
   background-position:
     calc(100% - 15px) 50%,
     calc(100% - 10px) 50%;
   background-repeat: no-repeat;
   background-size: 5px 5px;
-  color: #f6f7ff;
+  color: var(--theme-text, #f6f7ff);
   cursor: pointer;
   padding: 0 32px 0 11px;
   font: inherit;
@@ -216,8 +216,8 @@
 }
 
 .filterField select option {
-  background: #202640;
-  color: #f6f7ff;
+  background: var(--theme-surface-raised, #202640);
+  color: var(--theme-text, #f6f7ff);
 }
 
 .filterGroup {
@@ -261,10 +261,10 @@
 
 .filterChip {
   min-height: 40px;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #aeb5cb;
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 0 10px;
   font-size: 12px;
@@ -274,9 +274,9 @@
 
 .filterChip:hover,
 .filterChip.selected {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
-  color: #f3f4fc;
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  color: var(--theme-text, #f3f4fc);
 }
 
 .typeChip {
@@ -342,10 +342,10 @@
   justify-content: center;
   flex-direction: row;
   gap: 6px;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #aeb5cb;
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 4px;
   font-size: 12px;
@@ -376,10 +376,10 @@
   justify-content: center;
   flex-direction: row;
   gap: 5px;
-  border: 1px solid rgba(169, 91, 255, 0.6);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 60%, transparent);
   border-radius: 9px;
-  background: rgba(119, 82, 255, 0.24);
-  color: #f3f4fc;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 24%, transparent);
+  color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 8px 12px;
   font-size: 14px;
@@ -387,8 +387,8 @@
 }
 
 .startLearningButton:hover {
-  border-color: rgba(169, 91, 255, 0.9);
-  background: rgba(119, 82, 255, 0.36);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 90%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 36%, transparent);
 }
 
 .startLearningButton:disabled {
@@ -398,14 +398,14 @@
 
 .progressButton:hover,
 .progressButton.selected {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
-  color: #f3f4fc;
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  color: var(--theme-text, #f3f4fc);
 }
 
 .phraseMetadata {
   margin: 0;
-  color: #929bb7;
+  color: var(--theme-faint, #929bb7);
   font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
 }
 
@@ -413,10 +413,10 @@
   min-height: 44px;
   align-self: center;
   margin: 16px 0 4px;
-  border: 1px solid rgba(169, 91, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 10px;
-  background: rgba(119, 82, 255, 0.18);
-  color: #f3f4fc;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%, transparent);
+  color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 0 18px;
   font-size: 14px;
@@ -424,8 +424,8 @@
 }
 
 .loadMoreButton:hover {
-  border-color: rgba(169, 91, 255, 0.85);
-  background: rgba(119, 82, 255, 0.3);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 85%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 30%, transparent);
 }
 
 .entrySection {
@@ -435,7 +435,7 @@
 
 .entrySection h3 {
   margin: 0;
-  color: #929bb7;
+  color: var(--theme-faint, #929bb7);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -463,32 +463,25 @@
 }
 
 .exampleList li span:first-child {
-  color: #e2e5f2;
+  color: var(--theme-text-soft, #e2e5f2);
 }
 
 .exampleTranslation {
   min-width: 0;
-  color: #929bb7;
+  color: var(--theme-faint, #929bb7);
   text-align: right;
-  opacity: 0;
-  transform: translateX(8px);
-  visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
 }
 
-.exampleTranslationVisible {
-  opacity: 1;
-  transform: translateX(0);
-  visibility: visible;
-  transition-delay: 0s;
+.exampleTranslationHidden {
+  visibility: hidden;
 }
 
 .wordRelations {
   display: grid;
   gap: 6px;
-  border-top: 1px solid rgba(173, 183, 220, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
   padding-top: 12px;
-  color: #aeb5cb;
+  color: var(--theme-muted, #aeb5cb);
   font-size: 12px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -499,7 +492,7 @@
 }
 
 .wordRelations strong {
-  color: #dce0f1;
+  color: var(--theme-text-soft, #dce0f1);
   font-weight: 600;
 }
 

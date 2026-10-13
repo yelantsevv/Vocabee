@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  border-bottom: 1px solid rgba(173, 183, 220, 0.13);
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 13%, transparent);
   padding: 14px 2px;
 }
 
@@ -17,10 +17,10 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  border: 1px solid rgba(169, 91, 255, 0.36);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 36%, transparent);
   border-radius: 10px;
-  background: rgba(119, 82, 255, 0.11);
-  color: #e1dcf5;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 11%, transparent);
+  color: var(--theme-text-soft, #e1dcf5);
   cursor: pointer;
   padding: 10px 12px;
   font: inherit;
@@ -37,26 +37,26 @@
 
 .checkmark {
   flex: 0 0 auto;
-  color: #43d5b0;
+  color: var(--theme-success, #43d5b0);
   font-size: 15px;
   font-weight: 800;
 }
 
 .actions > button:not(:disabled):hover {
-  border-color: rgba(169, 91, 255, 0.75);
-  background: rgba(119, 82, 255, 0.22);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 75%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 22%, transparent);
 }
 
 .actions > button:disabled:hover {
-  border-color: rgba(176, 186, 222, 0.16);
-  background: rgba(255, 255, 255, 0.035);
-  color: #a5acc4;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #a5acc4);
 }
 
 .actions > button:disabled {
-  border-color: rgba(176, 186, 222, 0.16);
-  background: rgba(255, 255, 255, 0.035);
-  color: #a5acc4;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #a5acc4);
   cursor: not-allowed;
 }
 

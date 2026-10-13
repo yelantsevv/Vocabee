@@ -1,11 +1,68 @@
 .card {
-  display: grid;
+  position: relative;
+  display: flex;
   gap: 18px;
-  border: 1px solid rgba(173, 183, 220, 0.14);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.025);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 2%, transparent);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   margin: 12px 0;
   padding: 18px;
+}
+
+.revealToggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.revealClickSurface {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 18px;
+  pointer-events: none;
+}
+
+.cardContent :global(button),
+.cardContent [data-translation-trigger] {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.card:has(.revealToggle:checked) [data-translation-hidden="true"] {
+  visibility: visible;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:has([data-translation-trigger]:hover) [data-translation-hidden="true"],
+  .card:has([data-translation-trigger]:focus-visible) [data-translation-hidden="true"] {
+    visibility: visible;
+  }
+}
+
+.card:has(.revealToggle:focus-visible) .revealClickSurface {
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
+  outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
@@ -13,5 +70,9 @@
     gap: 15px;
     margin: 10px 0;
     padding: 14px;
+  }
+
+  .cardContent {
+    gap: 15px;
   }
 }

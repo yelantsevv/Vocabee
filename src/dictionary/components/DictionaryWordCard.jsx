@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useId } from 'react';
 import { DictionaryEntryHeader } from './DictionaryEntryHeader.jsx';
 import styles from './DictionaryWordCard.module.css';
 
@@ -10,23 +11,34 @@ export function DictionaryWordCard({
   forms,
   translationVisible = false,
   onAddToLearning,
-  onRevealTranslation,
-  onHideTranslation,
   children
 }) {
+  const revealToggleId = useId();
+
   return (
     <li className={clsx(styles.card, className)}>
-      <DictionaryEntryHeader
-        word={word}
-        translation={translation}
-        learningLevel={learningLevel}
-        forms={forms}
-        translationVisible={translationVisible}
-        onAddToLearning={onAddToLearning}
-        onRevealTranslation={onRevealTranslation}
-        onHideTranslation={onHideTranslation}
+      <input
+        className={styles.revealToggle}
+        id={revealToggleId}
+        type="checkbox"
+        aria-label={`Показать перевод карточки «${word}»`}
       />
-      {children}
+      <label
+        className={styles.revealClickSurface}
+        htmlFor={revealToggleId}
+        aria-hidden="true"
+      />
+      <div className={styles.cardContent}>
+        <DictionaryEntryHeader
+          word={word}
+          translation={translation}
+          learningLevel={learningLevel}
+          forms={forms}
+          translationVisible={translationVisible}
+          onAddToLearning={onAddToLearning}
+        />
+        {children}
+      </div>
     </li>
   );
 }

@@ -14,10 +14,10 @@
   min-height: 38px;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(169, 91, 255, 0.4);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 40%, transparent);
   border-radius: 9px;
-  background: rgba(119, 82, 255, 0.13);
-  color: #e4ddff;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 13%, transparent);
+  color: var(--theme-accent-text, #e4ddff);
   cursor: pointer;
   padding: 0;
 }
@@ -30,12 +30,12 @@
 }
 
 .importButton:hover {
-  border-color: rgba(169, 91, 255, 0.78);
-  background: rgba(119, 82, 255, 0.24);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 78%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 24%, transparent);
 }
 
 .importButton:focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid var(--theme-accent-solid, #a78bfa);
   outline-offset: 2px;
 }
 

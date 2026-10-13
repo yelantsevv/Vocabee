@@ -22,18 +22,18 @@
   min-height: var(--square-filter-control, 46px);
   flex: 0 0 var(--square-filter-control, 46px);
   place-items: center;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #dce0f1;
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-text-soft, #dce0f1);
   cursor: pointer;
   pointer-events: auto;
   transform: translateX(-50%);
 }
 
 .button:hover {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
 }
 
 .button svg {
@@ -55,7 +55,7 @@
 
 .button.editing {
   border-color: rgba(67, 213, 176, 0.85);
-  background: #202b39;
+  background: var(--theme-surface-raised, #202b39);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(67, 213, 176, 0.2);
   cursor: grab;
   touch-action: none;

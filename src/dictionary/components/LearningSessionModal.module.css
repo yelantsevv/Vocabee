@@ -19,11 +19,11 @@
   flex-direction: column;
   flex: 0 0 auto;
   overflow: hidden;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 18px;
-  background: #141a2d;
+  background: var(--theme-surface, #141a2d);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
-  color: #f3f4fc;
+  color: var(--theme-text, #f3f4fc);
   padding: 22px;
 }
 
@@ -92,10 +92,10 @@
   min-width: 42px;
   min-height: 42px;
   place-items: center;
-  border: 1px solid rgba(173, 183, 220, 0.2);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
-  color: #e8eafa;
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-text-soft, #e8eafa);
   cursor: pointer;
 }
 
@@ -112,9 +112,9 @@
   min-height: 0;
   flex: 1 1 auto;
   flex-direction: column;
-  border: 1px solid rgba(169, 91, 255, 0.3);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 30%, transparent);
   border-radius: 14px;
-  background: linear-gradient(145deg, rgba(119, 82, 255, 0.12), rgba(67, 213, 176, 0.045));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-accent, #a95bff) 12%, transparent), rgba(67, 213, 176, 0.045));
   overflow: hidden;
   text-align: center;
 }
@@ -158,10 +158,10 @@
   flex: 0 0 42px;
   align-self: center;
   place-items: center;
-  border: 1px solid rgba(169, 91, 255, 0.42);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 42%, transparent);
   border-radius: 50%;
-  background: rgba(119, 82, 255, 0.14);
-  color: #e2d8ff;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 14%, transparent);
+  color: var(--theme-accent-text, #e2d8ff);
   cursor: pointer;
 }
 
@@ -182,24 +182,24 @@
 }
 
 .speakButton:hover {
-  border-color: rgba(169, 91, 255, 0.8);
-  background: rgba(119, 82, 255, 0.28);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 80%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 28%, transparent);
 }
 
 .speakButton:focus-visible {
-  outline: 2px solid #d2c4ff;
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
   outline-offset: 3px;
 }
 
 .forms {
   margin: 12px 0 0;
-  color: #aeb5cb;
+  color: var(--theme-muted, #aeb5cb);
   font-size: clamp(13px, 1.5vw, 16px);
 }
 
 .synonyms {
   margin: 12px 0 0;
-  color: #929bb7;
+  color: var(--theme-faint, #929bb7);
   font-size: 13px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -207,7 +207,7 @@
 
 .translation {
   margin: 0;
-  color: #f3f4fc;
+  color: var(--theme-text, #f3f4fc);
   font-size: clamp(20px, 3vw, 30px);
   font-weight: 650;
   line-height: 1.35;
@@ -216,7 +216,7 @@
 
 .translationHint {
   margin: auto;
-  color: #aeb5cb;
+  color: var(--theme-muted, #aeb5cb);
   font-size: 15px;
   line-height: 1.5;
   text-align: center;
@@ -225,7 +225,7 @@
 .example {
   max-width: 720px;
   margin: 18px 0 0;
-  color: #dce0f1;
+  color: var(--theme-text-soft, #dce0f1);
   font-size: clamp(14px, 1.7vw, 18px);
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -234,7 +234,7 @@
 .exampleTranslation {
   max-width: 720px;
   margin: 12px 0 0;
-  color: #929bb7;
+  color: var(--theme-faint, #929bb7);
   font-size: clamp(13px, 1.4vw, 16px);
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -258,14 +258,14 @@
   gap: 12px;
   border-left: 2px solid rgba(67, 213, 176, 0.55);
   padding: 3px 0 3px 10px;
-  color: #dce0f1;
+  color: var(--theme-text-soft, #dce0f1);
   font-size: clamp(13px, 1.45vw, 16px);
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
 .translationExampleList li>span:first-child {
-  color: #e2e5f2;
+  color: var(--theme-text-soft, #e2e5f2);
 }
 
 .translationExampleList .exampleTranslation {
@@ -288,10 +288,10 @@
 .knowledgeActions button {
   box-sizing: border-box;
   min-height: 42px;
-  border: 1px solid rgba(169, 91, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 10px;
-  background: rgba(119, 82, 255, 0.2);
-  color: #f3f4fc;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 0 16px;
   font-weight: 650;
@@ -361,17 +361,17 @@
 
 .learnedButton {
   min-height: 46px;
-  border-color: rgba(173, 183, 220, 0.22);
-  background: rgba(255, 255, 255, 0.045);
-  color: #b8bfd2;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 22%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-muted, #b8bfd2);
   font-size: 13px;
 }
 
 .closeButton:hover,
 .knowledgeActions button:not(:disabled):hover,
 .learnedButton:not(:disabled):hover {
-  border-color: rgba(169, 91, 255, 0.72);
-  background: rgba(119, 82, 255, 0.2);
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
 }
 
 .dontKnowButton:not(:disabled):hover {
@@ -385,9 +385,9 @@
 }
 
 .learnedButton:not(:disabled):hover {
-  border-color: rgba(173, 183, 220, 0.38);
-  background: rgba(255, 255, 255, 0.08);
-  color: #e8eafa;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 38%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 8%, transparent);
+  color: var(--theme-text-soft, #e8eafa);
 }
 
 @media (max-width: 520px) {

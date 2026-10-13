@@ -6,6 +6,7 @@ import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 import { DictionaryStats } from './DictionaryStats.jsx';
+import { DICTIONARY_THEMES } from './settings.js';
 
 export function SettingsPanel({
   settings,
@@ -57,6 +58,29 @@ export function SettingsPanel({
           )}
         />
         <DictionaryStats sources={catalog.availableSources} />
+        <fieldset className={panelStyles.themeSetting}>
+          <legend>Тема приложения</legend>
+          <p>Выберите одну из двух светлых или двух тёмных цветовых схем.</p>
+          <div className={panelStyles.themeOptions}>
+            {DICTIONARY_THEMES.map(({ id, label }) => (
+              <label
+                className={panelStyles.themeOption}
+                data-theme-option={id}
+                key={id}
+              >
+                <input
+                  type="radio"
+                  name="dictionary-theme"
+                  value={id}
+                  checked={settings.theme === id}
+                  onChange={() => updateSetting('theme', id)}
+                />
+                <span className={panelStyles.themeSwatch} aria-hidden="true" />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
         <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
           <span>Карточек за загрузку</span>

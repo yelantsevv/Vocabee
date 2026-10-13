@@ -1,5 +1,18 @@
 export const DEFAULT_DICTIONARY_FONT_SIZE = 16;
 export const DEFAULT_INTERFACE_FONT_SCALE = 100;
+export const DICTIONARY_THEMES = [
+  { id: 'classic-dark', label: 'Классическая · Тёмная' },
+  { id: 'android-light', label: 'Облачная · Светлая' },
+  { id: 'airy-light', label: 'Чёрно-белая · Светлая' },
+  { id: 'aurora-dark', label: 'Северное сияние · Тёмная' }
+];
+export const DEFAULT_DICTIONARY_THEME = 'classic-dark';
+
+export function normalizeDictionaryTheme(value) {
+  return DICTIONARY_THEMES.some(({ id }) => id === value)
+    ? value
+    : DEFAULT_DICTIONARY_THEME;
+}
 
 export function normalizeDictionaryFontSize(value) {
   const parsedValue = Number(value);

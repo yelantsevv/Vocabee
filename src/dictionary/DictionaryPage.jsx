@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import './dictionaryThemes.css';
 import styles from './DictionaryPage.module.css';
 import {
   getDictionarySettings,
@@ -7,7 +8,9 @@ import {
 } from './storage.js';
 import {
   DEFAULT_DICTIONARY_FONT_SIZE,
+  DEFAULT_DICTIONARY_THEME,
   DEFAULT_INTERFACE_FONT_SCALE,
+  normalizeDictionaryTheme,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale,
   normalizeRefreshButtonPosition
@@ -23,6 +26,7 @@ const DEFAULT_SETTINGS = {
   lang: 'ru',
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
+  theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
   hideTranslationsUntilHover: true,
   refreshButtonPosition: null
@@ -69,6 +73,7 @@ export function DictionaryPage() {
         lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
+        theme: normalizeDictionaryTheme(result.theme),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
           : DEFAULT_SETTINGS.cardsPerLoad,
@@ -88,6 +93,7 @@ export function DictionaryPage() {
 
   async function updateSetting(key, value) {
     const normalizers = {
+      theme: normalizeDictionaryTheme,
       dictionaryFontSize: normalizeDictionaryFontSize,
       interfaceFontScale: normalizeInterfaceFontScale,
       refreshButtonPosition: normalizeRefreshButtonPosition,
@@ -96,6 +102,9 @@ export function DictionaryPage() {
     const nextValue = normalizers[key] ? normalizers[key](value) : value;
     const nextSettings = { ...settings, [key]: nextValue };
     setSettings(nextSettings);
+    if (key === 'theme') {
+      document.documentElement.dataset.dictionaryTheme = nextValue;
+    }
     if (key === 'refreshButtonPosition') {
       setAppliedSettings((current) => ({ ...current, refreshButtonPosition: nextValue }));
     }
