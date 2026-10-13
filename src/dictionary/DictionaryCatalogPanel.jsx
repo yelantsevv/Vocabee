@@ -23,6 +23,21 @@ function shuffleEntries(entries) {
   return shuffled;
 }
 
+function FilterButtonIcon({ name }) {
+  const paths = {
+    regular: <><circle cx="12" cy="12" r="8.5" /><path d="m8.5 12 2.3 2.3 4.8-5" /></>,
+    irregular: <path d="m13.5 2.8-8 10h5.6l-.7 8.4 8.1-11h-5.7l.7-7.4Z" />,
+    modal: <><rect x="4" y="4" width="16" height="16" rx="4" /><path d="M8 9h8M8 12h5M8 15h7" /></>,
+    phrasal: <><path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" /><path d="M7.5 10h9M7.5 13h6" /></>,
+    start: <><path d="M4 5.5c2.8-1 5.5-.6 8 1.1v13c-2.5-1.7-5.2-2.1-8-1.1v-13Z" /><path d="M20 5.5c-2.8-1-5.5-.6-8 1.1v13c2.5-1.7 5.2-2.1 8-1.1v-13Z" /></>,
+    learning: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5l3.2 2" /></>,
+    learned: <><path d="M12 3.5 14.6 5l3-.1.9 2.9 2 2.2-1.2 2.8.3 3-2.7 1.4-1.8 2.4-3-.7-2.9.7-1.8-2.4-2.7-1.4.3-3L2.8 10l2-2.2.9-2.9 3 .1L12 3.5Z" /><path d="m8.5 12 2.2 2.2 4.8-4.8" /></>,
+    new: <><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" /><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" /></>
+  };
+
+  return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>;
+}
+
 export function DictionaryCatalogPanel({
   catalog,
   searchLanguage,
@@ -179,15 +194,19 @@ export function DictionaryCatalogPanel({
               <button
                 className={clsx(styles.sourceViewButton, catalogView === 'words' && styles.selected)}
                 type="button"
+                aria-label="Слова"
+                title="Слова · Words"
                 aria-pressed={catalogView === 'words'}
                 onClick={() => setCatalogView('words')}
-              >Слова</button>
+              >Words</button>
               <button
                 className={clsx(styles.sourceViewButton, catalogView === 'phrases' && styles.selected)}
                 type="button"
+                aria-label="Фразы"
+                title="Фразы · Phrases"
                 aria-pressed={catalogView === 'phrases'}
                 onClick={() => setCatalogView('phrases')}
-              >Фразы</button>
+              >Phrases</button>
           </div>
 
           <fieldset className={styles.filterGroup} aria-label="Уровень">
@@ -238,18 +257,23 @@ export function DictionaryCatalogPanel({
             <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
               <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
                 {[
-                  ['regular', '✅ Правильные'],
-                  ['irregular', '⚡ Неправильные'],
-                  ['modal', '🧩 Модальные'],
-                  ['phrasal', '💬 Фразовые']
-                ].map(([type, label]) => (
+                  ['regular', 'Regular', 'Правильные'],
+                  ['irregular', 'Irregular', 'Неправильные'],
+                  ['modal', 'Modal', 'Модальные'],
+                  ['phrasal', 'Phrasal', 'Фразовые']
+                ].map(([type, label, russianLabel]) => (
                   <button
                     className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
                     key={type}
                     type="button"
+                    aria-label={russianLabel}
+                    title={`${russianLabel} · ${label}`}
                     aria-pressed={sourceVerbTypes.includes(type)}
                     onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
-                  >{label}</button>
+                  >
+                    <FilterButtonIcon name={type} />
+                    <span>{label}</span>
+                  </button>
                 ))}
                 <DictionarySearch
                   variant="filter"
@@ -263,23 +287,31 @@ export function DictionaryCatalogPanel({
               <button
                 className={styles.startLearningButton}
                 type="button"
+                aria-label="Начать изучение"
+                title="Начать изучение · Start"
                 onClick={() => {
                   setProgressViews(['remaining']);
                   requestAnimationFrame(() => cardListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
                 }}
-              >Начать изучение</button>
+              ><FilterButtonIcon name="start" /><span>Start</span></button>
               {[
-                ['learning', `Изучаю (${inProgressCount})`],
-                ['learned', `Изученные (${learnedCount})`],
-                ['remaining', `Не изученные (${remainingCount})`]
-              ].map(([view, label]) => (
+                ['learning', 'Learning', 'Изучаю', inProgressCount, 'learning'],
+                ['learned', 'Learned', 'Изученные', learnedCount, 'learned'],
+                ['remaining', 'New', 'Не изученные', remainingCount, 'new']
+              ].map(([view, label, russianLabel, count, icon]) => (
                 <button
                   className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
                   key={view}
                   type="button"
+                  aria-label={`${russianLabel} (${count})`}
+                  title={`${russianLabel} (${count}) · ${label}`}
                   aria-pressed={progressViews.includes(view)}
                   onClick={() => toggleValue(progressViews, setProgressViews, view)}
-                >{label}</button>
+                >
+                  <FilterButtonIcon name={icon} />
+                  <span>{label}</span>
+                  <span className={styles.progressCount}>{count}</span>
+                </button>
               ))}
               <button
                 className={`${styles.progressButton} ${styles.settingsButton}`}
