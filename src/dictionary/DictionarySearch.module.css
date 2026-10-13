@@ -10,6 +10,9 @@
   display: grid;
   width: 46px;
   height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  box-sizing: border-box;
   place-items: center;
   border: 1px solid rgba(173, 183, 220, 0.2);
   border-radius: 9px;
@@ -26,8 +29,10 @@
 }
 
 .searchControl[data-variant='filter'] .searchToggle {
-  width: 100%;
-  height: 100%;
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  min-height: 46px;
 }
 
 .searchToggle:hover,

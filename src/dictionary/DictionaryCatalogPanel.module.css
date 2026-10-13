@@ -6,6 +6,9 @@
 }
 
 .dictionaryFilters {
+  --square-filter-control: 46px;
+  --text-filter-control-width: clamp(48px, 8vw, 140px);
+  --source-text-control-width: clamp(64px, 8vw, 140px);
   position: relative;
   display: grid;
   gap: 16px;
@@ -36,35 +39,52 @@
 
 .filterLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  align-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: clamp(14px, 2vw, 30px);
 }
 
 .filterLeftGroup,
 .filterRightGroup {
   display: grid;
+  width: 100%;
   min-width: 0;
   grid-template-rows: minmax(46px, 1fr) minmax(46px, 1fr);
   align-content: stretch;
+  justify-items: center;
   gap: 10px;
   padding: 0;
 }
 
 .filterLeftTopRow {
   display: grid;
+  width: max-content;
   min-width: 0;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto auto;
   align-items: center;
-  gap: 10px;
+  justify-self: center;
+  gap: 12px;
 }
 
 .filterLeftBottomRow {
   display: grid;
+  width: 100%;
   min-width: 0;
-  grid-template-columns: minmax(0, 1.1fr) 46px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
+  justify-items: center;
+  gap: 8px;
+}
+
+.filterLeftBottomRow .filterField {
+  width: min(100%, calc(
+    var(--square-filter-control) + var(--square-filter-control) +
+    var(--source-text-control-width) + var(--source-text-control-width) +
+    var(--square-filter-control) + var(--square-filter-control) +
+    var(--square-filter-control) + var(--square-filter-control) +
+    var(--square-filter-control) + 54px
+  ));
+  max-width: 100%;
 }
 
 .emptyCatalog {
@@ -94,15 +114,20 @@
 }
 
 .sourceViewButtons {
-  display: flex;
+  display: grid;
+  width: max-content;
   min-width: max-content;
+  grid-template-columns: repeat(2, var(--square-filter-control)) repeat(2, var(--source-text-control-width));
   gap: 6px;
 }
 
 .sourceViewButton {
   display: grid;
-  min-width: 50px;
-  min-height: 46px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: var(--square-filter-control);
+  min-height: var(--square-filter-control);
   place-items: center;
   border: 1px solid rgba(173, 183, 220, 0.2);
   border-radius: 9px;
@@ -115,8 +140,22 @@
   transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
 }
 
-.sourceViewButton:nth-child(3) { min-width: 68px; }
-.sourceViewButton:nth-child(4) { min-width: 72px; }
+.sourceViewButton:nth-child(1),
+.sourceViewButton:nth-child(2) {
+  box-sizing: border-box;
+  width: var(--square-filter-control);
+  min-width: var(--square-filter-control);
+  height: var(--square-filter-control);
+  min-height: var(--square-filter-control);
+  flex: 0 0 var(--square-filter-control);
+  padding: 0;
+}
+
+.sourceViewButton:nth-child(3),
+.sourceViewButton:nth-child(4) {
+  width: var(--source-text-control-width);
+  min-width: var(--source-text-control-width);
+}
 
 .sourceViewButton svg {
   width: 22px;
@@ -185,6 +224,7 @@
 }
 
 .filterGroup {
+  width: max-content;
   min-width: 0;
   margin: 0;
   border: 0;
@@ -199,20 +239,27 @@
 
 .levelControls {
   display: flex;
-  min-width: 0;
+  width: max-content;
+  min-width: max-content;
   align-items: center;
   gap: 6px;
 }
 
 .levelControls > .filterChips {
-  flex-wrap: nowrap;
+  display: grid;
+  min-width: 0;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(4, var(--square-filter-control));
   gap: 6px;
 }
 
 .levelControls .filterChip {
-  min-width: 40px;
-  min-height: 46px;
-  padding: 0 8px;
+  box-sizing: border-box;
+  width: var(--square-filter-control);
+  min-width: var(--square-filter-control);
+  height: var(--square-filter-control);
+  min-height: var(--square-filter-control);
+  padding: 0;
 }
 
 .filterChip {
@@ -249,7 +296,7 @@
 
 .verbTypeChips {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
+  grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   align-items: stretch;
   gap: 6px;
 }
@@ -260,12 +307,14 @@
 
 .progressFilters {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
+  grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   align-items: stretch;
   gap: 6px;
 }
 
 .progressButton {
+  box-sizing: border-box;
+  width: var(--text-filter-control-width);
   min-width: 0;
   min-height: 46px;
   border: 1px solid rgba(173, 183, 220, 0.2);
@@ -279,7 +328,10 @@
 }
 
 .settingsButton {
-  width: 46px;
+  box-sizing: border-box;
+  width: var(--square-filter-control);
+  height: var(--square-filter-control);
+  min-height: var(--square-filter-control);
   justify-self: center;
   padding: 0;
   font-size: 21px;
@@ -287,7 +339,8 @@
 }
 
 .startLearningButton {
-  width: 100%;
+  box-sizing: border-box;
+  width: var(--text-filter-control-width);
   min-width: 0;
   min-height: 46px;
   border: 1px solid rgba(169, 91, 255, 0.6);
@@ -307,8 +360,12 @@
 
 .refreshCardsButton {
   display: grid;
-  width: 46px;
-  height: 46px;
+  box-sizing: border-box;
+  width: var(--square-filter-control);
+  min-width: var(--square-filter-control);
+  height: var(--square-filter-control);
+  min-height: var(--square-filter-control);
+  flex: 0 0 var(--square-filter-control);
   place-items: center;
   border: 1px solid rgba(173, 183, 220, 0.2);
   border-radius: 9px;
@@ -460,36 +517,38 @@
   }
 
   .filterLeftTopRow {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: max-content;
+    justify-items: center;
     gap: 8px;
   }
 
-  .sourceViewButtons {
-    display: grid;
-    min-width: 0;
-    grid-template-columns: 46px 46px minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .sourceViewButton:nth-child(3),
-  .sourceViewButton:nth-child(4) {
-    min-width: 0;
-  }
-
-  .filterLeftBottomRow {
-    grid-template-columns: minmax(0, 1fr) 46px;
-  }
-
   .filterLeftBottomRow .filterField {
-    grid-column: 1 / -1;
+    width: min(100%, max(
+      calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
+      calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 24px)
+    ));
   }
 
-  .refreshCardsButton {
-    grid-column: 2;
-    grid-row: 2;
+  .sourceViewButtons {
+    width: max-content;
+    min-width: max-content;
+    display: grid;
+    grid-template-columns: repeat(2, var(--square-filter-control)) repeat(2, var(--source-text-control-width));
+  }
+
+  .sourceViewButtons .sourceViewButton {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .sourceViewButtons .sourceViewButton:nth-child(1),
+  .sourceViewButtons .sourceViewButton:nth-child(2) {
+    min-width: var(--square-filter-control);
+    padding: 0;
   }
 
   .verbTypeChips {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) 36px;
+    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   }
 
   .typeChip {
@@ -499,7 +558,7 @@
   }
 
   .progressFilters {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) 36px;
+    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
     gap: 5px;
   }
 
@@ -507,10 +566,6 @@
     padding: 4px 2px;
     font-size: 10px;
     line-height: 1.1;
-  }
-
-  .progressFilters .settingsButton {
-    width: 36px;
   }
 
   .progressFilters .startLearningButton {
@@ -536,15 +591,23 @@
   }
 
   .filterLeftTopRow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
+    grid-template-columns: max-content;
+    justify-items: center;
+    gap: 12px;
+  }
+
+  .filterLeftBottomRow .filterField {
+    width: min(100%, max(
+      calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
+      calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 24px)
+    ));
   }
 
   .filterRightGroup .verbTypeChips {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
+    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   }
 
   .filterRightGroup .progressFilters {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
+    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
   }
 }
