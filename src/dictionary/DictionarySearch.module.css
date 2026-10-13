@@ -20,6 +20,16 @@
   transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
 }
 
+.searchControl[data-variant='filter'] {
+  width: 100%;
+  height: 46px;
+}
+
+.searchControl[data-variant='filter'] .searchToggle {
+  width: 100%;
+  height: 100%;
+}
+
 .searchToggle:hover,
 .searchToggle[aria-expanded='true'] {
   border-color: rgba(169, 91, 255, 0.72);

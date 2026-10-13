@@ -4,6 +4,7 @@ import styles from './DictionarySearch.module.css';
 const SEARCH_PLACEHOLDER = 'Поиск слова или перевода';
 
 export function DictionarySearch({
+  variant,
   selectedSourceLanguage,
   sourceSearch,
   onSourceSearchChange
@@ -12,7 +13,7 @@ export function DictionarySearch({
   if (!selectedSourceLanguage) return null;
 
   return (
-    <div className={styles.searchControl}>
+    <div className={styles.searchControl} data-variant={variant}>
       <button
         className={styles.searchToggle}
         type="button"

@@ -203,11 +203,6 @@ export function DictionaryCatalogPanel({
                   >{level}</button>
                 ))}
               </div>
-              <DictionarySearch
-                selectedSourceLanguage={searchLanguage}
-                sourceSearch={sourceSearch}
-                onSourceSearchChange={setSourceSearch}
-              />
             </div>
           </fieldset>
             </div>
@@ -225,14 +220,6 @@ export function DictionaryCatalogPanel({
               ))}
             </select>
           </label>
-          <button
-            className={styles.startLearningButton}
-            type="button"
-            onClick={() => {
-              setProgressViews(['remaining']);
-              requestAnimationFrame(() => cardListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-            }}
-          >Начать изучение</button>
           <button
             className={styles.refreshCardsButton}
             type="button"
@@ -264,9 +251,23 @@ export function DictionaryCatalogPanel({
                     onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
                   >{label}</button>
                 ))}
+                <DictionarySearch
+                  variant="filter"
+                  selectedSourceLanguage={searchLanguage}
+                  sourceSearch={sourceSearch}
+                  onSourceSearchChange={setSourceSearch}
+                />
               </div>
             </fieldset>
             <div className={styles.progressFilters} role="group" aria-label="Статус изучения слов">
+              <button
+                className={styles.startLearningButton}
+                type="button"
+                onClick={() => {
+                  setProgressViews(['remaining']);
+                  requestAnimationFrame(() => cardListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+                }}
+              >Начать изучение</button>
               {[
                 ['learning', `Изучаю (${inProgressCount})`],
                 ['learned', `Изученные (${learnedCount})`],

@@ -62,7 +62,7 @@
 .filterLeftBottomRow {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 46px;
+  grid-template-columns: minmax(0, 1.1fr) 46px;
   align-items: center;
   gap: 10px;
 }
@@ -237,19 +237,20 @@
 
 .typeChip {
   display: flex;
-  width: auto;
-  min-width: max-content;
+  width: 100%;
+  min-width: 0;
   min-height: 46px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 6px 12px;
-  text-align: left;
-  white-space: nowrap;
+  text-align: center;
+  white-space: normal;
 }
 
 .verbTypeChips {
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
+  align-items: stretch;
   gap: 6px;
 }
 
@@ -259,9 +260,9 @@
 
 .progressFilters {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
 }
 
 .progressButton {
@@ -482,31 +483,40 @@
     grid-column: 1 / -1;
   }
 
-  .startLearningButton {
-    grid-column: 1;
-  }
-
   .refreshCardsButton {
     grid-column: 2;
     grid-row: 2;
   }
 
   .verbTypeChips {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 36px;
   }
 
   .typeChip {
-    width: 100%;
-    min-width: 0;
-    justify-content: center;
-    padding: 6px 8px;
-    white-space: normal;
-    text-align: center;
+    padding: 4px 2px;
+    font-size: 10px;
+    line-height: 1.1;
   }
 
   .progressFilters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 36px;
+    gap: 5px;
+  }
+
+  .progressFilters .progressButton {
+    padding: 4px 2px;
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .progressFilters .settingsButton {
+    width: 36px;
+  }
+
+  .progressFilters .startLearningButton {
+    padding: 4px 2px;
+    font-size: 10px;
+    line-height: 1.1;
   }
 
   .exampleList li {
@@ -531,33 +541,10 @@
   }
 
   .filterRightGroup .verbTypeChips {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .filterRightGroup .typeChip {
-    width: 100%;
-    min-width: 0;
-    justify-content: center;
-    white-space: normal;
-    text-align: center;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
   }
 
   .filterRightGroup .progressFilters {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1251px) and (max-width: 1500px) {
-  .filterRightGroup .verbTypeChips {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .filterRightGroup .typeChip {
-    width: 100%;
-    min-width: 0;
-    justify-content: center;
-    white-space: normal;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 46px;
   }
 }
