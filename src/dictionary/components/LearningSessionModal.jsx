@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
 import entryHeaderStyles from './DictionaryEntryHeader.module.css';
 
@@ -15,7 +15,11 @@ export function LearningSessionModal({
   const [translationVisible, setTranslationVisible] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const audioRef = useRef(null);
   const entry = entries[currentIndex];
+  const entryLanguage = entry?._catalogLanguage || entry?.source_language || 'en';
+  const spokenText = String(entry?.word || entry?.examples?.[0]?.phrase || '').trim();
   const learningLevel = entry ? getLearningLevel(entry) : 0;
   const example = entry?.examples?.[0];
   const translationExamples = entry?.examples?.slice(0, 3) || [];
@@ -49,6 +53,18 @@ export function LearningSessionModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [entries.length, onClose]);
 
+  useEffect(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    window.speechSynthesis?.cancel();
+    setAudioPlaying(false);
+  }, [entry?.word]);
+
+  useEffect(() => () => {
+    audioRef.current?.pause();
+    window.speechSynthesis?.cancel();
+  }, []);
+
   if (!entry) return null;
 
   const verbTypes = ['verb', 'i-verb', 'm-verb', 'ph-verb', 'r-verb', 'phrasal_verb', 'phrasal-verb'];
@@ -60,6 +76,60 @@ export function LearningSessionModal({
     setTranslationVisible(false);
     if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
     else onClose();
+  }
+
+  function playWithGoogleVoice() {
+    const parameters = new URLSearchParams({
+      client: 'gtx',
+      ie: 'UTF-8',
+      tl: 'en',
+      q: spokenText
+    });
+    const audio = new Audio(`https://translate.googleapis.com/translate_tts?${parameters}`);
+    audio.preload = 'auto';
+    audio.referrerPolicy = 'no-referrer';
+    audio.onplay = () => setAudioPlaying(true);
+    audio.onended = () => setAudioPlaying(false);
+    audio.onerror = () => setAudioPlaying(false);
+    audioRef.current = audio;
+    audio.play().catch(() => setAudioPlaying(false));
+  }
+
+  function toggleEnglishAudio() {
+    if (audioPlaying) {
+      audioRef.current?.pause();
+      if (audioRef.current) audioRef.current.currentTime = 0;
+      audioRef.current = null;
+      window.speechSynthesis?.cancel();
+      setAudioPlaying(false);
+      return;
+    }
+
+    const speechSynthesis = window.speechSynthesis;
+    if (!spokenText || !speechSynthesis || !window.SpeechSynthesisUtterance) {
+      playWithGoogleVoice();
+      return;
+    }
+
+    speechSynthesis.cancel();
+    const utterance = new window.SpeechSynthesisUtterance(spokenText);
+    utterance.lang = 'en-US';
+    utterance.voice = speechSynthesis.getVoices()
+      .find((voice) => /^en(-|$)/i.test(voice.lang)) || null;
+    utterance.onend = () => setAudioPlaying(false);
+    utterance.onerror = (event) => {
+      if (event.error === 'canceled' || event.error === 'interrupted') {
+        setAudioPlaying(false);
+      } else {
+        playWithGoogleVoice();
+      }
+    };
+    setAudioPlaying(true);
+    try {
+      speechSynthesis.speak(utterance);
+    } catch {
+      playWithGoogleVoice();
+    }
   }
 
   async function deleteCurrentEntry() {
@@ -91,6 +161,21 @@ export function LearningSessionModal({
         aria-label={catalogView === 'phrases' ? 'Изучение фраз' : 'Изучение слов'}
       >
         <header className={styles.header}>
+          {entryLanguage === 'en' && (
+            <button
+              className={styles.speakButton}
+              type="button"
+              onClick={toggleEnglishAudio}
+              aria-label={audioPlaying ? 'Остановить озвучивание' : 'Озвучить английский текст'}
+              aria-pressed={audioPlaying}
+              title="Озвучить на английском"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
+                <path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" />
+              </svg>
+            </button>
+          )}
           <div className={styles.headerActions}>
             <button
               className={styles.learnedButton}
@@ -99,7 +184,7 @@ export function LearningSessionModal({
               disabled={learningLevel === 9}
             >{learningLevel === 9 ? '✓ Изучено' : '✓  Изученное'}</button>
             <button
-              className={styles.deleteButton}
+              className={`${styles.learnedButton} ${styles.deleteButton}`}
               type="button"
               onClick={deleteCurrentEntry}
               disabled={deleting}

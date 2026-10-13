@@ -59,6 +59,7 @@ function getCatalogSourceIds(language, sourceConnections) {
 
 function readCatalogFilters() {
   const defaults = {
+    catalogView: 'words',
     selectedSourceLanguage: null,
     sourceLevels: ['A1', 'A2', 'B1'],
     sourceVerbTypes: ['irregular', 'phrasal'],
@@ -71,6 +72,9 @@ function readCatalogFilters() {
     const saved = JSON.parse(localStorage.getItem(CATALOG_FILTERS_KEY) || '{}');
     const isMigrated = saved.version === CATALOG_FILTERS_VERSION;
     return {
+      catalogView: ['words', 'phrases'].includes(saved.catalogView)
+        ? saved.catalogView
+        : defaults.catalogView,
       selectedSourceLanguage: isMigrated
         && ([...Object.keys(CATALOG_SOURCES), 'all'].includes(saved.selectedSourceLanguage)
           || String(saved.selectedSourceLanguage || '').startsWith('custom-dictionary-'))
@@ -122,7 +126,7 @@ export function useDictionaryCatalog() {
   const [sourceSearch, setSourceSearch] = useState(initialFilters.sourceSearch);
   const [progressViews, setProgressViews] = useState(initialFilters.progressViews);
   const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
-  const [catalogView, setCatalogView] = useState('words');
+  const [catalogView, setCatalogView] = useState(initialFilters.catalogView);
   const [importStatus, setImportStatus] = useState('');
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
@@ -284,6 +288,7 @@ export function useDictionaryCatalog() {
     try {
       localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
         version: CATALOG_FILTERS_VERSION,
+        catalogView,
         selectedSourceLanguage,
         sourceLevels,
         sourceVerbTypes,
@@ -294,7 +299,7 @@ export function useDictionaryCatalog() {
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
     }
-  }, [selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, sourceSearch, progressViews]);
+  }, [catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, sourceSearch, progressViews]);
 
   useEffect(() => {
     try {
