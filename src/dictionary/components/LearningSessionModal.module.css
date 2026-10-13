@@ -167,6 +167,50 @@
   overflow-wrap: anywhere;
 }
 
+.translationExampleList {
+  display: grid;
+  width: 100%;
+  max-width: 760px;
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.translationExampleList li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  border-left: 2px solid rgba(67, 213, 176, 0.55);
+  padding: 3px 0 3px 10px;
+  color: #dce0f1;
+  font-size: clamp(13px, 1.45vw, 16px);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.translationExampleList li > span:first-child {
+  color: #e2e5f2;
+}
+
+.translationExampleList .exampleTranslation {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .translationExampleList li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+
+  .translationExampleList .exampleTranslation {
+    text-align: left;
+  }
+}
+
 .learnedButton,
 .knowledgeActions button {
   box-sizing: border-box;

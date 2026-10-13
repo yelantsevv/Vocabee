@@ -14,6 +14,7 @@ export function LearningSessionModal({
   const entry = entries[currentIndex];
   const learningLevel = entry ? getLearningLevel(entry) : 0;
   const example = entry?.examples?.[0];
+  const translationExamples = entry?.examples?.slice(0, 3) || [];
 
   useEffect(() => {
     const body = document.body;
@@ -51,7 +52,7 @@ export function LearningSessionModal({
     ? `${entry.word} · ${entry.forms.past_simple} · ${entry.forms.past_participle}`
     : null;
   const itemKind = catalogView === 'phrases' ? 'Phrases' : 'Words';
-  const formattedEntryCount = new Intl.NumberFormat('en-US').format(entries.length);
+  const formattedEntryCount = new Intl.NumberFormat('en-US').format(entries.length - currentIndex);
 
   function rateAndContinue(nextLevel) {
     onSetLearningLevel(entry, nextLevel);
@@ -100,7 +101,16 @@ export function LearningSessionModal({
             </section>
             <section className={styles.translationBlock} aria-label="Перевод">
               <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
-              {example?.translation && <p className={styles.exampleTranslation}>{example.translation}</p>}
+              {translationExamples.length > 0 && (
+                <ul className={styles.translationExampleList}>
+                  {translationExamples.map((item, index) => (
+                    <li key={`${item.phrase}-${index}`}>
+                      <span>{item.phrase}</span>
+                      {item.translation && <span className={styles.exampleTranslation}>{item.translation}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           </div>
 

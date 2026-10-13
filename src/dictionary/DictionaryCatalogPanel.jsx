@@ -279,7 +279,7 @@ export function DictionaryCatalogPanel({
                 aria-label="Начать изучение"
                 title="Начать изучение · Start"
                 disabled={studySessionEntries.length === 0}
-                onClick={() => setLearningSessionEntries([...studySessionEntries])}
+                onClick={() => setLearningSessionEntries(shuffleEntries(studySessionEntries))}
               ><FilterButtonIcon name="start" /><span>Start</span></button>
               {[
                 ['learning', 'Learning', 'Изучаю', 'learning'],
