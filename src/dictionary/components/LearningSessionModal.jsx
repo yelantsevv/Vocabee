@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
 import entryHeaderStyles from './DictionaryEntryHeader.module.css';
+import { useInterfaceText } from '../interfaceLanguage.jsx';
 
 export function LearningSessionModal({
   entries,
@@ -12,8 +13,10 @@ export function LearningSessionModal({
   onDeleteEntry,
   onClose
 }) {
+  const t = useInterfaceText();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [translationVisible, setTranslationVisible] = useState(false);
+  const [translationClickArmed, setTranslationClickArmed] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
@@ -76,8 +79,25 @@ export function LearningSessionModal({
   function rateAndContinue(nextLevel) {
     onSetLearningLevel(entry, nextLevel);
     setTranslationVisible(false);
+    setTranslationClickArmed(false);
     if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
     else onClose();
+  }
+
+  function showTranslationOrAdvance() {
+    if (translationClickArmed) {
+      if (entries.length < 2) return;
+      const nextIndices = entries.map((_, index) => index).filter((index) => index !== currentIndex);
+      const randomIndex = nextIndices[Math.floor(Math.random() * nextIndices.length)];
+      setCurrentIndex(randomIndex);
+      setTranslationVisible(false);
+      setTranslationClickArmed(false);
+      setDeleteError('');
+      return;
+    }
+
+    setTranslationClickArmed(true);
+    if (!translationVisible) setTranslationVisible(true);
   }
 
   function handleTouchStart(event) {
@@ -102,7 +122,7 @@ export function LearningSessionModal({
     if (swipeLength < swipeThreshold) return;
 
     const angleFromVertical = Math.atan2(Math.abs(deltaX), Math.abs(deltaY)) * (180 / Math.PI);
-    if (deltaY < 0 && angleFromVertical <= 18) {
+    if (angleFromVertical <= 18) {
       onClose();
       return;
     }
@@ -112,6 +132,7 @@ export function LearningSessionModal({
     const randomIndex = nextIndices[Math.floor(Math.random() * nextIndices.length)];
     setCurrentIndex(randomIndex);
     setTranslationVisible(false);
+    setTranslationClickArmed(false);
     setDeleteError('');
   }
 
@@ -181,7 +202,7 @@ export function LearningSessionModal({
       if (entries.length <= 1) onClose();
       else setCurrentIndex((index) => Math.min(index, entries.length - 2));
     } catch (error) {
-      setDeleteError(error.message || 'Не удалось удалить слово из словаря.');
+      setDeleteError(t(error.message || 'Не удалось удалить слово из словаря.'));
     } finally {
       setDeleting(false);
     }
@@ -195,7 +216,7 @@ export function LearningSessionModal({
         className={styles.modal}
         role="dialog"
         aria-modal="true"
-        aria-label={catalogView === 'phrases' ? 'Изучение фраз' : 'Изучение слов'}
+        aria-label={t(catalogView === 'phrases' ? 'Изучение фраз' : 'Изучение слов')}
       >
         <header className={styles.header}>
           <div className={styles.headerActions}>
@@ -204,22 +225,22 @@ export function LearningSessionModal({
               type="button"
               onClick={() => rateAndContinue(9)}
               disabled={learningLevel === 9}
-            >{learningLevel === 9 ? '✓ Изучено' : '✓  Изученное'}</button>
+            >{t(learningLevel === 9 ? '✓ Изучено' : '✓  Изученное')}</button>
             <button
               className={`${styles.learnedButton} ${styles.deleteButton}`}
               type="button"
               onClick={deleteCurrentEntry}
               disabled={deleting}
-              aria-label={`Удалить ${entry.word} из словаря`}
-            >{deleting ? 'Удаление…' : 'Удалить'}</button>
+              aria-label={`${t('Удалить')} ${entry.word}`}
+            >{deleting ? t('Удаление…') : t(catalogView === 'phrases' ? 'Удалить фразу' : 'Удалить слово')}</button>
             <div className={styles.headerLearningLevel}>
               {learningLevel === 9 ? (
-                <span className={entryHeaderStyles.learnedMark} aria-label="Слово изучено">✓</span>
+                <span className={entryHeaderStyles.learnedMark} aria-label={t('Слово выучено')}>✓</span>
               ) : (
                 <span
                   className={entryHeaderStyles.progressCircle}
                   role="progressbar"
-                  aria-label={`Уровень знания: ${learningLevel}`}
+              aria-label={`${t('Уровень знания: ')}${learningLevel}`}
                   aria-valuemin={0}
                   aria-valuemax={9}
                   aria-valuenow={learningLevel}
@@ -229,9 +250,9 @@ export function LearningSessionModal({
                 </span>
               )}
             </div>
-            <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">
+            <button className={styles.closeButton} type="button" onClick={onClose} aria-label={t('Закрыть изучение')}>
               <span className={styles.closeSymbol} aria-hidden="true">×</span>
-              <span className={styles.closeLabel}>Закрыть</span>
+              <span className={styles.closeLabel}>{t('Закрыть')}</span>
             </button>
           </div>
         </header>
@@ -255,16 +276,16 @@ export function LearningSessionModal({
                     toggleEnglishAudio();
                   }
                 }}
-                aria-label={audioPlaying ? 'Остановить озвучивание английского текста' : `Озвучить: ${spokenText}`}
+                aria-label={audioPlaying ? t('Остановить озвучивание английского текста') : `${t('Озвучить: ')}${spokenText}`}
                 aria-pressed={audioPlaying}
-                title="Нажмите, чтобы озвучить английский текст"
+                title={t('Нажмите, чтобы озвучить английский текст')}
               >
                 <h3>{entry.word}</h3>
                 {forms && <p className={styles.forms}>{forms}</p>}
                 {example && <p className={styles.example}>{example.phrase || example.example}</p>}
               </section>
             ) : (
-              <section className={styles.englishBlock} aria-label="Текст на иностранном языке">
+              <section className={styles.englishBlock} aria-label={t('Текст на иностранном языке')}>
                 <h3>{entry.word}</h3>
                 {forms && <p className={styles.forms}>{forms}</p>}
                 {example && <p className={styles.example}>{example.phrase || example.example}</p>}
@@ -274,19 +295,19 @@ export function LearningSessionModal({
               className={styles.translationBlock}
               role="button"
               tabIndex={0}
-              aria-label={translationVisible ? 'Перевод показан' : 'Показать перевод и примеры'}
+              aria-label={t(translationVisible ? 'Перевод показан' : 'Показать перевод и примеры')}
               aria-expanded={translationVisible}
-              onClick={() => setTranslationVisible(true)}
+              onClick={showTranslationOrAdvance}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  setTranslationVisible(true);
+                  showTranslationOrAdvance();
                 }
               }}
             >
               {translationVisible ? (
                 <>
-                  <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
+                  <p className={styles.translation}>{entry.definitions?.join(' · ') || t('Перевод не указан')}</p>
                   {translationExamples.length > 0 && (
                     <ul className={styles.translationExampleList}>
                       {translationExamples.map((item, index) => (
@@ -299,7 +320,7 @@ export function LearningSessionModal({
                   )}
                 </>
               ) : (
-                <p className={styles.translationHint}></p>
+                <p className={styles.translationHint}>{t('Показать перевод')}</p>
               )}
             </section>
           </div>
@@ -307,10 +328,10 @@ export function LearningSessionModal({
           <div className={styles.cardActions}>
             <div className={styles.knowledgeActions}>
               <button className={styles.dontKnowButton} type="button" onClick={() => rateAndContinue(learningLevel - 1)}>
-                Не знаю
+                {t('Не знаю')}
               </button>
               <button className={styles.knowButton} type="button" onClick={() => rateAndContinue(learningLevel + 1)}>
-                Знаю
+                {t('Знаю')}
               </button>
             </div>
           </div>

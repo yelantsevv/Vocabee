@@ -65,7 +65,7 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
   .card {
     gap: var(--vocabee-card-mobile-gap);
     margin: var(--vocabee-space-2) 0;

@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useId } from 'react';
 import { DictionaryEntryHeader } from './DictionaryEntryHeader.jsx';
 import styles from './DictionaryWordCard.module.css';
+import { useInterfaceText } from '../interfaceLanguage.jsx';
 
 export function DictionaryWordCard({
   className,
@@ -14,6 +15,7 @@ export function DictionaryWordCard({
   onSpeakWord,
   children
 }) {
+  const t = useInterfaceText();
   const revealToggleId = useId();
 
   return (
@@ -22,7 +24,7 @@ export function DictionaryWordCard({
         className={styles.revealToggle}
         id={revealToggleId}
         type="checkbox"
-        aria-label={`Показать перевод карточки «${word}»`}
+        aria-label={`${t('Показать перевод карточки: ')}${word}`}
       />
       <label
         className={styles.revealClickSurface}

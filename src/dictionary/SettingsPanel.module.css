@@ -283,7 +283,7 @@
   background: linear-gradient(135deg, #17283d 50%, #73d8d0 50%);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
   .settings {
     padding: 8px 16px;
   }

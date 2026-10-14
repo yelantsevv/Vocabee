@@ -60,7 +60,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 1260px) {
   .actions:not([data-variant="popup"]) {
     grid-template-columns: 1fr;
   }

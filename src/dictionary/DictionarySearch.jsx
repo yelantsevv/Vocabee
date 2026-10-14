@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './DictionarySearch.module.css';
+import { useInterfaceText } from './interfaceLanguage.jsx';
 
 const SEARCH_PLACEHOLDER = 'Поиск слова или перевода';
 
@@ -9,6 +10,7 @@ export function DictionarySearch({
   sourceSearch,
   onSourceSearchChange
 }) {
+  const t = useInterfaceText();
   const [isExpanded, setIsExpanded] = useState(Boolean(sourceSearch));
   if (!selectedSourceLanguage) return null;
 
@@ -17,9 +19,9 @@ export function DictionarySearch({
       <button
         className={styles.searchToggle}
         type="button"
-        aria-label={isExpanded ? 'Скрыть поиск' : SEARCH_PLACEHOLDER}
+        aria-label={t(isExpanded ? 'Скрыть поиск' : SEARCH_PLACEHOLDER)}
         aria-expanded={isExpanded}
-        title={isExpanded ? 'Скрыть поиск' : SEARCH_PLACEHOLDER}
+        title={t(isExpanded ? 'Скрыть поиск' : SEARCH_PLACEHOLDER)}
         onClick={() => setIsExpanded((expanded) => !expanded)}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -34,8 +36,8 @@ export function DictionarySearch({
             type="search"
             value={sourceSearch}
             onChange={(event) => onSourceSearchChange(event.target.value)}
-            placeholder={SEARCH_PLACEHOLDER}
-            aria-label={SEARCH_PLACEHOLDER}
+            placeholder={t(SEARCH_PLACEHOLDER)}
+            aria-label={t(SEARCH_PLACEHOLDER)}
           />
         </label>
       )}

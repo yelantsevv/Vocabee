@@ -281,7 +281,7 @@
 }
 
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
   .settingsModalBackdrop {
     display: block;
     overflow: auto;
@@ -345,8 +345,12 @@
   }
 
   .wordList ul {
-    padding-right: 16px;
-    padding-left: 16px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .wordList {
+    margin-top: 8px
   }
 
   .wordPair {

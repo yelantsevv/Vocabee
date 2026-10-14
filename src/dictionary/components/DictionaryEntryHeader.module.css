@@ -155,7 +155,7 @@
   outline-offset: 3px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
   .entryHeader {
     gap: 14px;
   }

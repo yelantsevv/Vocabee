@@ -78,7 +78,7 @@
   color: #73dfb2;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
   .stats {
     padding: 13px;
   }

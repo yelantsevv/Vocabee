@@ -8,6 +8,7 @@ import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 import { DictionaryStats } from './DictionaryStats.jsx';
 import { DICTIONARY_THEMES } from './settings.js';
+import { useInterfaceText } from './interfaceLanguage.jsx';
 
 export function SettingsPanel({
   settings,
@@ -20,6 +21,7 @@ export function SettingsPanel({
   onResetRefreshButtonPosition,
   modal = false
 }) {
+  const t = useInterfaceText();
   const [englishVoices, setEnglishVoices] = useState([]);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function SettingsPanel({
   const hasEnglishDictionary = loadedSources.has('en');
   const actions = [
     ...(!hasEnglishDictionary ? [{
-      label: catalog.remoteImportLoading ? 'Загружаю словарь EN → RU…' : 'Загрузить словарь EN → RU',
+      label: catalog.remoteImportLoading ? t('Загружаю словарь EN → RU…') : t('Загрузить словарь EN → RU'),
       disabled: catalog.catalogLoading || catalog.remoteImportLoading,
       onClick: catalog.importDictionaryFromUrl
     }] : []),
@@ -64,8 +66,8 @@ export function SettingsPanel({
   ];
 
   return (
-    <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label="Настройки">
-      <section className={panelStyles.settings} aria-label="Настройки Vocabee">
+    <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label={t('Настройки')}>
+      <section className={panelStyles.settings} aria-label={t('Настройки Vocabee')}>
         <SettingsActionButtons
           actions={actions}
           firstAction={(
@@ -78,10 +80,21 @@ export function SettingsPanel({
           )}
         />
         <DictionaryStats sources={catalog.availableSources} />
-        <section className={panelStyles.fontSizeSettings} aria-label="Размер текста">
+        <label className={panelStyles.voiceSetting} htmlFor="interface-language">
+          <span><strong>{t('Язык интерфейса')}</strong></span>
+          <select
+            id="interface-language"
+            value={settings.interfaceLanguage}
+            onChange={(event) => updateSetting('interfaceLanguage', event.target.value)}
+          >
+            <option value="en">{t('Английский')}</option>
+            <option value="ru">{t('Русский')}</option>
+          </select>
+        </label>
+        <section className={panelStyles.fontSizeSettings} aria-label={t('Размер текста')}>
           <label className={panelStyles.fontSizeControl} htmlFor="content-font-size">
             <span>
-              <strong>Основной текст</strong>
+              <strong>{t('Основной текст')}</strong>
             </span>
             <output htmlFor="content-font-size">{settings.contentFontSize} px</output>
             <input
@@ -96,7 +109,7 @@ export function SettingsPanel({
           </label>
           <label className={panelStyles.fontSizeControl} htmlFor="additional-font-size">
             <span>
-              <strong>Дополнительный текст</strong>
+              <strong>{t('Дополнительный текст')}</strong>
             </span>
             <output htmlFor="additional-font-size">{settings.additionalFontSize} px</output>
             <input
@@ -111,7 +124,7 @@ export function SettingsPanel({
           </label>
         </section>
         <fieldset className={panelStyles.themeSetting}>
-          <legend>Тема приложения</legend>
+          <legend>{t('Тема приложения')}</legend>
           <div className={panelStyles.themeOptions}>
             {DICTIONARY_THEMES.map(({ id, label }) => (
               <label
@@ -127,14 +140,14 @@ export function SettingsPanel({
                   onChange={() => updateSetting('theme', id)}
                 />
                 <span className={panelStyles.themeSwatch} aria-hidden="true" />
-                <span>{label}</span>
+                <span>{t(label)}</span>
               </label>
             ))}
           </div>
         </fieldset>
-        {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
+        {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{t(catalog.importStatus)}</p>}
         <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
-          <span>Карточек за загрузку</span>
+          <span>{t('Карточек за загрузку')}</span>
           <select
             id="cards-per-load"
             value={settings.cardsPerLoad}
@@ -147,26 +160,26 @@ export function SettingsPanel({
         </label>
         <label className={panelStyles.voiceSetting} htmlFor="english-speech-voice">
           <span>
-            <strong>Голос английской озвучки</strong>
+            <strong>{t('Голос английской озвучки')}</strong>
           </span>
           <select
             id="english-speech-voice"
             value={settings.speechVoiceURI || ''}
             onChange={(event) => updateSetting('speechVoiceURI', event.target.value)}
           >
-            <option value="">Автоматический голос</option>
+            <option value="">{t('Автоматический голос')}</option>
             {settings.speechVoiceURI && !selectedVoiceAvailable && (
-              <option value={settings.speechVoiceURI}>Сохранённый голос недоступен</option>
+              <option value={settings.speechVoiceURI}>{t('Сохранённый голос недоступен')}</option>
             )}
             {englishVoices.map((voice) => (
               <option key={voice.voiceURI} value={voice.voiceURI}>
-                {voice.name} · {voice.lang}{voice.default ? ' · по умолчанию' : ''}
+                {voice.name} · {voice.lang}{voice.default ? ` · ${t('по умолчанию')}` : ''}
               </option>
             ))}
           </select>
         </label>
         <label className={panelStyles.toggleSetting} htmlFor="hide-translations-until-hover">
-          <span>Скрывать перевод до наведения</span>
+          <span>{t('Скрывать перевод до наведения')}</span>
           <input
             id="hide-translations-until-hover"
             type="checkbox"
@@ -175,9 +188,9 @@ export function SettingsPanel({
           />
         </label>
         <section className={panelStyles.positionSetting} aria-labelledby="refresh-button-position-title">
-          <h2 id="refresh-button-position-title">Положение кнопки обновления</h2>
+          <h2 id="refresh-button-position-title">{t('Положение кнопки обновления')}</h2>
           <label className={panelStyles.positionToggle} htmlFor="edit-refresh-button-position">
-            <span>Перемещать кнопку</span>
+            <span>{t('Перемещать кнопку')}</span>
             <input
               id="edit-refresh-button-position"
               type="checkbox"
@@ -185,17 +198,26 @@ export function SettingsPanel({
               onChange={(event) => onRefreshButtonPositionEditingChange(event.target.checked)}
             />
           </label>
+          <label className={panelStyles.positionToggle} htmlFor="show-refresh-button">
+            <span>{t('Скрыть кнопку обновления')}</span>
+            <input
+              id="show-refresh-button"
+              type="checkbox"
+              checked={!settings.showRefreshButton}
+              onChange={(event) => updateSetting('showRefreshButton', !event.target.checked)}
+            />
+          </label>
           <p className={panelStyles.positionHint}>
-            Включите настройку, перетащите появившуюся кнопку в нужное место и выключите её.
+            {t('Включите настройку, перетащите появившуюся кнопку в нужное место и выключите её.')}
           </p>
           <button
             className={panelStyles.positionReset}
             type="button"
             onClick={onResetRefreshButtonPosition}
             disabled={!refreshButtonPosition}
-          >Сбросить положение</button>
+          >{t('Сбросить положение')}</button>
         </section>
-        {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
+        {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{t(settingsStatus)}</p>}
         <DatabaseManager />
       </section>
     </section>

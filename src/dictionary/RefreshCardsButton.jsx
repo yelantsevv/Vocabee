@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './RefreshCardsButton.module.css';
+import { useInterfaceText } from './interfaceLanguage.jsx';
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -12,6 +13,7 @@ export function RefreshCardsButton({
   onPositionChange,
   onRefresh
 }) {
+  const t = useInterfaceText();
   const buttonRef = useRef(null);
   const dragRef = useRef(null);
   const [dragPosition, setDragPosition] = useState(null);
@@ -115,8 +117,8 @@ export function RefreshCardsButton({
           top: `${activePosition.top}px`
         } : undefined}
         type="button"
-        aria-label={positionEditing ? 'Перетащить кнопку обновления' : 'Обновить список карточек'}
-        title={positionEditing ? 'Перетащите кнопку в нужное место' : 'Обновить список карточек'}
+        aria-label={t(positionEditing ? 'Перетащить кнопку обновления' : 'Обновить список карточек')}
+        title={t(positionEditing ? 'Перетащите кнопку в нужное место' : 'Обновить список карточек')}
         onClick={(event) => {
           if (positionEditing) event.preventDefault();
           else onRefresh();

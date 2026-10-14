@@ -282,7 +282,7 @@
   text-align: right;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 1260px) {
   .translationExampleList li {
     grid-template-columns: minmax(0, 1fr);
     gap: 3px;
@@ -399,7 +399,7 @@
   color: var(--theme-text-soft, #e8eafa);
 }
 
-@media (max-width: 520px) {
+@media (max-width: 1260px) {
   .backdrop {
     display: block;
     overflow: auto;
@@ -459,7 +459,7 @@
 
 }
 
-@media (max-width: 640px), (pointer: coarse) and (max-height: 600px) {
+@media (max-width: 1260px) {
   .headerActions {
     display: grid;
     width: 100%;

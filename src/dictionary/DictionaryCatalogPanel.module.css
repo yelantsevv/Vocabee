@@ -2,11 +2,10 @@
   width: 100%;
   max-width: var(--vocabee-content-max-width);
   align-self: center;
-  padding-top: 24px;
+  padding-top: 0;
 }
 
 .dictionaryFilters {
-  container: dictionary-filters / inline-size;
   position: relative;
   display: grid;
   gap: clamp(12px, 1.5vw, 20px);
@@ -143,8 +142,8 @@
   transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
-.sourceViewButton:nth-child(1),
-.sourceViewButton:nth-child(2) {
+.myDictionarySourceButton,
+.languageSourceButton {
   box-sizing: border-box;
   width: var(--vocabee-filter-square-size);
   min-width: var(--vocabee-filter-square-size);
@@ -154,10 +153,19 @@
   padding: 0;
 }
 
-.sourceViewButton:nth-child(3),
-.sourceViewButton:nth-child(4) {
+.wordsViewButton,
+.phrasesViewButton {
   width: var(--vocabee-filter-source-width);
   min-width: var(--vocabee-filter-source-width);
+}
+
+.mobileCategoryControl,
+.mobileSettingsButton {
+  display: none;
+}
+
+.desktopSearchControl {
+  display: contents;
 }
 
 .sourceViewButton svg {
@@ -300,16 +308,9 @@
 }
 
 .typeChip svg,
-.progressButton svg,
+.progressButton:not(.settingsButton) svg,
 .startLearningButton svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 auto;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
+  display: none;
 }
 
 .typeChip span,
@@ -320,9 +321,10 @@
   line-height: 1.1;
 }
 
-.typeChip .mobileTypeIcon,
-.typeChip .mobileTypeLabel {
-  display: none;
+.typeChip,
+.progressButton,
+.startLearningButton {
+  text-align: center;
 }
 
 .verbTypeChips {
@@ -375,6 +377,11 @@
 .settingsButton svg {
   width: 24px;
   height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
 }
 
 .startLearningButton {
@@ -507,47 +514,201 @@
   font-weight: 600;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1260px) {
 
-  .levelControls>.filterChips {
-    gap: 30px;
+  .dictionaryFilters {
+    padding: 12px;
+  }
+
+  .filterLayout {
+    gap: 8px;
+  }
+
+  .filterLayout,
+  .filterLeftGroup,
+  .filterRightGroup {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filterLeftGroup,
+  .filterRightGroup {
+    justify-items: stretch;
+    gap: 8px;
+  }
+
+  .filterLeftTopRow,
+  .filterRightGroup > * {
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+  }
+
+  .filterLeftTopRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .filterLeftGroup {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    gap: 8px;
+  }
+
+  .filterLeftGroup .filterGroup {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    justify-self: stretch;
+  }
+
+  .levelControls > .filterChips {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .levelControls .filterChip {
+    width: 100%;
+    min-width: 0;
   }
 
   .dictionaryContent.dictionaryContent {
-    --vocabee-filter-text-width: clamp(55px, 8vw, 48px);
-  }
-
-  .dictionaryFilters {
-    padding: 14px;
+    --vocabee-filter-text-width: 0px;
   }
 
   .sourceViewButtons {
-    width: max-content;
-    min-width: max-content;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     display: grid;
-    grid-template-columns: repeat(2, var(--vocabee-filter-square-size)) repeat(2, var(--vocabee-filter-source-width));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .sourceViewButtons .sourceViewButton {
+    box-sizing: border-box;
     padding-right: 4px;
     padding-left: 4px;
   }
 
-  .sourceViewButtons .sourceViewButton:nth-child(1),
-  .sourceViewButtons .sourceViewButton:nth-child(2) {
-    min-width: var(--vocabee-filter-square-size);
+  .sourceViewButtons .myDictionarySourceButton,
+  .sourceViewButtons .languageSourceButton {
+    display: none;
+  }
+
+  .sourceViewButtons .mobileCategoryControl {
+    position: relative;
+    display: grid;
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: var(--vocabee-filter-square-size);
+    min-height: var(--vocabee-filter-square-size);
     padding: 0;
   }
 
-  .verbTypeChips {
-    grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
+  .mobileCategoryIcon {
+    display: grid;
+    place-items: center;
+    pointer-events: none;
   }
 
-  .typeChip svg,
-  .progressButton svg,
-  .startLearningButton svg {
-    width: 15px;
-    height: 15px;
+  .mobileCategorySelect {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .sourceViewButtons .mobileSettingsButton {
+    display: grid;
+    grid-column: 4;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+    height: var(--vocabee-filter-square-size);
+    min-height: var(--vocabee-filter-square-size);
+    padding: 0;
+  }
+
+  .sourceViewButtons .wordsViewButton {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+  }
+
+  .sourceViewButtons .phrasesViewButton {
+    grid-column: 3;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+  }
+
+  .filterLeftBottomRow,
+  .desktopSearchControl,
+  .progressFilters .desktopSettingsButton {
+    display: none;
+  }
+
+  .filterLeftGroup .filterGroup {
+    box-sizing: border-box;
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-inline-size: 0;
+    justify-self: stretch;
+  }
+
+  .filterLeftGroup .levelControls {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filterLeftGroup .levelControls > .filterChips {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .filterLeftGroup .levelControls .filterChip {
+    box-sizing: border-box;
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: var(--vocabee-filter-square-size);
+    min-height: var(--vocabee-filter-square-size);
+    place-items: center;
+    padding: 0;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .verbTypeChips {
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .settingsButton svg {
@@ -556,7 +717,8 @@
   }
 
   .progressFilters {
-    grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -580,16 +742,13 @@
     grid-row: 1;
   }
 
-  .progressFilters .settingsButton {
-    grid-column: 5;
-    grid-row: 1;
-  }
-
   .progressFilters .progressButton {
+    width: 100%;
     padding: 3px 1px;
   }
 
   .progressFilters .startLearningButton {
+    width: 100%;
     padding: 3px 1px;
   }
 
@@ -604,13 +763,7 @@
 
 }
 
-@media (max-width: 1000px) {
-
-  .typeChip>span,
-  .progressButton>span,
-  .startLearningButton>span {
-    display: none;
-  }
+@media (max-width: 1260px) {
 
   .typeChip,
   .progressButton,
@@ -627,31 +780,17 @@
     padding: 3px 1px;
   }
 
-  .verbTypeChips .typeChip svg,
-  .verbTypeChips .typeChip>span:not(.mobileTypeIcon):not(.mobileTypeLabel) {
-    display: none;
-  }
-
-  .typeChip .mobileTypeIcon,
-  .typeChip .mobileTypeLabel {
-    display: block;
-  }
-
-  .typeChip .mobileTypeIcon {
-    color: var(--theme-text, #f3f4fc);
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1;
-  }
-
-  .typeChip .mobileTypeLabel {
-    font-size: 9px;
-    font-weight: 650;
-    line-height: 1.05;
+  .typeChip span,
+  .progressButton>span,
+  .startLearningButton>span {
+    font-size: 10px;
+    line-height: 1.1;
+    text-align: center;
+    overflow-wrap: anywhere;
   }
 }
 
-@container dictionary-filters (min-width: 1200px) {
+@media (min-width: 1261px) {
   .filterLayout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(14px, 2vw, 30px);

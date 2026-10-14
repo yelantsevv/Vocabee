@@ -1,6 +1,8 @@
 import styles from './DictionaryImportButton.module.css';
+import { useInterfaceText } from './interfaceLanguage.jsx';
 
 export function DictionaryImportButton({ inputRef, onImportFile, fill = false }) {
+  const t = useInterfaceText();
   return (
     <div className={styles.importControl}>
       <input
@@ -8,14 +10,14 @@ export function DictionaryImportButton({ inputRef, onImportFile, fill = false })
         className={styles.hiddenFileInput}
         type="file"
         accept=".json,application/json"
-        aria-label="Выбрать JSON-файл словаря для импорта"
+        aria-label={t('Выбрать JSON-файл словаря для импорта')}
         onChange={onImportFile}
       />
       <button
         className={`${styles.importButton} ${fill ? styles.fillButton : ''}`}
         type="button"
-        aria-label="Импортировать базу словаря"
-        title="Импорт базы"
+        aria-label={t('Импортировать базу словаря')}
+        title={t('Импорт базы')}
         onClick={() => inputRef.current?.click()}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">

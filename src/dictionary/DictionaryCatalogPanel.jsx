@@ -10,6 +10,7 @@ import { LearningSessionModal } from './components/LearningSessionModal.jsx';
 import { DictionarySearch } from './DictionarySearch.jsx';
 import { enterMobileFullscreen, exitMobileFullscreen } from './mobileFullscreen.js';
 import { RefreshCardsButton } from './RefreshCardsButton.jsx';
+import { useInterfaceText } from './interfaceLanguage.jsx';
 
 function toggleValue(values, setter, value) {
   setter(values.includes(value)
@@ -36,22 +37,24 @@ function FilterButtonIcon({ name }) {
     learning: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5l3.2 2" /></>,
     learned: <><path d="M12 3.5 14.6 5l3-.1.9 2.9 2 2.2-1.2 2.8.3 3-2.7 1.4-1.8 2.4-3-.7-2.9.7-1.8-2.4-2.7-1.4.3-3L2.8 10l2-2.2.9-2.9 3 .1L12 3.5Z" /><path d="m8.5 12 2.2 2.2 4.8-4.8" /></>,
     new: <><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" /><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" /></>,
-    settings: <><path d="M12.22 2h-.44a2 2 0 0 0-2 1.72l-.14 1.04a8 8 0 0 0-1.64.95l-.99-.4a2 2 0 0 0-2.47.93l-.22.38a2 2 0 0 0 .48 2.58l.82.64a8 8 0 0 0 0 1.9l-.82.64a2 2 0 0 0-.48 2.58l.22.38a2 2 0 0 0 2.47.93l.99-.4c.5.39 1.05.71 1.64.95l.14 1.04a2 2 0 0 0 2 1.72h.44a2 2 0 0 0 2-1.72l.14-1.04a8 8 0 0 0 1.64-.95l.99.4a2 2 0 0 0 2.47-.93l.22-.38a2 2 0 0 0-.48-2.58l-.82-.64a8 8 0 0 0 0-1.9l.82-.64a2 2 0 0 0 .48-2.58l-.22-.38a2 2 0 0 0-2.47-.93l-.99.4a8 8 0 0 0-1.64-.95l-.14-1.04a2 2 0 0 0-2-1.72Z" /><circle cx="12" cy="12" r="3" /></>
+    settings: <><path d="M12.22 2h-.44a2 2 0 0 0-2 1.72l-.14 1.04a8 8 0 0 0-1.64.95l-.99-.4a2 2 0 0 0-2.47.93l-.22.38a2 2 0 0 0 .48 2.58l.82.64a8 8 0 0 0 0 1.9l-.82.64a2 2 0 0 0-.48 2.58l.22.38a2 2 0 0 0 2.47.93l.99-.4c.5.39 1.05.71 1.64.95l.14 1.04a2 2 0 0 0 2 1.72h.44a2 2 0 0 0 2-1.72l.14-1.04a8 8 0 0 0 1.64-.95l.99.4a2 2 0 0 0 2.47-.93l.22-.38a2 2 0 0 0-.48-2.58l-.82-.64a8 8 0 0 0 0-1.9l.82-.64a2 2 0 0 0 .48-2.58l-.22-.38a2 2 0 0 0-2.47-.93l-.99.4a8 8 0 0 0-1.64-.95l-.14-1.04a2 2 0 0 0-2-1.72Z" /><circle cx="12" cy="12" r="3" /></>,
+    categories: <><path d="M4 6h16M4 12h16M4 18h16" /><circle cx="7" cy="6" r="1" /><circle cx="7" cy="12" r="1" /><circle cx="7" cy="18" r="1" /></>
   };
 
   return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>;
 }
 
 function FilteredProgressBar({ value, sticky = false }) {
+  const t = useInterfaceText();
   return (
     <div
       className={clsx(styles.overallProgress, sticky && styles.stickyProgress)}
       role="progressbar"
-      aria-label={`Прогресс отфильтрованного содержимого: ${value}%`}
+      aria-label={`${t('Прогресс отфильтрованного содержимого: ')}${value}%`}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={value}
-      title={`Прогресс выбранных записей: ${value}%`}
+      title={`${t('Прогресс выбранных записей: ')}${value}%`}
     >
       <span style={{ width: `${value}%` }} />
     </div>
@@ -71,8 +74,10 @@ export function DictionaryCatalogPanel({
   cardsPerLoad,
   hideTranslationsUntilHover,
   speechVoiceURI,
+  showRefreshButton = true,
   refreshVersion
 }) {
+  const t = useInterfaceText();
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const [showStickyProgress, setShowStickyProgress] = useState(false);
@@ -205,19 +210,41 @@ export function DictionaryCatalogPanel({
   }
 
   return (
-    <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
-      <section ref={filtersRef} className={styles.dictionaryFilters} aria-label="Фильтры словаря">
+    <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label={t('Каталог словарей')}>
+      <section ref={filtersRef} className={styles.dictionaryFilters} aria-label={t('Фильтры словаря')}>
         <FilteredProgressBar value={filteredDictionaryProgress} />
         <div className={styles.filterLayout}>
           <div className={styles.filterLeftGroup}>
             <div className={styles.filterLeftTopRow}>
-          <div className={styles.sourceViewButtons} role="group" aria-label="Раздел словаря">
+          <div className={styles.sourceViewButtons} role="group" aria-label={t('Раздел словаря')}>
+              <label
+                className={clsx(styles.sourceViewButton, styles.mobileCategoryControl, sourceCategories.length > 0 && styles.selected)}
+                aria-label={t('Категории фраз')}
+                title={sourceCategories[0]
+                  ? t(phraseCategories.find(({ id }) => id === sourceCategories[0])?.label)
+                  : t('Категории фраз')}
+              >
+                <span className={styles.mobileCategoryIcon} aria-hidden="true">
+                  <FilterButtonIcon name="categories" />
+                </span>
+                <select
+                  className={styles.mobileCategorySelect}
+                  aria-label={t('Категории фраз')}
+                  value={sourceCategories[0] || ''}
+                  onChange={(event) => setSourceCategories(event.target.value ? [event.target.value] : [])}
+                >
+                  <option value="">{t('Все категории')}</option>
+                  {phraseCategories.map(({ id, label }) => (
+                    <option key={id} value={id}>{t(label)}</option>
+                  ))}
+                </select>
+              </label>
               <button
-                className={clsx(styles.sourceViewButton, sourceConnections.my && styles.selected)}
+                className={clsx(styles.sourceViewButton, styles.myDictionarySourceButton, sourceConnections.my && styles.selected)}
                 type="button"
-                aria-label={sourceConnections.my ? 'Отключить мой словарь' : 'Подключить мой словарь'}
+                aria-label={t(sourceConnections.my ? 'Отключить мой словарь' : 'Подключить мой словарь')}
                 aria-pressed={sourceConnections.my}
-                title={sourceConnections.my ? 'Мой словарь подключён' : 'Подключить мой словарь'}
+                title={t(sourceConnections.my ? 'Мой словарь подключён' : 'Подключить мой словарь')}
                 onClick={() => toggleSourceConnection('my')}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -226,35 +253,42 @@ export function DictionaryCatalogPanel({
                 </svg>
               </button>
               <button
-                className={clsx(styles.sourceViewButton, sourceConnections.language && activeLanguage && styles.selected)}
+                className={clsx(styles.sourceViewButton, styles.languageSourceButton, sourceConnections.language && activeLanguage && styles.selected)}
                 type="button"
-                aria-label={`${activeLanguage?.label || 'Языковой словарь'}: ${sourceConnections.language ? 'подключён' : 'отключён'}`}
+                aria-label={`${activeLanguage?.label || t('Языковой словарь')}: ${t(sourceConnections.language ? 'подключён' : 'отключён')}`}
                 aria-pressed={Boolean(sourceConnections.language && activeLanguage)}
                 title={activeLanguage
                   ? `${activeLanguage.label} · ${sourceConnections.language ? 'подключён' : 'отключён'}`
-                  : 'Сначала загрузите EN → RU или DE → RU в настройках'}
+                  : t('Сначала загрузите EN → RU или DE → RU в настройках')}
                 disabled={!activeLanguage}
                 onClick={() => toggleSourceConnection('language')}
               >{activeLanguage?.id === 'de' ? '🇩🇪' : '🇬🇧'}</button>
               <button
-                className={clsx(styles.sourceViewButton, catalogView === 'words' && styles.selected)}
+                className={clsx(styles.sourceViewButton, styles.mobileSettingsButton)}
                 type="button"
-                aria-label="Слова"
-                title="Слова · Words"
+                aria-label={t('Открыть настройки')}
+                title={t('Настройки')}
+                onClick={onOpenSettings}
+              ><FilterButtonIcon name="settings" /></button>
+              <button
+                className={clsx(styles.sourceViewButton, styles.wordsViewButton, catalogView === 'words' && styles.selected)}
+                type="button"
+                aria-label={t('Слова')}
+                title={`${t('Слова')} · Words`}
                 aria-pressed={catalogView === 'words'}
                 onClick={() => setCatalogView('words')}
               >Words</button>
               <button
-                className={clsx(styles.sourceViewButton, catalogView === 'phrases' && styles.selected)}
+                className={clsx(styles.sourceViewButton, styles.phrasesViewButton, catalogView === 'phrases' && styles.selected)}
                 type="button"
-                aria-label="Фразы"
-                title="Фразы · Phrases"
+                aria-label={t('Фразы')}
+                title={`${t('Фразы')} · Phrases`}
                 aria-pressed={catalogView === 'phrases'}
                 onClick={() => setCatalogView('phrases')}
               >Phrases</button>
           </div>
 
-          <fieldset className={styles.filterGroup} aria-label="Уровень">
+          <fieldset className={styles.filterGroup} aria-label={t('Уровень')}>
             <div className={styles.levelControls}>
               <div className={styles.filterChips}>
                 {['A1', 'A2', 'B1', 'B2'].map((level) => (
@@ -274,85 +308,83 @@ export function DictionaryCatalogPanel({
           <label className={styles.filterField}>
             <select
               id="source-categories"
-              aria-label="Категории фраз"
+              aria-label={t('Категории фраз')}
               value={sourceCategories[0] || ''}
               onChange={(event) => setSourceCategories(event.target.value ? [event.target.value] : [])}
             >
-              <option value="">Все категории</option>
+              <option value="">{t('Все категории')}</option>
               {phraseCategories.map(({ id, label }) => (
-                <option key={id} value={id}>{label}</option>
+                <option key={id} value={id}>{t(label)}</option>
               ))}
             </select>
           </label>
             </div>
           </div>
           <div className={styles.filterRightGroup}>
-            <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
+            <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={t(catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола')}>
               <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
                 {[
-                  ['regular', 'Regular', 'Правильные', '+ed', 'Правил.'],
-                  ['irregular', 'Irregular', 'Неправильные', 'V2', 'Неправ.'],
-                  ['modal', 'Modal', 'Модальные', 'can', 'Модал.'],
-                  ['phrasal', 'Phrasal', 'Фразовые', 'V+', 'Фразов.']
-                ].map(([type, label, russianLabel, mobileIcon, mobileLabel]) => (
+                  ['regular', 'Regular', 'Правильные', 'Правил.'],
+                  ['irregular', 'Irregular', 'Неправильные', 'Неправ.'],
+                  ['modal', 'Modal', 'Модальные', 'Модал.'],
+                  ['phrasal', 'Phrasal', 'Фразовые', 'Фразов.']
+                ].map(([type, label, russianLabel, shortLabel]) => (
                   <button
                     className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
                     key={type}
                     type="button"
-                    aria-label={russianLabel}
-                    title={`${russianLabel} · ${label}`}
+                    aria-label={t(russianLabel)}
+                    title={`${t(russianLabel)} · ${label}`}
                     aria-pressed={sourceVerbTypes.includes(type)}
                     onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
                   >
-                    <FilterButtonIcon name={type} />
-                    <span>{label}</span>
-                    <span className={styles.mobileTypeIcon} aria-hidden="true">{mobileIcon}</span>
-                    <span className={styles.mobileTypeLabel} aria-hidden="true">{mobileLabel}</span>
+                    <span>{t(shortLabel)}</span>
                   </button>
                 ))}
-                <DictionarySearch
-                  variant="filter"
-                  selectedSourceLanguage={searchLanguage}
-                  sourceSearch={sourceSearch}
-                  onSourceSearchChange={setSourceSearch}
-                />
+                <div className={styles.desktopSearchControl}>
+                  <DictionarySearch
+                    variant="filter"
+                    selectedSourceLanguage={searchLanguage}
+                    sourceSearch={sourceSearch}
+                    onSourceSearchChange={setSourceSearch}
+                  />
+                </div>
               </div>
             </fieldset>
-            <div className={styles.progressFilters} role="group" aria-label="Статус изучения слов">
+            <div className={styles.progressFilters} role="group" aria-label={t('Статус изучения слов')}>
               <button
                 className={styles.startLearningButton}
                 type="button"
-                aria-label="Начать изучение"
-                title="Начать изучение · Start"
+                aria-label={t('Начать изучение')}
+                title={t('Начать изучение')}
                 disabled={studySessionEntries.length === 0}
                 onClick={() => {
                   enterMobileFullscreen();
                   setLearningSessionEntries(shuffleEntries(studySessionEntries));
                 }}
-              ><FilterButtonIcon name="start" /><span>Start</span></button>
+              ><span>{t('Начать')}</span></button>
               {[
-                ['learning', 'Learning', 'Изучаю', 'learning'],
-                ['learned', 'Learned', 'Изученные', 'learned'],
-                ['remaining', 'New', 'Не изученные', 'new']
-              ].map(([view, label, russianLabel, icon]) => (
+                ['learning', 'Learning', 'Изучаю', 'Учу'],
+                ['learned', 'Learned', 'Изученные', 'Выучено'],
+                ['remaining', 'Not learned', 'Не изученные', 'К изучению']
+              ].map(([view, label, russianLabel, shortLabel]) => (
                 <button
                   className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
                   key={view}
                   type="button"
-                  aria-label={russianLabel}
-                  title={`${russianLabel} · ${label}`}
+                  aria-label={t(russianLabel)}
+                  title={`${t(russianLabel)} · ${label}`}
                   aria-pressed={progressViews.includes(view)}
                   onClick={() => toggleValue(progressViews, setProgressViews, view)}
                 >
-                  <FilterButtonIcon name={icon} />
-                  <span>{label}</span>
+                  <span>{t(shortLabel)}</span>
                 </button>
               ))}
               <button
-                className={`${styles.progressButton} ${styles.settingsButton}`}
+                className={`${styles.progressButton} ${styles.settingsButton} ${styles.desktopSettingsButton}`}
                 type="button"
-                aria-label="Открыть настройки"
-                title="Настройки"
+                aria-label={t('Открыть настройки')}
+                title={t('Настройки')}
                 onClick={onOpenSettings}
               ><FilterButtonIcon name="settings" /></button>
             </div>
@@ -363,30 +395,30 @@ export function DictionaryCatalogPanel({
         <FilteredProgressBar value={filteredDictionaryProgress} sticky />
       )}
 
-      <RefreshCardsButton
+      {showRefreshButton && <RefreshCardsButton
         position={refreshButtonPosition}
         positionEditing={refreshButtonPositionEditing}
         onPositionChange={onRefreshButtonPositionChange}
         onRefresh={onRefreshCards}
-      />
+      />}
 
       {catalogLoading ? (
-        <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
+        <p className={styles.emptyCatalog}>{t('Проверяем базу словарей…')}</p>
       ) : catalogError ? (
         <div className={styles.emptyCatalog} role="status">
-          <p>{catalogError}</p>
-          <button type="button" onClick={onOpenSettings}>Открыть настройки</button>
+          <p>{t(catalogError)}</p>
+          <button type="button" onClick={onOpenSettings}>{t('Открыть настройки')}</button>
         </div>
       ) : !hasViewableSource ? (
         <div className={styles.emptyCatalog}>
           {hasMyDictionary || loadedLanguages.length ? (
-            <p>Оба источника отключены. Включите нужный словарь кнопками выше.</p>
+            <p>{t('Оба источника отключены. Включите нужный словарь кнопками выше.')}</p>
           ) : (
             <>
-              <p>База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.</p>
+              <p>{t('База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.')}</p>
               <div className={styles.emptyCatalogActions}>
-                <button type="button" onClick={openExtensionSettings}>Установить расширение</button>
-                <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+                <button type="button" onClick={openExtensionSettings}>{t('Установить расширение')}</button>
+                <button type="button" onClick={onOpenSettings}>{t('Перейти в настройки и загрузить базу')}</button>
               </div>
               {extensionSettingsError && <p role="alert">{extensionSettingsError}</p>}
             </>
@@ -395,7 +427,7 @@ export function DictionaryCatalogPanel({
       ) : <>
       <section
         className={commonStyles.wordList}
-        aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}
+        aria-label={t(catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря')}
       >
         <ul>
           {shuffledEntries.slice(0, displayedCardCount).map((entry) => {
@@ -421,7 +453,7 @@ export function DictionaryCatalogPanel({
                 onSpeakWord={() => speakEntry(entry)}
               >
                 {entry.examples?.length > 0 && (
-                  <section className={styles.entrySection} aria-label="Примеры">
+                  <section className={styles.entrySection} aria-label={t('Примеры')}>
                     <ul className={styles.exampleList}>
                       {entry.examples
                         .filter((example) => (
@@ -445,8 +477,8 @@ export function DictionaryCatalogPanel({
 
                 {(entry.synonyms?.length > 0 || entry.antonyms?.length > 0) && (
                   <div className={styles.wordRelations}>
-                    {entry.synonyms?.length > 0 && <p><strong>Синонимы:</strong> {entry.synonyms.join(', ')}</p>}
-                    {entry.antonyms?.length > 0 && <p><strong>Антонимы:</strong> {entry.antonyms.join(', ')}</p>}
+                    {entry.synonyms?.length > 0 && <p><strong>{t('Синонимы:')}</strong> {entry.synonyms.join(', ')}</p>}
+                    {entry.antonyms?.length > 0 && <p><strong>{t('Антонимы:')}</strong> {entry.antonyms.join(', ')}</p>}
                   </div>
                 )}
 
@@ -455,7 +487,7 @@ export function DictionaryCatalogPanel({
           })}
         </ul>
         {filteredSourceEntries.length === 0 && (
-          <p className={commonStyles.message}>Ничего не найдено. Измените фильтры или поисковый запрос.</p>
+          <p className={commonStyles.message}>{t('Ничего не найдено. Измените фильтры или поисковый запрос.')}</p>
         )}
       </section>
       {displayedCardCount < shuffledEntries.length && (
@@ -464,7 +496,7 @@ export function DictionaryCatalogPanel({
           type="button"
           onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
         >
-           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
+           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} {t('из')} {numberFormat.format(shuffledEntries.length)}
         </button>
       )}
       </>}

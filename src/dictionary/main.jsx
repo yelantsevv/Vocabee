@@ -7,6 +7,8 @@ try {
   if (settings.theme) {
     document.documentElement.dataset.dictionaryTheme = normalizeDictionaryTheme(settings.theme);
   }
+  document.documentElement.lang = settings.interfaceLanguage === 'ru' ? 'ru' : 'en';
+  document.title = settings.interfaceLanguage === 'ru' ? 'Мой словарь — Vocabee' : 'My Dictionary — Vocabee';
 } catch {
   // Use the default theme if saved settings are unavailable.
 }
