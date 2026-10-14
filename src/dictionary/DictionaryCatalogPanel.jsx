@@ -290,11 +290,11 @@ export function DictionaryCatalogPanel({
             <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола'}>
               <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
                 {[
-                  ['regular', 'Regular', 'Правильные'],
-                  ['irregular', 'Irregular', 'Неправильные'],
-                  ['modal', 'Modal', 'Модальные'],
-                  ['phrasal', 'Phrasal', 'Фразовые']
-                ].map(([type, label, russianLabel]) => (
+                  ['regular', 'Regular', 'Правильные', '+ed', 'Правил.'],
+                  ['irregular', 'Irregular', 'Неправильные', 'V2', 'Неправ.'],
+                  ['modal', 'Modal', 'Модальные', 'can', 'Модал.'],
+                  ['phrasal', 'Phrasal', 'Фразовые', 'V+', 'Фразов.']
+                ].map(([type, label, russianLabel, mobileIcon, mobileLabel]) => (
                   <button
                     className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
                     key={type}
@@ -306,6 +306,8 @@ export function DictionaryCatalogPanel({
                   >
                     <FilterButtonIcon name={type} />
                     <span>{label}</span>
+                    <span className={styles.mobileTypeIcon} aria-hidden="true">{mobileIcon}</span>
+                    <span className={styles.mobileTypeLabel} aria-hidden="true">{mobileLabel}</span>
                   </button>
                 ))}
                 <DictionarySearch

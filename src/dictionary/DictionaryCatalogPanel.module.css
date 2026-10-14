@@ -179,7 +179,7 @@
 
 .sourceBadge {
   display: flex;
-  min-height: 46px;
+  min-height: var(--vocabee-filter-square-size);
   align-items: center;
   color: var(--theme-text-soft, #dce0f1);
   font-size: 14px;
@@ -197,7 +197,7 @@
 .filterField select {
   width: 100%;
   min-width: 0;
-  min-height: 46px;
+  min-height: var(--vocabee-filter-square-size);
   box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
@@ -266,7 +266,7 @@
 }
 
 .filterChip {
-  min-height: 40px;
+  min-height: var(--vocabee-filter-square-size);
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
@@ -289,7 +289,7 @@
   display: flex;
   width: 100%;
   min-width: 0;
-  min-height: 46px;
+  min-height: var(--vocabee-filter-square-size);
   align-items: center;
   justify-content: center;
   flex-direction: row;
@@ -320,11 +320,16 @@
   line-height: 1.1;
 }
 
+.typeChip .mobileTypeIcon,
+.typeChip .mobileTypeLabel {
+  display: none;
+}
+
 .verbTypeChips {
   display: grid;
   grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
   align-items: stretch;
-  gap: 6px;
+  gap: 8px;
 }
 
 .verbTypeGroup {
@@ -343,7 +348,7 @@
   box-sizing: border-box;
   width: var(--vocabee-filter-text-width);
   min-width: 0;
-  min-height: 46px;
+  min-height: var(--vocabee-filter-square-size);
   align-items: center;
   justify-content: center;
   flex-direction: row;
@@ -377,7 +382,7 @@
   box-sizing: border-box;
   width: var(--vocabee-filter-text-width);
   min-width: 0;
-  min-height: 46px;
+  min-height: var(--vocabee-filter-square-size);
   align-items: center;
   justify-content: center;
   flex-direction: row;
@@ -505,7 +510,7 @@
 @media (max-width: 640px) {
 
   .levelControls>.filterChips {
-    gap: 35px;
+    gap: 30px;
   }
 
   .dictionaryContent.dictionaryContent {
@@ -552,7 +557,7 @@
 
   .progressFilters {
     grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
-    gap: 5px;
+    gap: 8px;
   }
 
   .progressFilters .startLearningButton {
@@ -613,6 +618,36 @@
     gap: 0;
     padding-right: 0;
     padding-left: 0;
+  }
+
+  .verbTypeChips .typeChip {
+    min-height: var(--vocabee-filter-square-size);
+    flex-direction: column;
+    gap: 2px;
+    padding: 3px 1px;
+  }
+
+  .verbTypeChips .typeChip svg,
+  .verbTypeChips .typeChip>span:not(.mobileTypeIcon):not(.mobileTypeLabel) {
+    display: none;
+  }
+
+  .typeChip .mobileTypeIcon,
+  .typeChip .mobileTypeLabel {
+    display: block;
+  }
+
+  .typeChip .mobileTypeIcon {
+    color: var(--theme-text, #f3f4fc);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .typeChip .mobileTypeLabel {
+    font-size: 9px;
+    font-weight: 650;
+    line-height: 1.05;
   }
 }
 

@@ -8,10 +8,10 @@
 
 .searchToggle {
   display: grid;
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  min-height: 46px;
+  width: var(--vocabee-filter-square-size, 54px);
+  height: var(--vocabee-filter-square-size, 54px);
+  min-width: var(--vocabee-filter-square-size, 54px);
+  min-height: var(--vocabee-filter-square-size, 54px);
   box-sizing: border-box;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
@@ -25,14 +25,14 @@
 
 .searchControl[data-variant='filter'] {
   width: 100%;
-  height: 46px;
+  height: var(--vocabee-filter-square-size, 54px);
 }
 
 .searchControl[data-variant='filter'] .searchToggle {
-  width: 46px;
-  min-width: 46px;
-  height: 46px;
-  min-height: 46px;
+  width: var(--vocabee-filter-square-size, 54px);
+  min-width: var(--vocabee-filter-square-size, 54px);
+  height: var(--vocabee-filter-square-size, 54px);
+  min-height: var(--vocabee-filter-square-size, 54px);
 }
 
 .searchToggle:hover,
