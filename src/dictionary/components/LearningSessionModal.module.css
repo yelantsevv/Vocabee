@@ -120,6 +120,7 @@
   border-radius: var(--vocabee-radius-card);
   background: linear-gradient(145deg, color-mix(in srgb, var(--theme-accent, #a95bff) 12%, transparent), rgba(67, 213, 176, 0.045));
   overflow: hidden;
+  touch-action: pan-y;
   text-align: center;
 }
 
@@ -168,6 +169,8 @@
 
 .translationBlock {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .translationBlock::before {
@@ -192,7 +195,7 @@
 
 .card h3 {
   margin: 0;
-  font-size: var(--vocabee-font-size-word);
+  font-size: var(--vocabee-content-font-size, var(--vocabee-font-size-word));
   line-height: 1.08;
   overflow-wrap: anywhere;
 }
@@ -200,13 +203,13 @@
 .forms {
   margin: 12px 0 0;
   color: var(--theme-muted, #aeb5cb);
-  font-size: clamp(13px, 1.5vw, 16px);
+  font-size: var(--vocabee-additional-font-size, clamp(13px, 1.5vw, 16px));
 }
 
 .synonyms {
   margin: 12px 0 0;
   color: var(--theme-faint, #929bb7);
-  font-size: 13px;
+  font-size: var(--vocabee-additional-font-size, 13px);
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -214,7 +217,7 @@
 .translation {
   margin: 0;
   color: var(--theme-text, #f3f4fc);
-  font-size: var(--vocabee-font-size-translation);
+  font-size: var(--vocabee-content-font-size, var(--vocabee-font-size-translation));
   font-weight: 650;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -223,7 +226,7 @@
 .translationHint {
   margin: auto;
   color: var(--theme-muted, #aeb5cb);
-  font-size: 15px;
+  font-size: var(--vocabee-additional-font-size, 15px);
   line-height: 1.5;
   text-align: center;
 }
@@ -232,7 +235,7 @@
   max-width: 720px;
   margin: 18px 0 0;
   color: var(--theme-text-soft, #dce0f1);
-  font-size: clamp(14px, 1.7vw, 18px);
+  font-size: var(--vocabee-additional-font-size, clamp(14px, 1.7vw, 18px));
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -241,7 +244,7 @@
   max-width: 720px;
   margin: 12px 0 0;
   color: var(--theme-faint, #929bb7);
-  font-size: clamp(13px, 1.4vw, 16px);
+  font-size: var(--vocabee-additional-font-size, clamp(13px, 1.4vw, 16px));
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -265,7 +268,7 @@
   border-left: 2px solid rgba(67, 213, 176, 0.55);
   padding: 3px 0 3px 10px;
   color: var(--theme-text-soft, #dce0f1);
-  font-size: clamp(13px, 1.45vw, 16px);
+  font-size: var(--vocabee-additional-font-size, clamp(13px, 1.45vw, 16px));
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -423,7 +426,7 @@
   }
 
   .card h3 {
-    font-size: clamp(28px, 9vw, 38px);
+    font-size: var(--vocabee-content-font-size, var(--vocabee-font-size-word));
   }
 
   .header {

@@ -21,7 +21,7 @@
 .entryWordBlock h2 {
   margin: 0;
   color: var(--theme-text, #f3f4fc);
-  font-size: var(--vocabee-font-size-card-word);
+  font-size: var(--vocabee-content-font-size, var(--vocabee-font-size-card-word));
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
@@ -50,7 +50,7 @@
 .inlineForms {
   margin: 0;
   color: var(--theme-muted, #aeb5cb);
-  font-size: 14px;
+  font-size: var(--vocabee-additional-font-size, 14px);
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
@@ -60,7 +60,7 @@
   flex: 1 1 auto;
   margin: 0;
   color: var(--theme-accent-text, #d2c4ff);
-  font-size: 18px;
+  font-size: var(--vocabee-content-font-size, 18px);
   line-height: 1.5;
   text-align: right;
   overflow-wrap: anywhere;

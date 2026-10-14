@@ -18,6 +18,7 @@ export function LearningSessionModal({
   const [deleting, setDeleting] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = useRef(null);
+  const touchStartRef = useRef(null);
   const entry = entries[currentIndex];
   const entryLanguage = entry?._catalogLanguage || entry?.source_language || 'en';
   const spokenText = String(entry?.word || entry?.examples?.[0]?.phrase || '').trim();
@@ -77,6 +78,40 @@ export function LearningSessionModal({
     setTranslationVisible(false);
     if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
     else onClose();
+  }
+
+  function handleTouchStart(event) {
+    if (event.target.closest('button')) {
+      touchStartRef.current = null;
+      return;
+    }
+    const touch = event.touches[0];
+    touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+  }
+
+  function handleTouchEnd(event) {
+    if (!touchStartRef.current || deleting) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    touchStartRef.current = null;
+    const swipeThreshold = 60;
+
+    if (deltaY < -swipeThreshold && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+      onClose();
+      return;
+    }
+
+    if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+      if (entries.length < 2) return;
+      const nextIndices = entries.map((_, index) => index).filter((index) => index !== currentIndex);
+      const randomIndex = nextIndices[Math.floor(Math.random() * nextIndices.length)];
+      setCurrentIndex(randomIndex);
+      setTranslationVisible(false);
+      setDeleteError('');
+    }
   }
 
   function playWithGoogleVoice() {
@@ -200,7 +235,12 @@ export function LearningSessionModal({
           </div>
         </header>
 
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => { touchStartRef.current = null; }}
+        >
           <div className={styles.cardContent}>
             {entryLanguage === 'en' ? (
               <section

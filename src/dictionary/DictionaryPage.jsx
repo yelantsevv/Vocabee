@@ -10,10 +10,14 @@ import {
   DEFAULT_DICTIONARY_FONT_SIZE,
   DEFAULT_DICTIONARY_THEME,
   DEFAULT_INTERFACE_FONT_SCALE,
+  DEFAULT_CONTENT_FONT_SIZE,
+  DEFAULT_ADDITIONAL_FONT_SIZE,
   DEFAULT_SPEECH_VOICE_URI,
   normalizeDictionaryTheme,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale,
+  normalizeContentFontSize,
+  normalizeAdditionalFontSize,
   normalizeSpeechVoiceURI,
   normalizeRefreshButtonPosition
 } from './settings.js';
@@ -28,6 +32,8 @@ const DEFAULT_SETTINGS = {
   lang: 'ru',
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
+  contentFontSize: DEFAULT_CONTENT_FONT_SIZE,
+  additionalFontSize: DEFAULT_ADDITIONAL_FONT_SIZE,
   speechVoiceURI: DEFAULT_SPEECH_VOICE_URI,
   theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
@@ -76,6 +82,8 @@ export function DictionaryPage() {
         lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
+        contentFontSize: normalizeContentFontSize(result.contentFontSize),
+        additionalFontSize: normalizeAdditionalFontSize(result.additionalFontSize),
         speechVoiceURI: normalizeSpeechVoiceURI(result.speechVoiceURI),
         theme: normalizeDictionaryTheme(result.theme),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
@@ -100,6 +108,8 @@ export function DictionaryPage() {
       theme: normalizeDictionaryTheme,
       dictionaryFontSize: normalizeDictionaryFontSize,
       interfaceFontScale: normalizeInterfaceFontScale,
+      contentFontSize: normalizeContentFontSize,
+      additionalFontSize: normalizeAdditionalFontSize,
       speechVoiceURI: normalizeSpeechVoiceURI,
       refreshButtonPosition: normalizeRefreshButtonPosition,
       cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
@@ -113,6 +123,9 @@ export function DictionaryPage() {
     if (key === 'refreshButtonPosition') {
       setAppliedSettings((current) => ({ ...current, refreshButtonPosition: nextValue }));
     }
+    if (key === 'contentFontSize' || key === 'additionalFontSize') {
+      setAppliedSettings((current) => ({ ...current, [key]: nextValue }));
+    }
 
     try {
       await saveDictionarySettings(nextSettings);
@@ -125,7 +138,9 @@ export function DictionaryPage() {
 
   const pageStyle = {
     '--vocabee-ui-font-scale': appliedSettings.interfaceFontScale / 100,
-    '--vocabee-dictionary-font-size': `${appliedSettings.dictionaryFontSize}px`
+    '--vocabee-dictionary-font-size': `${appliedSettings.dictionaryFontSize}px`,
+    '--vocabee-content-font-size': `${appliedSettings.contentFontSize}px`,
+    '--vocabee-additional-font-size': `${appliedSettings.additionalFontSize}px`
   };
   function refreshCards() {
     setCardRefreshVersion((version) => version + 1);

@@ -21,13 +21,11 @@ export function SettingsPanel({
   modal = false
 }) {
   const [englishVoices, setEnglishVoices] = useState([]);
-  const [speechSynthesisSupported, setSpeechSynthesisSupported] = useState(false);
 
   useEffect(() => {
     const speechSynthesis = window.speechSynthesis;
     if (!speechSynthesis) return undefined;
 
-    setSpeechSynthesisSupported(true);
     const updateVoices = () => {
       setEnglishVoices(speechSynthesis.getVoices()
         .filter((voice) => /^en(?:-|$)/i.test(voice.lang))
@@ -80,9 +78,40 @@ export function SettingsPanel({
           )}
         />
         <DictionaryStats sources={catalog.availableSources} />
+        <section className={panelStyles.fontSizeSettings} aria-label="Размер текста">
+          <label className={panelStyles.fontSizeControl} htmlFor="content-font-size">
+            <span>
+              <strong>Основной текст</strong>
+            </span>
+            <output htmlFor="content-font-size">{settings.contentFontSize} px</output>
+            <input
+              id="content-font-size"
+              type="range"
+              min="18"
+              max="48"
+              step="1"
+              value={settings.contentFontSize}
+              onChange={(event) => updateSetting('contentFontSize', event.target.value)}
+            />
+          </label>
+          <label className={panelStyles.fontSizeControl} htmlFor="additional-font-size">
+            <span>
+              <strong>Дополнительный текст</strong>
+            </span>
+            <output htmlFor="additional-font-size">{settings.additionalFontSize} px</output>
+            <input
+              id="additional-font-size"
+              type="range"
+              min="12"
+              max="28"
+              step="1"
+              value={settings.additionalFontSize}
+              onChange={(event) => updateSetting('additionalFontSize', event.target.value)}
+            />
+          </label>
+        </section>
         <fieldset className={panelStyles.themeSetting}>
           <legend>Тема приложения</legend>
-          <p>Выберите одну из двух светлых или двух тёмных цветовых схем.</p>
           <div className={panelStyles.themeOptions}>
             {DICTIONARY_THEMES.map(({ id, label }) => (
               <label
@@ -119,11 +148,6 @@ export function SettingsPanel({
         <label className={panelStyles.voiceSetting} htmlFor="english-speech-voice">
           <span>
             <strong>Голос английской озвучки</strong>
-            <small>
-              {speechSynthesisSupported
-                ? 'Список голосов зависит от браузера и установленных языковых пакетов.'
-                : 'В этом браузере выбор системного голоса недоступен; будет использован голос сервиса озвучки.'}
-            </small>
           </span>
           <select
             id="english-speech-voice"
