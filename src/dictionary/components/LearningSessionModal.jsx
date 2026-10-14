@@ -97,21 +97,22 @@ export function LearningSessionModal({
     const deltaX = touch.clientX - touchStartRef.current.x;
     const deltaY = touch.clientY - touchStartRef.current.y;
     touchStartRef.current = null;
-    const swipeThreshold = 60;
+    const swipeThreshold = 20;
+    const swipeLength = Math.hypot(deltaX, deltaY);
+    if (swipeLength < swipeThreshold) return;
 
-    if (deltaY < -swipeThreshold && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+    const angleFromVertical = Math.atan2(Math.abs(deltaX), Math.abs(deltaY)) * (180 / Math.PI);
+    if (deltaY < 0 && angleFromVertical <= 18) {
       onClose();
       return;
     }
 
-    if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-      if (entries.length < 2) return;
-      const nextIndices = entries.map((_, index) => index).filter((index) => index !== currentIndex);
-      const randomIndex = nextIndices[Math.floor(Math.random() * nextIndices.length)];
-      setCurrentIndex(randomIndex);
-      setTranslationVisible(false);
-      setDeleteError('');
-    }
+    if (entries.length < 2) return;
+    const nextIndices = entries.map((_, index) => index).filter((index) => index !== currentIndex);
+    const randomIndex = nextIndices[Math.floor(Math.random() * nextIndices.length)];
+    setCurrentIndex(randomIndex);
+    setTranslationVisible(false);
+    setDeleteError('');
   }
 
   function playWithGoogleVoice() {

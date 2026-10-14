@@ -38,10 +38,6 @@
   text-align: left;
 }
 
-.speakWordButton:hover {
-  color: var(--theme-accent-text, #d2c4ff);
-}
-
 .speakWordButton:focus-visible {
   outline: 2px solid var(--theme-accent-text, #d2c4ff);
   outline-offset: 4px;
