@@ -26,6 +26,27 @@
   overflow-wrap: anywhere;
 }
 
+.speakWordButton {
+  max-width: 100%;
+  color: inherit;
+  font: inherit;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.speakWordButton:hover {
+  color: var(--theme-accent-text, #d2c4ff);
+}
+
+.speakWordButton:focus-visible {
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
+  outline-offset: 4px;
+}
+
 .inlineForms {
   margin: 0;
   color: var(--theme-muted, #aeb5cb);

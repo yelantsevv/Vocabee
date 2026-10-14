@@ -136,8 +136,6 @@ export function LearningSessionModal({
   }
 
   async function deleteCurrentEntry() {
-    if (!window.confirm(`Удалить «${entry.word}» из словаря?`)) return;
-
     setDeleting(true);
     setDeleteError('');
     try {
@@ -195,7 +193,10 @@ export function LearningSessionModal({
                 </span>
               )}
             </div>
-            <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">×</button>
+            <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">
+              <span className={styles.closeSymbol} aria-hidden="true">×</span>
+              <span className={styles.closeLabel}>Закрыть</span>
+            </button>
           </div>
         </header>
 

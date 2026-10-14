@@ -120,6 +120,26 @@ export function DictionaryCatalogPanel({
   const hasViewableSource = (sourceConnections.my && hasMyDictionary)
     || (sourceConnections.language && Boolean(activeLanguage));
 
+  useEffect(() => () => {
+    window.speechSynthesis?.cancel();
+  }, []);
+
+  function speakEntry(entry) {
+    const text = String(entry?.word || '').trim();
+    if (!text) return;
+
+    const speechSynthesis = window.speechSynthesis;
+    if (!speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    speechSynthesis.cancel();
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    const voices = speechSynthesis.getVoices();
+    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURI)
+      || voices.find((voice) => /^en(?:-|$)/i.test(voice.lang))
+      || null;
+    speechSynthesis.speak(utterance);
+  }
+
   useEffect(() => {
     let stickyVisible = false;
     const updateStickyProgress = () => {
@@ -396,6 +416,7 @@ export function DictionaryCatalogPanel({
                   : undefined}
                 translationVisible={translationVisible}
                 onAddToLearning={() => onAddToLearning(entry)}
+                onSpeakWord={() => speakEntry(entry)}
               >
                 {entry.examples?.length > 0 && (
                   <section className={styles.entrySection} aria-label="Примеры">

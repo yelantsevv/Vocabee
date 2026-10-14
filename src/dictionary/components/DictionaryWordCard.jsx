@@ -11,6 +11,7 @@ export function DictionaryWordCard({
   forms,
   translationVisible = false,
   onAddToLearning,
+  onSpeakWord,
   children
 }) {
   const revealToggleId = useId();
@@ -36,6 +37,7 @@ export function DictionaryWordCard({
           forms={forms}
           translationVisible={translationVisible}
           onAddToLearning={onAddToLearning}
+          onSpeakWord={onSpeakWord}
         />
         {children}
       </div>
