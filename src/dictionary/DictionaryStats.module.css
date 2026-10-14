@@ -1,6 +1,6 @@
 .stats {
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
-  border-radius: 13px;
+  border-radius: var(--vocabee-radius-card);
   background: linear-gradient(135deg, color-mix(in srgb, var(--theme-accent, #a95bff) 9%, transparent), rgba(67, 213, 176, 0.035));
   margin: 10px 0 4px;
   padding: 16px;
@@ -17,13 +17,13 @@
 .header h2 {
   margin: 0;
   color: var(--theme-text, #f3f4fc);
-  font-size: 16px;
+  font-size: calc(var(--vocabee-font-size-body) * var(--vocabee-ui-font-scale, 1));
 }
 
 .header p {
   margin: 5px 0 0;
   color: var(--theme-muted, #a5acc4);
-  font-size: 13px;
+  font-size: calc(var(--vocabee-font-size-small) * var(--vocabee-ui-font-scale, 1));
 }
 
 .tableScroll {

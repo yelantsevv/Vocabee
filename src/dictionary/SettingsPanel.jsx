@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SettingsPanel.module.css';
 import { SettingsActionButtons } from './SettingsActionButtons.jsx';
@@ -19,6 +20,27 @@ export function SettingsPanel({
   onResetRefreshButtonPosition,
   modal = false
 }) {
+  const [englishVoices, setEnglishVoices] = useState([]);
+  const [speechSynthesisSupported, setSpeechSynthesisSupported] = useState(false);
+
+  useEffect(() => {
+    const speechSynthesis = window.speechSynthesis;
+    if (!speechSynthesis) return undefined;
+
+    setSpeechSynthesisSupported(true);
+    const updateVoices = () => {
+      setEnglishVoices(speechSynthesis.getVoices()
+        .filter((voice) => /^en(?:-|$)/i.test(voice.lang))
+        .sort((first, second) => first.name.localeCompare(second.name)));
+    };
+
+    updateVoices();
+    speechSynthesis.addEventListener?.('voiceschanged', updateVoices);
+    return () => speechSynthesis.removeEventListener?.('voiceschanged', updateVoices);
+  }, []);
+
+  const selectedVoiceAvailable = englishVoices.some((voice) => voice.voiceURI === settings.speechVoiceURI);
+
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const loadedSourceActions = dictionaryQuickActions
     .filter((action) => loadedSources.has(action.id.slice('words-'.length)))
@@ -91,6 +113,31 @@ export function SettingsPanel({
           >
             {[5, 10, 20, 30, 50, 100, 200].map((count) => (
               <option key={count} value={count}>{count}</option>
+            ))}
+          </select>
+        </label>
+        <label className={panelStyles.voiceSetting} htmlFor="english-speech-voice">
+          <span>
+            <strong>Голос английской озвучки</strong>
+            <small>
+              {speechSynthesisSupported
+                ? 'Список голосов зависит от браузера и установленных языковых пакетов.'
+                : 'В этом браузере выбор системного голоса недоступен; будет использован голос сервиса озвучки.'}
+            </small>
+          </span>
+          <select
+            id="english-speech-voice"
+            value={settings.speechVoiceURI || ''}
+            onChange={(event) => updateSetting('speechVoiceURI', event.target.value)}
+          >
+            <option value="">Автоматический голос</option>
+            {settings.speechVoiceURI && !selectedVoiceAvailable && (
+              <option value={settings.speechVoiceURI}>Сохранённый голос недоступен</option>
+            )}
+            {englishVoices.map((voice) => (
+              <option key={voice.voiceURI} value={voice.voiceURI}>
+                {voice.name} · {voice.lang}{voice.default ? ' · по умолчанию' : ''}
+              </option>
             ))}
           </select>
         </label>

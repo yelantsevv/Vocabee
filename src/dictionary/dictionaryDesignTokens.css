@@ -1,0 +1,160 @@
+/* Базовые параметры интерфейса: меняйте их, чтобы настроить общий вид словаря. */
+:root {
+  /* Шрифты: семейство и основные размеры текста; масштаб и размер словаря также можно менять в настройках приложения. */
+  --vocabee-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --vocabee-font-size-caption: 11px;
+  --vocabee-font-size-small: 13px;
+  --vocabee-font-size-control: 14px;
+  --vocabee-font-size-body: 16px;
+  --vocabee-font-size-subtitle: 20px;
+  --vocabee-font-size-heading: 24px;
+  --vocabee-font-size-word: clamp(34px, 6vw, 54px);
+  --vocabee-font-size-card-word: clamp(22px, 2.6vw, 30px);
+  --vocabee-font-size-translation: clamp(20px, 3vw, 30px);
+  --vocabee-ui-font-scale: 1;
+  --vocabee-dictionary-font-size: 16px;
+
+  /* Отступы: шаги для расстояний между текстом, кнопками, карточками и секциями. */
+  --vocabee-space-1: 4px;
+  --vocabee-space-2: 8px;
+  --vocabee-space-3: 12px;
+  --vocabee-space-4: 16px;
+  --vocabee-space-5: 20px;
+  --vocabee-space-6: 24px;
+
+  /* Формы и границы: радиусы карточек, полей, панелей и модальных окон. */
+  --vocabee-radius-control: 9px;
+  --vocabee-radius-card: 14px;
+  --vocabee-radius-panel: 16px;
+  --vocabee-radius-modal: 18px;
+  --vocabee-radius-pill: 999px;
+  --vocabee-border-width: 1px;
+
+  /* Размеры и эффекты: ширина областей, высота кнопок, тени, размытие и скорость переходов. */
+  --vocabee-content-max-width: 1900px;
+  --vocabee-settings-max-width: 840px;
+  --vocabee-learning-modal-width: 80vw;
+  --vocabee-learning-modal-height: 90dvh;
+  --vocabee-control-height: 42px;
+  --vocabee-card-gap: 18px;
+  --vocabee-card-padding: 18px;
+  --vocabee-card-mobile-gap: 15px;
+  --vocabee-card-mobile-padding: 14px;
+  --vocabee-filter-square-size: 46px;
+  --vocabee-filter-text-width: clamp(48px, 8vw, 140px);
+  --vocabee-filter-source-width: clamp(90px, 8vw, 140px);
+  --vocabee-modal-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  --vocabee-modal-backdrop: rgba(5, 8, 20, 0.78);
+  --vocabee-backdrop-blur: 8px;
+  --vocabee-motion-fast: 160ms;
+  --vocabee-motion-normal: 200ms;
+}
+/* Общие настройки выше управляют типографикой, ритмом отступов, формами и размерами элементов. */
+
+/* Палитра «Облачная · Светлая»: спокойные синие акценты на светлом фоне. */
+html[data-dictionary-theme="android-light"] {
+  color-scheme: light;
+  --theme-page: #f3f6fb;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #e9eef7;
+  --theme-text: #1b2638;
+  --theme-text-soft: #34445e;
+  --theme-muted: #596a83;
+  --theme-faint: #71819a;
+  --theme-accent: #4665b5;
+  --theme-accent-text: #345196;
+  --theme-accent-solid: #4665b5;
+  --theme-success: #287451;
+  --theme-border-rgb: 54, 72, 105;
+  --theme-accent-rgb: 70, 101, 181;
+  --theme-tint-rgb: 91, 132, 210;
+  --theme-overlay-rgb: 32, 48, 76;
+  --theme-glow-a: rgba(98, 130, 205, 0.14);
+  --theme-glow-b: rgba(94, 166, 157, 0.09);
+}
+/* В этой теме меняются фон, текст, акцент кнопок и мягкое свечение страницы. */
+
+/* Палитра «Чёрно-белая · Светлая»: нейтральные поверхности с синим акцентом. */
+html[data-dictionary-theme="airy-light"] {
+  color-scheme: light;
+  --theme-page: #f0f0f0;
+  --theme-surface: #ffffff;
+  --theme-surface-raised: #e6e6e6;
+  --theme-text: #171717;
+  --theme-text-soft: #303030;
+  --theme-muted: #454545;
+  --theme-faint: #626262;
+  --theme-accent: #315da8;
+  --theme-accent-text: #244a89;
+  --theme-accent-solid: #315da8;
+  --theme-success: #247448;
+  --theme-border-rgb: 35, 35, 35;
+  --theme-accent-rgb: 49, 93, 168;
+  --theme-tint-rgb: 77, 122, 201;
+  --theme-overlay-rgb: 0, 0, 0;
+  --theme-border-soft-strength: 24%;
+  --theme-border-strength: 30%;
+  --theme-glow-a: rgba(77, 122, 201, 0.08);
+  --theme-glow-b: rgba(77, 116, 83, 0.06);
+}
+/* Эта тема задаёт контрастные чёрно-белые поверхности и более заметные границы. */
+
+/* Палитра «Классическая · Тёмная»: фиолетовые акценты и бирюзовый цвет успеха. */
+html[data-dictionary-theme="classic-dark"] {
+  color-scheme: dark;
+  --theme-page: #101426;
+  --theme-surface: #141a2d;
+  --theme-surface-raised: #202640;
+  --theme-text: #f3f4fc;
+  --theme-text-soft: #dce0f1;
+  --theme-muted: #a5acc4;
+  --theme-faint: #929bb7;
+  --theme-accent: #a95bff;
+  --theme-accent-text: #c9baff;
+  --theme-accent-solid: #a15cff;
+  --theme-success: #43d5b0;
+  --theme-border-rgb: 173, 183, 220;
+  --theme-accent-rgb: 169, 91, 255;
+  --theme-tint-rgb: 119, 82, 255;
+  --theme-overlay-rgb: 255, 255, 255;
+  --theme-glow-a: rgba(112, 77, 255, 0.2);
+  --theme-glow-b: rgba(34, 211, 238, 0.09);
+}
+/* В этой теме задаются цвета тёмного фона, поверхностей, текста и активных элементов. */
+
+/* Палитра «Северное сияние · Тёмная»: глубокие синие тона с бирюзовыми акцентами. */
+html[data-dictionary-theme="aurora-dark"] {
+  color-scheme: dark;
+  --theme-page: #101b2c;
+  --theme-surface: #17283d;
+  --theme-surface-raised: #203751;
+  --theme-text: #f0f6ff;
+  --theme-text-soft: #d5e4f6;
+  --theme-muted: #b3c5dc;
+  --theme-faint: #91a7c3;
+  --theme-accent: #73d8d0;
+  --theme-accent-text: #a6ede2;
+  --theme-accent-solid: #50c8c0;
+  --theme-success: #8ed8ad;
+  --theme-border-rgb: 160, 190, 222;
+  --theme-accent-rgb: 115, 216, 208;
+  --theme-tint-rgb: 85, 179, 196;
+  --theme-overlay-rgb: 231, 241, 255;
+  --theme-glow-a: rgba(79, 109, 204, 0.2);
+  --theme-glow-b: rgba(61, 198, 181, 0.13);
+}
+/* Эта тема задаёт холодные цвета поверхностей и бирюзовые акценты интерфейса. */
+
+/* Общие правила темы: связывают выбранную палитру с фоном документа и текстом страницы. */
+html[data-dictionary-theme] {
+  background: var(--theme-page);
+}
+
+html[data-dictionary-theme] body {
+  background:
+    radial-gradient(ellipse at 8% 0%, var(--theme-glow-a), transparent 42%),
+    radial-gradient(ellipse at 100% 42%, var(--theme-glow-b), transparent 38%),
+    var(--theme-page);
+  color: var(--theme-text);
+}
+/* Эти правила применяют выбранную палитру к фону всей страницы и её основному тексту. */

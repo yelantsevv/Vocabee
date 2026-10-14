@@ -20,7 +20,7 @@
   color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 8px;
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
 .searchControl[data-variant='filter'] {

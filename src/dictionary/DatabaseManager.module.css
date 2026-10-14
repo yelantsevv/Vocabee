@@ -12,12 +12,12 @@
 
 .manager h2 {
   color: var(--theme-text, #f3f4fc);
-  font-size: calc(16px * var(--vocabee-ui-font-scale, 1));
+  font-size: calc(var(--vocabee-font-size-body) * var(--vocabee-ui-font-scale, 1));
 }
 
 .manager p {
   color: var(--theme-muted, #a5acc4);
-  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
+  font-size: calc(var(--vocabee-font-size-small) * var(--vocabee-ui-font-scale, 1));
   line-height: 1.45;
 }
 

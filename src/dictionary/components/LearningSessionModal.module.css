@@ -5,24 +5,24 @@
   display: grid;
   place-items: center;
   overflow: auto;
-  background: rgba(5, 8, 20, 0.78);
-  padding: 24px;
-  backdrop-filter: blur(8px);
+  background: var(--vocabee-modal-backdrop);
+  padding: var(--vocabee-space-6);
+  backdrop-filter: blur(var(--vocabee-backdrop-blur));
 }
 
 .modal {
   display: flex;
-  width: 80vw;
+  width: var(--vocabee-learning-modal-width);
   height: 80vh;
-  height: 90dvh;
+  height: var(--vocabee-learning-modal-height);
   min-width: 0;
   flex-direction: column;
   flex: 0 0 auto;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
-  border-radius: 18px;
+  border-radius: var(--vocabee-radius-modal);
   background: var(--theme-surface, #141a2d);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--vocabee-modal-shadow);
   color: var(--theme-text, #f3f4fc);
   padding: 22px;
 }
@@ -113,7 +113,7 @@
   flex: 1 1 auto;
   flex-direction: column;
   border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 30%, transparent);
-  border-radius: 14px;
+  border-radius: var(--vocabee-radius-card);
   background: linear-gradient(145deg, color-mix(in srgb, var(--theme-accent, #a95bff) 12%, transparent), rgba(67, 213, 176, 0.045));
   overflow: hidden;
   text-align: center;
@@ -135,60 +135,62 @@
 
 .englishBlock,
 .translationBlock {
+  position: relative;
   display: flex;
   min-height: 0;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  padding-top: clamp(14px, 2vh, 22px);
+}
 
+.englishBlock {
+  width: 100%;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.englishBlock:focus-visible,
+.translationBlock:focus-visible {
+  border-radius: var(--vocabee-radius-control);
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
+  outline-offset: 4px;
+}
+
+.translationBlock {
+  cursor: pointer;
+}
+
+.translationBlock::before {
+  content: '';
+  display: block;
+  width: min(76%, 220px);
+  height: 3px;
+  flex: 0 0 3px;
+  margin: 0 auto clamp(14px, 2vh, 22px);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--theme-accent-solid, #8b5cf6) 24%,
+    var(--theme-accent, #a95bff) 50%,
+    var(--theme-accent-solid, #8b5cf6) 76%,
+    transparent
+  );
+  box-shadow: 0 0 12px color-mix(in srgb, var(--theme-accent, #a95bff) 32%, transparent);
 }
 
 
 .card h3 {
   margin: 0;
-  font-size: clamp(34px, 6vw, 54px);
+  font-size: var(--vocabee-font-size-word);
   line-height: 1.08;
   overflow-wrap: anywhere;
-}
-
-.speakButton {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  align-self: center;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 42%, transparent);
-  border-radius: 50%;
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 14%, transparent);
-  color: var(--theme-accent-text, #e2d8ff);
-  cursor: pointer;
-}
-
-.speakButton svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
-
-.speakButton[aria-pressed="true"] {
-  border-color: rgba(67, 213, 176, 0.6);
-  background: rgba(67, 213, 176, 0.14);
-  color: #78e2ae;
-}
-
-.speakButton:hover {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 80%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 28%, transparent);
-}
-
-.speakButton:focus-visible {
-  outline: 2px solid var(--theme-accent-text, #d2c4ff);
-  outline-offset: 3px;
 }
 
 .forms {
@@ -208,7 +210,7 @@
 .translation {
   margin: 0;
   color: var(--theme-text, #f3f4fc);
-  font-size: clamp(20px, 3vw, 30px);
+  font-size: var(--vocabee-font-size-translation);
   font-weight: 650;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -422,6 +424,7 @@
 
   .header {
     flex-wrap: wrap;
+    margin-bottom: 5px;
   }
 
   .headerActions {

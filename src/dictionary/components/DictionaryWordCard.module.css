@@ -1,14 +1,14 @@
 .card {
   position: relative;
   display: flex;
-  gap: 18px;
+  gap: var(--vocabee-card-gap);
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
-  border-radius: 14px;
+  border-radius: var(--vocabee-radius-card);
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 2%, transparent);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  margin: 12px 0;
-  padding: 18px;
+  margin: var(--vocabee-space-3) 0;
+  padding: var(--vocabee-card-padding);
 }
 
 .revealToggle {
@@ -67,12 +67,12 @@
 
 @media (max-width: 640px) {
   .card {
-    gap: 15px;
-    margin: 10px 0;
-    padding: 14px;
+    gap: var(--vocabee-card-mobile-gap);
+    margin: var(--vocabee-space-2) 0;
+    padding: var(--vocabee-card-mobile-padding);
   }
 
   .cardContent {
-    gap: 15px;
+    gap: var(--vocabee-card-mobile-gap);
   }
 }

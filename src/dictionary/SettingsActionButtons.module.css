@@ -27,7 +27,7 @@
   font-size: 12px;
   line-height: 1.3;
   overflow-wrap: anywhere;
-  transition: border-color 0.16s ease, background 0.16s ease;
+  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease;
 }
 
 .actions > button.active {

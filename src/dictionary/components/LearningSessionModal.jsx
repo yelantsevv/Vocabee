@@ -5,6 +5,7 @@ import entryHeaderStyles from './DictionaryEntryHeader.module.css';
 export function LearningSessionModal({
   entries,
   catalogView,
+  speechVoiceURI = '',
   initialIndex = 0,
   getLearningLevel,
   onSetLearningLevel,
@@ -114,8 +115,10 @@ export function LearningSessionModal({
     speechSynthesis.cancel();
     const utterance = new window.SpeechSynthesisUtterance(spokenText);
     utterance.lang = 'en-US';
-    utterance.voice = speechSynthesis.getVoices()
-      .find((voice) => /^en(-|$)/i.test(voice.lang)) || null;
+    const voices = speechSynthesis.getVoices();
+    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURI)
+      || voices.find((voice) => /^en(?:-|$)/i.test(voice.lang))
+      || null;
     utterance.onend = () => setAudioPlaying(false);
     utterance.onerror = (event) => {
       if (event.error === 'canceled' || event.error === 'interrupted') {
@@ -161,21 +164,6 @@ export function LearningSessionModal({
         aria-label={catalogView === 'phrases' ? 'Изучение фраз' : 'Изучение слов'}
       >
         <header className={styles.header}>
-          {entryLanguage === 'en' && (
-            <button
-              className={styles.speakButton}
-              type="button"
-              onClick={toggleEnglishAudio}
-              aria-label={audioPlaying ? 'Остановить озвучивание' : 'Озвучить английский текст'}
-              aria-pressed={audioPlaying}
-              title="Озвучить на английском"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
-                <path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" />
-              </svg>
-            </button>
-          )}
           <div className={styles.headerActions}>
             <button
               className={styles.learnedButton}
@@ -212,26 +200,48 @@ export function LearningSessionModal({
         </header>
 
         <div className={styles.card}>
-          <div
-            className={styles.cardContent}
-            role="group"
-            tabIndex={0}
-            aria-label="Нажмите на карточку, чтобы показать перевод"
-            aria-expanded={translationVisible}
-            onClick={() => setTranslationVisible(true)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                setTranslationVisible(true);
-              }
-            }}
-          >
-            <section className={styles.englishBlock} aria-label="Английский текст">
-              <h3>{entry.word}</h3>
-              {forms && <p className={styles.forms}>{forms}</p>}
-              {example && <p className={styles.example}>{example.phrase || example.example}</p>}
-            </section>
-            <section className={styles.translationBlock} aria-label="Перевод">
+          <div className={styles.cardContent}>
+            {entryLanguage === 'en' ? (
+              <section
+                className={styles.englishBlock}
+                role="button"
+                tabIndex={0}
+                onClick={toggleEnglishAudio}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleEnglishAudio();
+                  }
+                }}
+                aria-label={audioPlaying ? 'Остановить озвучивание английского текста' : `Озвучить: ${spokenText}`}
+                aria-pressed={audioPlaying}
+                title="Нажмите, чтобы озвучить английский текст"
+              >
+                <h3>{entry.word}</h3>
+                {forms && <p className={styles.forms}>{forms}</p>}
+                {example && <p className={styles.example}>{example.phrase || example.example}</p>}
+              </section>
+            ) : (
+              <section className={styles.englishBlock} aria-label="Текст на иностранном языке">
+                <h3>{entry.word}</h3>
+                {forms && <p className={styles.forms}>{forms}</p>}
+                {example && <p className={styles.example}>{example.phrase || example.example}</p>}
+              </section>
+            )}
+            <section
+              className={styles.translationBlock}
+              role="button"
+              tabIndex={0}
+              aria-label={translationVisible ? 'Перевод показан' : 'Показать перевод и примеры'}
+              aria-expanded={translationVisible}
+              onClick={() => setTranslationVisible(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setTranslationVisible(true);
+                }
+              }}
+            >
               {translationVisible ? (
                 <>
                   <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>

@@ -1,5 +1,6 @@
 export const DEFAULT_DICTIONARY_FONT_SIZE = 16;
 export const DEFAULT_INTERFACE_FONT_SCALE = 100;
+export const DEFAULT_SPEECH_VOICE_URI = '';
 export const DICTIONARY_THEMES = [
   { id: 'classic-dark', label: 'Классическая · Тёмная' },
   { id: 'android-light', label: 'Облачная · Светлая' },
@@ -24,6 +25,10 @@ export function normalizeInterfaceFontScale(value) {
   const parsedValue = Number(value);
   if (!Number.isFinite(parsedValue)) return DEFAULT_INTERFACE_FONT_SCALE;
   return Math.max(80, Math.min(140, Math.round(parsedValue / 5) * 5));
+}
+
+export function normalizeSpeechVoiceURI(value) {
+  return typeof value === 'string' ? value : DEFAULT_SPEECH_VOICE_URI;
 }
 
 export function normalizeRefreshButtonPosition(value) {

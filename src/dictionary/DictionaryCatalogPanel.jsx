@@ -42,8 +42,25 @@ function FilterButtonIcon({ name }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>;
 }
 
+function FilteredProgressBar({ value, sticky = false }) {
+  return (
+    <div
+      className={clsx(styles.overallProgress, sticky && styles.stickyProgress)}
+      role="progressbar"
+      aria-label={`Прогресс отфильтрованного содержимого: ${value}%`}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={value}
+      title={`Прогресс выбранных записей: ${value}%`}
+    >
+      <span style={{ width: `${value}%` }} />
+    </div>
+  );
+}
+
 export function DictionaryCatalogPanel({
   catalog,
+  settingsOpen = false,
   searchLanguage,
   onAddToLearning,
   onOpenSettings,
@@ -53,10 +70,13 @@ export function DictionaryCatalogPanel({
   onRefreshButtonPositionChange,
   cardsPerLoad,
   hideTranslationsUntilHover,
+  speechVoiceURI,
   refreshVersion
 }) {
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
+  const [showStickyProgress, setShowStickyProgress] = useState(false);
+  const filtersRef = useRef(null);
   const {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -77,7 +97,7 @@ export function DictionaryCatalogPanel({
     setProgressViews,
     sourceConnections,
     setSourceConnections,
-    overallDictionaryProgress,
+    filteredDictionaryProgress,
     selectedSourceDictionary,
     learningLevelOverrides,
     filteredSourceEntries,
@@ -99,6 +119,28 @@ export function DictionaryCatalogPanel({
     || loadedLanguages[0];
   const hasViewableSource = (sourceConnections.my && hasMyDictionary)
     || (sourceConnections.language && Boolean(activeLanguage));
+
+  useEffect(() => {
+    let stickyVisible = false;
+    const updateStickyProgress = () => {
+      const filterPanel = filtersRef.current;
+      if (!filterPanel) return;
+
+      const nextStickyVisible = filterPanel.getBoundingClientRect().top < 0;
+      if (nextStickyVisible === stickyVisible) return;
+      stickyVisible = nextStickyVisible;
+      setShowStickyProgress(nextStickyVisible);
+    };
+
+    updateStickyProgress();
+    window.addEventListener('scroll', updateStickyProgress, { passive: true });
+    window.addEventListener('resize', updateStickyProgress);
+    return () => {
+      window.removeEventListener('scroll', updateStickyProgress);
+      window.removeEventListener('resize', updateStickyProgress);
+    };
+  }, []);
+
   useEffect(() => {
     if (previousRefreshVersion.current !== refreshVersion) {
       previousRefreshVersion.current = refreshVersion;
@@ -144,18 +186,8 @@ export function DictionaryCatalogPanel({
 
   return (
     <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label="Каталог словарей">
-      <section className={styles.dictionaryFilters} aria-label="Фильтры словаря">
-        <div
-          className={styles.overallProgress}
-          role="progressbar"
-          aria-label={`Общий прогресс изучения выбранного словаря: ${overallDictionaryProgress}%`}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={overallDictionaryProgress}
-          title={`Весь словарь: ${overallDictionaryProgress}%`}
-        >
-          <span style={{ width: `${overallDictionaryProgress}%` }} />
-        </div>
+      <section ref={filtersRef} className={styles.dictionaryFilters} aria-label="Фильтры словаря">
+        <FilteredProgressBar value={filteredDictionaryProgress} />
         <div className={styles.filterLayout}>
           <div className={styles.filterLeftGroup}>
             <div className={styles.filterLeftTopRow}>
@@ -305,6 +337,9 @@ export function DictionaryCatalogPanel({
           </div>
         </div>
       </section>
+      {(showStickyProgress || settingsOpen || learningSessionEntries) && (
+        <FilteredProgressBar value={filteredDictionaryProgress} sticky />
+      )}
 
       <RefreshCardsButton
         position={refreshButtonPosition}
@@ -414,6 +449,7 @@ export function DictionaryCatalogPanel({
         <LearningSessionModal
           entries={learningSessionEntries}
           catalogView={catalogView}
+          speechVoiceURI={speechVoiceURI}
           getLearningLevel={(entry) => getEntryLearningLevel(
             entry,
             entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,

@@ -467,6 +467,11 @@ export function useDictionaryCatalog() {
         : 'remaining';
     return progressViews.length === 0 || progressViews.includes(progressCategory);
   }), [sourceEntriesByFilters, progressViews, learningLevelOverrides, selectedSourceLanguage]);
+  const filteredDictionaryProgress = getAverageProgress(
+    filteredSourceEntries,
+    selectedSourceLanguage,
+    learningLevelOverrides
+  );
 
   const studySessionEntries = useMemo(() => sourceEntriesByFilters
     .filter((entry) => {
@@ -706,6 +711,7 @@ export function useDictionaryCatalog() {
     studySessionEntries,
     selectedSourceDictionary,
     overallDictionaryProgress,
+    filteredDictionaryProgress,
     selectedLevelEntries,
     levelLearningProgress,
     filteredSourceEntries,

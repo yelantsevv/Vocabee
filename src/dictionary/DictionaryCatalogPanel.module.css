@@ -1,9 +1,6 @@
 .dictionaryContent.dictionaryContent {
-  --square-filter-control: 46px;
-  --text-filter-control-width: clamp(48px, 8vw, 140px);
-  --source-text-control-width: clamp(90px, 8vw, 140px);
   width: 100%;
-  max-width: 1900px;
+  max-width: var(--vocabee-content-max-width);
   align-self: center;
   padding-top: 24px;
 }
@@ -14,7 +11,7 @@
   display: grid;
   gap: clamp(12px, 1.5vw, 20px);
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
-  border-radius: 16px;
+  border-radius: var(--vocabee-radius-panel);
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
   padding: clamp(12px, 1.5vw, 20px);
 }
@@ -26,8 +23,17 @@
   left: 0;
   height: 4px;
   overflow: hidden;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--vocabee-radius-panel) var(--vocabee-radius-panel) 0 0;
   background: color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
+}
+
+.stickyProgress.stickyProgress {
+  position: fixed;
+  z-index: 10020;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-radius: 0;
 }
 
 .overallProgress span {
@@ -35,7 +41,7 @@
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--theme-accent-solid, #8b5cf6), var(--theme-success, #43d5b0));
-  transition: width 0.2s ease;
+  transition: width var(--vocabee-motion-normal, 200ms) ease;
 }
 
 .filterLayout {
@@ -79,8 +85,8 @@
 }
 
 .filterLeftBottomRow .filterField {
-  width: min(100%, max(calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + 18px),
-        calc(var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 18px)));
+    width: min(100%, max(calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-source-width) + var(--vocabee-filter-source-width) + 18px),
+        calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + 18px)));
   max-width: 100%;
 }
 
@@ -114,7 +120,7 @@
   display: grid;
   width: max-content;
   min-width: max-content;
-  grid-template-columns: repeat(2, var(--square-filter-control)) repeat(2, var(--source-text-control-width));
+  grid-template-columns: repeat(2, var(--vocabee-filter-square-size)) repeat(2, var(--vocabee-filter-source-width));
   gap: 6px;
 }
 
@@ -123,35 +129,35 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  height: var(--square-filter-control);
-  min-height: var(--square-filter-control);
+  height: var(--vocabee-filter-square-size);
+  min-height: var(--vocabee-filter-square-size);
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
-  border-radius: 9px;
+  border-radius: var(--vocabee-radius-control);
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
   color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 0 8px;
   font-size: 12px;
   font-weight: 650;
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
 .sourceViewButton:nth-child(1),
 .sourceViewButton:nth-child(2) {
   box-sizing: border-box;
-  width: var(--square-filter-control);
-  min-width: var(--square-filter-control);
-  height: var(--square-filter-control);
-  min-height: var(--square-filter-control);
-  flex: 0 0 var(--square-filter-control);
+  width: var(--vocabee-filter-square-size);
+  min-width: var(--vocabee-filter-square-size);
+  height: var(--vocabee-filter-square-size);
+  min-height: var(--vocabee-filter-square-size);
+  flex: 0 0 var(--vocabee-filter-square-size);
   padding: 0;
 }
 
 .sourceViewButton:nth-child(3),
 .sourceViewButton:nth-child(4) {
-  width: var(--source-text-control-width);
-  min-width: var(--source-text-control-width);
+  width: var(--vocabee-filter-source-width);
+  min-width: var(--vocabee-filter-source-width);
 }
 
 .sourceViewButton svg {
@@ -196,7 +202,7 @@
   appearance: none;
   -webkit-appearance: none;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
-  border-radius: 10px;
+  border-radius: var(--vocabee-radius-control);
   background-color: var(--theme-surface-raised, #202640);
   background-image:
     linear-gradient(45deg, transparent 50%, var(--theme-muted, #aeb5cb) 50%),
@@ -246,16 +252,16 @@
   display: grid;
   min-width: 0;
   flex: 0 0 auto;
-  grid-template-columns: repeat(4, var(--square-filter-control));
+  grid-template-columns: repeat(4, var(--vocabee-filter-square-size));
   gap: 6px;
 }
 
 .levelControls .filterChip {
   box-sizing: border-box;
-  width: var(--square-filter-control);
-  min-width: var(--square-filter-control);
-  height: var(--square-filter-control);
-  min-height: var(--square-filter-control);
+  width: var(--vocabee-filter-square-size);
+  min-width: var(--vocabee-filter-square-size);
+  height: var(--vocabee-filter-square-size);
+  min-height: var(--vocabee-filter-square-size);
   padding: 0;
 }
 
@@ -269,7 +275,7 @@
   padding: 0 10px;
   font-size: 12px;
   line-height: 1.25;
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
 .filterChip:hover,
@@ -316,7 +322,7 @@
 
 .verbTypeChips {
   display: grid;
-  grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
+  grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
   align-items: stretch;
   gap: 6px;
 }
@@ -327,7 +333,7 @@
 
 .progressFilters {
   display: grid;
-  grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
+  grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
   align-items: stretch;
   gap: 6px;
 }
@@ -335,7 +341,7 @@
 .progressButton {
   display: flex;
   box-sizing: border-box;
-  width: var(--text-filter-control-width);
+  width: var(--vocabee-filter-text-width);
   min-width: 0;
   min-height: 46px;
   align-items: center;
@@ -354,9 +360,9 @@
 
 .settingsButton {
   box-sizing: border-box;
-  width: var(--square-filter-control);
-  height: var(--square-filter-control);
-  min-height: var(--square-filter-control);
+  width: var(--vocabee-filter-square-size);
+  height: var(--vocabee-filter-square-size);
+  min-height: var(--vocabee-filter-square-size);
   justify-self: center;
   padding: 0;
 }
@@ -369,7 +375,7 @@
 .startLearningButton {
   display: flex;
   box-sizing: border-box;
-  width: var(--text-filter-control-width);
+  width: var(--vocabee-filter-text-width);
   min-width: 0;
   min-height: 46px;
   align-items: center;
@@ -503,7 +509,7 @@
   }
 
   .dictionaryContent.dictionaryContent {
-    --text-filter-control-width: clamp(55px, 8vw, 48px);
+    --vocabee-filter-text-width: clamp(55px, 8vw, 48px);
   }
 
   .dictionaryFilters {
@@ -514,7 +520,7 @@
     width: max-content;
     min-width: max-content;
     display: grid;
-    grid-template-columns: repeat(2, var(--square-filter-control)) repeat(2, var(--source-text-control-width));
+    grid-template-columns: repeat(2, var(--vocabee-filter-square-size)) repeat(2, var(--vocabee-filter-source-width));
   }
 
   .sourceViewButtons .sourceViewButton {
@@ -524,12 +530,12 @@
 
   .sourceViewButtons .sourceViewButton:nth-child(1),
   .sourceViewButtons .sourceViewButton:nth-child(2) {
-    min-width: var(--square-filter-control);
+    min-width: var(--vocabee-filter-square-size);
     padding: 0;
   }
 
   .verbTypeChips {
-    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
+    grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
   }
 
   .typeChip svg,
@@ -545,7 +551,7 @@
   }
 
   .progressFilters {
-    grid-template-columns: repeat(4, var(--text-filter-control-width)) var(--square-filter-control);
+    grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
     gap: 5px;
   }
 
@@ -622,6 +628,6 @@
   }
 
   .filterLeftBottomRow .filterField {
-    width: min(100%, calc(var(--square-filter-control) + var(--square-filter-control) + var(--source-text-control-width) + var(--source-text-control-width) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + var(--square-filter-control) + 48px));
+    width: min(100%, calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-source-width) + var(--vocabee-filter-source-width) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + 48px));
   }
 }

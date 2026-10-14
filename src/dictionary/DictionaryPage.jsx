@@ -10,9 +10,11 @@ import {
   DEFAULT_DICTIONARY_FONT_SIZE,
   DEFAULT_DICTIONARY_THEME,
   DEFAULT_INTERFACE_FONT_SCALE,
+  DEFAULT_SPEECH_VOICE_URI,
   normalizeDictionaryTheme,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale,
+  normalizeSpeechVoiceURI,
   normalizeRefreshButtonPosition
 } from './settings.js';
 import { targetLanguages } from './dictionaryUtils.js';
@@ -26,6 +28,7 @@ const DEFAULT_SETTINGS = {
   lang: 'ru',
   dictionaryFontSize: DEFAULT_DICTIONARY_FONT_SIZE,
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
+  speechVoiceURI: DEFAULT_SPEECH_VOICE_URI,
   theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
   hideTranslationsUntilHover: true,
@@ -73,6 +76,7 @@ export function DictionaryPage() {
         lang: targetLanguages.includes(result.lang) ? result.lang : DEFAULT_SETTINGS.lang,
         dictionaryFontSize: normalizeDictionaryFontSize(result.dictionaryFontSize),
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
+        speechVoiceURI: normalizeSpeechVoiceURI(result.speechVoiceURI),
         theme: normalizeDictionaryTheme(result.theme),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
@@ -96,6 +100,7 @@ export function DictionaryPage() {
       theme: normalizeDictionaryTheme,
       dictionaryFontSize: normalizeDictionaryFontSize,
       interfaceFontScale: normalizeInterfaceFontScale,
+      speechVoiceURI: normalizeSpeechVoiceURI,
       refreshButtonPosition: normalizeRefreshButtonPosition,
       cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
     };
@@ -130,6 +135,7 @@ export function DictionaryPage() {
     <main className={styles.page} style={pageStyle}>
       <DictionaryCatalogPanel
         catalog={catalog}
+        settingsOpen={settingsOpen}
         searchLanguage={catalog.selectedSourceLanguage || (
           ['my', 'words', 'phrases'].includes(catalog.catalogView) ? 'my-vocabee' : null
         )}
@@ -141,6 +147,7 @@ export function DictionaryPage() {
         onRefreshButtonPositionChange={(position) => updateSetting('refreshButtonPosition', position)}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
+        speechVoiceURI={appliedSettings.speechVoiceURI}
         refreshVersion={cardRefreshVersion}
       />
 
