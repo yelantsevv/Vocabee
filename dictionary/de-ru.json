@@ -1,0 +1,375 @@
+[
+  {
+    "word": "aufstehen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 95,
+    "is_irregular": true,
+    "definitions": [
+      "вставать",
+      "подниматься"
+    ],
+    "synonyms": [
+      "sich erheben",
+      "aufwachen"
+    ],
+    "antonyms": [
+      "sich hinlegen",
+      "liegen bleiben"
+    ],
+    "examples": [
+      {
+        "phrase": "Ich stehe jeden Tag um sieben Uhr auf.",
+        "translation": "Я каждый день встаю в семь часов.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Steh bitte auf!",
+        "translation": "Пожалуйста, встань!",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Ich stehe am Wochenende später auf.",
+        "translation": "По выходным я встаю позже."
+      }
+    ],
+    "forms": {
+      "past_simple": "stand auf",
+      "past_participle": "aufgestanden"
+    },
+    "learning_level": 0
+  },
+  {
+    "word": "anrufen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 120,
+    "is_irregular": true,
+    "definitions": [
+      "звонить кому-либо",
+      "позвонить"
+    ],
+    "synonyms": [
+      "telefonieren",
+      "durchklingeln"
+    ],
+    "examples": [
+      {
+        "phrase": "Ich rufe dich heute Abend an.",
+        "translation": "Я позвоню тебе сегодня вечером.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Ruf mich bitte morgen an.",
+        "translation": "Позвони мне, пожалуйста, завтра.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Ich rufe dich an, sobald ich zu Hause bin.",
+        "translation": "Я позвоню тебе, как только буду дома."
+      }
+    ],
+    "forms": {
+      "past_simple": "rief an",
+      "past_participle": "angerufen"
+    },
+    "learning_level": 0
+  },
+  {
+    "word": "einkaufen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 145,
+    "is_irregular": false,
+    "definitions": [
+      "покупать продукты",
+      "ходить за покупками"
+    ],
+    "synonyms": [
+      "besorgen",
+      "shoppen"
+    ],
+    "antonyms": [
+      "verkaufen"
+    ],
+    "examples": [
+      {
+        "phrase": "Wir kaufen am Samstag ein.",
+        "translation": "Мы ходим за покупками в субботу.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Ich muss noch Lebensmittel einkaufen.",
+        "translation": "Мне ещё нужно купить продукты.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Nach der Arbeit kaufe ich für das Abendessen ein.",
+        "translation": "После работы я покупаю продукты к ужину."
+      }
+    ],
+    "learning_level": 0
+  },
+  {
+    "word": "mitkommen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 180,
+    "is_irregular": true,
+    "definitions": [
+      "идти вместе",
+      "сопровождать",
+      "поехать с кем-либо"
+    ],
+    "synonyms": [
+      "begleiten",
+      "mitgehen"
+    ],
+    "examples": [
+      {
+        "phrase": "Kommst du heute Abend mit?",
+        "translation": "Ты пойдёшь сегодня вечером с нами?",
+        "level": "A1"
+      },
+      {
+        "phrase": "Er ist ins Kino mitgekommen.",
+        "translation": "Он пошёл с нами в кино.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Wenn du möchtest, kannst du morgen mitkommen.",
+        "translation": "Если хочешь, можешь пойти с нами завтра."
+      }
+    ],
+    "forms": {
+      "past_simple": "kam mit",
+      "past_participle": "mitgekommen"
+    },
+    "learning_level": 0
+  },
+  {
+    "word": "aufmachen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 210,
+    "is_irregular": false,
+    "definitions": [
+      "открывать",
+      "распахивать"
+    ],
+    "synonyms": [
+      "öffnen"
+    ],
+    "antonyms": [
+      "zumachen",
+      "schließen"
+    ],
+    "examples": [
+      {
+        "phrase": "Mach bitte das Fenster auf.",
+        "translation": "Открой, пожалуйста, окно.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Der Laden macht um neun Uhr auf.",
+        "translation": "Магазин открывается в девять часов.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Sie machte das Fenster auf, weil es im Zimmer sehr warm war.",
+        "translation": "Она открыла окно, потому что в комнате было очень тепло."
+      }
+    ],
+    "learning_level": 0
+  },
+  {
+    "word": "zumachen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 230,
+    "is_irregular": false,
+    "definitions": [
+      "закрывать",
+      "захлопывать"
+    ],
+    "synonyms": [
+      "schließen"
+    ],
+    "antonyms": [
+      "aufmachen",
+      "öffnen"
+    ],
+    "examples": [
+      {
+        "phrase": "Mach die Tür bitte zu.",
+        "translation": "Закрой, пожалуйста, дверь.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Bitte mach das Fenster zu.",
+        "translation": "Пожалуйста, закрой окно.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Mach bitte die Tür zu, damit es nicht so laut ist.",
+        "translation": "Закрой, пожалуйста, дверь, чтобы не было так шумно."
+      }
+    ],
+    "learning_level": 0
+  },
+  {
+    "word": "abholen",
+    "part_of_speech": "separable_verb",
+    "level": "A2",
+    "frequency_rank": 260,
+    "is_irregular": false,
+    "definitions": [
+      "забирать",
+      "встречать и провожать"
+    ],
+    "synonyms": [
+      "holen",
+      "einsammeln"
+    ],
+    "examples": [
+      {
+        "phrase": "Ich hole dich vom Bahnhof ab.",
+        "translation": "Я встречу тебя на вокзале.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Kannst du das Paket abholen?",
+        "translation": "Можешь забрать посылку?",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Ich hole das Kind heute von der Schule ab.",
+        "translation": "Сегодня я заберу ребёнка из школы."
+      }
+    ],
+    "learning_level": 0
+  },
+  {
+    "word": "anfangen",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 75,
+    "is_irregular": true,
+    "definitions": [
+      "начинать",
+      "приступать"
+    ],
+    "synonyms": [
+      "beginnen",
+      "starten"
+    ],
+    "antonyms": [
+      "aufhören",
+      "beenden"
+    ],
+    "examples": [
+      {
+        "phrase": "Der Film fängt um acht an.",
+        "translation": "Фильм начинается в восемь.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Wir fangen jetzt an.",
+        "translation": "Мы начинаем сейчас.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Der Kurs fängt nächste Woche an und dauert drei Monate.",
+        "translation": "Курс начнётся на следующей неделе и продлится три месяца."
+      }
+    ],
+    "forms": {
+      "past_simple": "fing an",
+      "past_participle": "angefangen"
+    },
+    "learning_level": 0
+  },
+  {
+    "word": "aufhören",
+    "part_of_speech": "separable_verb",
+    "level": "A1",
+    "frequency_rank": 110,
+    "is_irregular": false,
+    "definitions": [
+      "прекращать",
+      "переставать"
+    ],
+    "synonyms": [
+      "beenden",
+      "stoppen",
+      "abbrechen"
+    ],
+    "antonyms": [
+      "anfangen",
+      "fortsetzen"
+    ],
+    "examples": [
+      {
+        "phrase": "Hör bitte auf!",
+        "translation": "Пожалуйста, прекрати!",
+        "level": "A1"
+      },
+      {
+        "phrase": "Sie hört mit dem Rauchen auf.",
+        "translation": "Она бросает курить.",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Es hörte auf zu regnen, und wir gingen weiter.",
+        "translation": "Дождь прекратился, и мы пошли дальше."
+      }
+    ],
+    "learning_level": 0
+  },
+  {
+    "word": "teilnehmen",
+    "part_of_speech": "separable_verb",
+    "level": "A2",
+    "frequency_rank": 300,
+    "is_irregular": true,
+    "definitions": [
+      "участвовать",
+      "принимать участие"
+    ],
+    "synonyms": [
+      "mitmachen",
+      "dabei sein"
+    ],
+    "examples": [
+      {
+        "phrase": "Viele Studenten nehmen an dem Kurs teil.",
+        "translation": "Многие студенты участвуют в этом курсе.",
+        "level": "A1"
+      },
+      {
+        "phrase": "Nimmst du an der Besprechung teil?",
+        "translation": "Ты участвуешь в совещании?",
+        "level": "A2"
+      },
+      {
+        "level": "B1",
+        "phrase": "Sie nimmt an dem Projekt teil, weil sie Erfahrung in diesem Bereich hat.",
+        "translation": "Она участвует в проекте, потому что у неё есть опыт в этой области."
+      }
+    ],
+    "forms": {
+      "past_simple": "nahm teil",
+      "past_participle": "teilgenommen"
+    },
+    "learning_level": 0
+  }
+]
