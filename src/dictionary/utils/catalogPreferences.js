@@ -39,9 +39,14 @@ export function readSourceConnections() {
 }
 
 export function getCatalogSourceIds(language, sourceConnections) {
+  const selectedSourceIds = sourceConnections.language
+    && (CATALOG_SOURCES[language] || String(language || '').startsWith('custom-dictionary-'))
+    ? [language]
+    : [];
+
   return [
     ...(sourceConnections.my ? ['my-vocabee'] : []),
-    ...(sourceConnections.language && ['en', 'de'].includes(language) ? [language] : [])
+    ...selectedSourceIds
   ];
 }
 
@@ -68,23 +73,30 @@ export function readCatalogFilters() {
 
   try {
     const saved = JSON.parse(localStorage.getItem(CATALOG_FILTERS_KEY) || '{}');
-    const isMigrated = saved.version === CATALOG_FILTERS_VERSION;
+    const selectedSourceLanguage = [
+      ...Object.keys(CATALOG_SOURCES),
+      'all',
+      'my-vocabee'
+    ].includes(saved.selectedSourceLanguage)
+      || String(saved.selectedSourceLanguage || '').startsWith('custom-dictionary-')
+      ? saved.selectedSourceLanguage
+      : defaults.selectedSourceLanguage;
+    const sourceCategories = Array.isArray(saved.sourceCategories)
+      ? saved.sourceCategories.filter((category) => availableCategories.has(category))
+      : [];
+
     return {
-      catalogView: ['words', 'phrases'].includes(saved.catalogView) ? saved.catalogView : defaults.catalogView,
-      selectedSourceLanguage: isMigrated
-        && ([...Object.keys(CATALOG_SOURCES), 'all'].includes(saved.selectedSourceLanguage)
-          || String(saved.selectedSourceLanguage || '').startsWith('custom-dictionary-'))
-        ? saved.selectedSourceLanguage
-        : defaults.selectedSourceLanguage,
+      catalogView: sourceCategories.length > 0
+        ? 'phrases'
+        : ['words', 'phrases'].includes(saved.catalogView) ? saved.catalogView : defaults.catalogView,
+      selectedSourceLanguage,
       sourceLevels: Array.isArray(saved.sourceLevels)
         ? saved.sourceLevels.filter((level) => availableLevels.includes(level))
         : defaults.sourceLevels,
       sourceVerbTypes: Array.isArray(saved.sourceVerbTypes)
         ? saved.sourceVerbTypes.filter((type) => availableVerbTypes.includes(type))
         : defaults.sourceVerbTypes,
-      sourceCategories: Array.isArray(saved.sourceCategories)
-        ? saved.sourceCategories.filter((category) => availableCategories.has(category))
-        : [],
+      sourceCategories,
       progressViews: Array.isArray(saved.progressViews)
         ? saved.progressViews.filter((view) => progressViews.includes(view))
         : saved.progressView === 'all'

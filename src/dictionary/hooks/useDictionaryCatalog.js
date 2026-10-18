@@ -28,6 +28,7 @@ import {
   readCatalogFilters,
   readSourceConnections,
   readStoredObject,
+  CATALOG_FILTERS_VERSION,
   CATALOG_FILTERS_KEY,
   DICTIONARY_STATS_KEY,
   SOURCE_CONNECTIONS_KEY
@@ -35,15 +36,15 @@ import {
 
 export function useDictionaryCatalog() {
   const [initialFilters] = useState(readCatalogFilters);
-  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(null);
+  const [selectedSourceLanguage, setSelectedSourceLanguageState] = useState(null);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogError, setCatalogError] = useState('');
-  const [sourceLevels, setSourceLevels] = useState(initialFilters.sourceLevels);
-  const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
-  const [sourceCategories, setSourceCategories] = useState(initialFilters.sourceCategories);
-  const [progressViews, setProgressViews] = useState(initialFilters.progressViews);
+  const [sourceLevels, setSourceLevelsState] = useState(initialFilters.sourceLevels);
+  const [sourceVerbTypes, setSourceVerbTypesState] = useState(initialFilters.sourceVerbTypes);
+  const [sourceCategories, setSourceCategoriesState] = useState(initialFilters.sourceCategories);
+  const [progressViews, setProgressViewsState] = useState(initialFilters.progressViews);
   const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
-  const [catalogView, setCatalogView] = useState(initialFilters.catalogView);
+  const [catalogView, setCatalogViewState] = useState(initialFilters.catalogView);
   const [importStatus, setImportStatus] = useState('');
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
@@ -52,6 +53,52 @@ export function useDictionaryCatalog() {
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readStoredObject(LEARNED_ENTRIES_KEY, true)
   ));
+  const persistedFiltersRef = useRef({
+    catalogView: initialFilters.catalogView,
+    selectedSourceLanguage: initialFilters.selectedSourceLanguage,
+    sourceLevels: initialFilters.sourceLevels,
+    sourceVerbTypes: initialFilters.sourceVerbTypes,
+    sourceCategories: initialFilters.sourceCategories,
+    progressViews: initialFilters.progressViews
+  });
+
+  function updateFilter(name, value) {
+    const currentFilters = persistedFiltersRef.current;
+    const nextValue = typeof value === 'function' ? value(currentFilters[name]) : value;
+    const persistedValue = name === 'selectedSourceLanguage'
+      && nextValue === null
+      && catalogLoading
+      ? currentFilters[name]
+      : nextValue;
+    const nextFilters = { ...currentFilters, [name]: persistedValue };
+    persistedFiltersRef.current = nextFilters;
+
+    const stateSetters = {
+      catalogView: setCatalogViewState,
+      selectedSourceLanguage: setSelectedSourceLanguageState,
+      sourceLevels: setSourceLevelsState,
+      sourceVerbTypes: setSourceVerbTypesState,
+      sourceCategories: setSourceCategoriesState,
+      progressViews: setProgressViewsState
+    };
+    stateSetters[name](nextValue);
+
+    try {
+      localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
+        version: CATALOG_FILTERS_VERSION,
+        ...nextFilters
+      }));
+    } catch (error) {
+      console.warn('Vocabee: unable to save dictionary filters.', error);
+    }
+  }
+
+  function setCatalogView(value) { updateFilter('catalogView', value); }
+  function setSelectedSourceLanguage(value) { updateFilter('selectedSourceLanguage', value); }
+  function setSourceLevels(value) { updateFilter('sourceLevels', value); }
+  function setSourceVerbTypes(value) { updateFilter('sourceVerbTypes', value); }
+  function setSourceCategories(value) { updateFilter('sourceCategories', value); }
+  function setProgressViews(value) { updateFilter('progressViews', value); }
 
   useEffect(() => {
     let active = true;
@@ -105,7 +152,7 @@ export function useDictionaryCatalog() {
         const preferredLanguage = initialFilters.selectedSourceLanguage;
         const loadedLanguages = ['en', 'de'].filter((language) => dictionaries[language]);
         setSelectedSourceLanguage(
-          loadedLanguages.includes(preferredLanguage)
+          Object.prototype.hasOwnProperty.call(dictionaries, preferredLanguage)
             ? preferredLanguage
             : loadedLanguages[0] || null
         );
@@ -203,15 +250,23 @@ export function useDictionaryCatalog() {
   useEffect(() => {
     if (catalogLoading) return;
 
+    // Do not let the first post-load render replace persisted filters with
+    // transient state from catalog initialization.
+    const filters = {
+      catalogView,
+      selectedSourceLanguage: selectedSourceLanguage
+        ?? persistedFiltersRef.current.selectedSourceLanguage,
+      sourceLevels,
+      sourceVerbTypes,
+      sourceCategories,
+      progressViews
+    };
+    persistedFiltersRef.current = filters;
+
     try {
       localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
         version: CATALOG_FILTERS_VERSION,
-        catalogView,
-        selectedSourceLanguage,
-        sourceLevels,
-        sourceVerbTypes,
-        sourceCategories,
-        progressViews
+        ...filters
       }));
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
