@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { deleteExtensionIndexedDatabase, getExtensionIndexedDatabases } from '../../data/storage.js';
 import styles from './DatabaseManager.module.css';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function DatabaseManager() {
-  const t = useInterfaceText();
   const [databases, setDatabases] = useState([]);
   const [selectedDatabase, setSelectedDatabase] = useState('');
   const [status, setStatus] = useState('Проверяю IndexedDB…');
@@ -30,7 +28,7 @@ export function DatabaseManager() {
         value: `page:${name}`,
         name,
         source: 'page',
-        label: `${name} · ${t('текущий сайт')}`
+        label: `${name} · текущий сайт`
       }));
       let extensionList = [];
       let extensionError = '';
@@ -48,7 +46,7 @@ export function DatabaseManager() {
             ...databaseOptions
           ];
         } catch (error) {
-          extensionError = ` ${t('Не удалось проверить IndexedDB расширения: ')}${error.message}`;
+          extensionError = ` Не удалось проверить IndexedDB расширения: ${error.message}`;
         }
       } else if (isExtensionPage) {
         databaseOptions = localList.map((name) => ({
@@ -66,9 +64,9 @@ export function DatabaseManager() {
           : databaseOptions[0]?.value || ''
       ));
       const count = isLocalSite ? extensionList.length + localList.length : localList.length;
-      setStatus(`${count ? `${t('Найдено баз: ')}${count}.` : t('В IndexedDB нет баз.')}${extensionError}`);
+      setStatus(`${count ? `Найдено баз: ${count}.` : 'В IndexedDB нет баз.'}${extensionError}`);
     } catch (error) {
-      setStatus(`${t('Не удалось прочитать IndexedDB: ')}${error.message}`);
+      setStatus(`Не удалось прочитать IndexedDB: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -84,7 +82,7 @@ export function DatabaseManager() {
 
     const { name: databaseName, source } = selected;
     setLoading(true);
-    setStatus(`${t('Удаляю базу')} «${databaseName}»…`);
+    setStatus(`Удаляю базу «${databaseName}»…`);
     try {
       if (source === 'extension' && isLocalSite) {
         await deleteExtensionIndexedDatabase(databaseName);
@@ -105,36 +103,36 @@ export function DatabaseManager() {
         detail: { databaseName }
       }));
       await refreshDatabases();
-      setStatus(`${t('База')} «${databaseName}» ${t('удалена')}${source === 'extension' ? t(' из Vocabee') : t(' с сайта')}.`);
+      setStatus(`База «${databaseName}» удалена${source === 'extension' ? ' из Vocabee' : ' с сайта'}.`);
     } catch (error) {
-      setStatus(`${t('Не удалось удалить')} «${databaseName}»: ${error.message}`);
+      setStatus(`Не удалось удалить «${databaseName}»: ${error.message}`);
       setLoading(false);
     }
   }
 
   return (
     <section className={styles.manager} aria-labelledby="database-manager-title">
-      <h2 id="database-manager-title">{t('Базы данных')}</h2>
-      <p>{t('Список IndexedDB текущего контекста: расширения или открытого сайта.')}</p>
+      <h2 id="database-manager-title">Базы данных</h2>
+      <p>Список IndexedDB текущего контекста: расширения или открытого сайта.</p>
       <div className={styles.controls}>
         <select
-          aria-label={t('Выберите базу IndexedDB')}
+          aria-label='Выберите базу IndexedDB'
           value={selectedDatabase}
           onChange={(event) => setSelectedDatabase(event.target.value)}
           disabled={loading || databases.length === 0}
         >
           {databases.length === 0
-            ? <option value="">{t('Базы не найдены')}</option>
+            ? <option value="">Базы не найдены</option>
             : databases.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </select>
-        <button type="button" onClick={refreshDatabases} disabled={loading}>{t('Обновить')}</button>
+        <button type="button" onClick={refreshDatabases} disabled={loading}>Обновить</button>
         <button
           type="button"
           onClick={deleteSelectedDatabase}
           disabled={loading || !selectedDatabase}
-        >{t('Удалить БД')}</button>
+        >Удалить БД</button>
       </div>
-      <p className={styles.status} role="status">{t(status)}</p>
+      <p className={styles.status} role="status">{status}</p>
     </section>
   );
 }

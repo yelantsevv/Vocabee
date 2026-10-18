@@ -1,5 +1,4 @@
 import styles from './DictionaryEntryHeader.module.css';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function DictionaryEntryHeader({
   word,
@@ -10,7 +9,6 @@ export function DictionaryEntryHeader({
   onAddToLearning,
   onSpeakWord
 }) {
-  const t = useInterfaceText();
   return (
     <div className={styles.entryHeader}>
       <div className={styles.entryMain}>
@@ -20,8 +18,8 @@ export function DictionaryEntryHeader({
               <button
                 className={styles.speakWordButton}
                 type="button"
-                aria-label={`${t('Озвучить: ')}${word}`}
-                title={t('Озвучить слово или фразу')}
+                aria-label={`Озвучить: ${word}`}
+                title='Озвучить слово или фразу'
                 data-translation-trigger=""
                 onClick={onSpeakWord}
               >
@@ -42,9 +40,9 @@ export function DictionaryEntryHeader({
             <button
               className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
               type="button"
-              aria-label={`${t('Повысить уровень знания: ')}${word}: ${learningLevel}`}
+              aria-label={`Повысить уровень знания: ${word}: ${learningLevel}`}
               data-translation-trigger=""
-              title={`${t('Повысить уровень знания: ')}${learningLevel}`}
+              title={`Повысить уровень знания: ${learningLevel}`}
               style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / 9 * 360}deg` } : undefined}
               onClick={onAddToLearning}
             >
@@ -55,7 +53,7 @@ export function DictionaryEntryHeader({
           ) : learningLevel === 9 ? (
             <span
               className={styles.learnedMark}
-              aria-label={t('Слово выучено')}
+              aria-label='Слово выучено'
               data-translation-trigger=""
             >✓</span>
           ) : null}

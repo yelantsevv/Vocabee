@@ -7,7 +7,6 @@ import { getCatalogEntryKey, shuffleEntries } from '../../utils/catalogEntries.j
 import { openBrowserExtensionSettings } from '../../data/storage.js';
 import { LearningSessionModal } from '../cards/LearningSessionModal.jsx';
 import { enterMobileFullscreen, exitMobileFullscreen } from '../../utils/mobileFullscreen.js';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 import { FilteredProgressBar } from './FilteredProgressBar.jsx';
 import { DictionaryEntriesList } from './DictionaryEntriesList.jsx';
 import { CatalogFilterPanel } from './CatalogFilterPanel.jsx';
@@ -21,7 +20,6 @@ export function DictionaryCatalogPanel({
   hideTranslationsUntilHover,
   speechVoiceURIs
 }) {
-  const t = useInterfaceText();
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const [showStickyProgress, setShowStickyProgress] = useState(false);
@@ -123,7 +121,7 @@ export function DictionaryCatalogPanel({
   }
 
   return (
-    <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label={t('Каталог словарей')}>
+    <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label='Каталог словарей'>
       <CatalogFilterPanel
         catalog={catalog}
         filtersRef={filtersRef}
@@ -139,22 +137,22 @@ export function DictionaryCatalogPanel({
       )}
 
       {catalogLoading ? (
-        <p className={styles.emptyCatalog}>{t('Проверяем базу словарей…')}</p>
+        <p className={styles.emptyCatalog}>Проверяем базу словарей…</p>
       ) : catalogError ? (
         <div className={styles.emptyCatalog} role="status">
-          <p>{t(catalogError)}</p>
-          <button type="button" onClick={onOpenSettings}>{t('Открыть настройки')}</button>
+          <p>{catalogError}</p>
+          <button type="button" onClick={onOpenSettings}>Открыть настройки</button>
         </div>
       ) : !hasViewableSource ? (
         <div className={styles.emptyCatalog}>
           {hasMyDictionary || loadedLanguages.length ? (
-            <p>{t('Оба источника отключены. Включите нужный словарь кнопками выше.')}</p>
+            <p>Оба источника отключены. Включите нужный словарь кнопками выше.</p>
           ) : (
             <>
-              <p>{t('База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.')}</p>
+              <p>База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.</p>
               <div className={styles.emptyCatalogActions}>
-                <button type="button" onClick={openExtensionSettings}>{t('Установить расширение')}</button>
-                <button type="button" onClick={onOpenSettings}>{t('Перейти в настройки и загрузить базу')}</button>
+                <button type="button" onClick={openExtensionSettings}>Установить расширение</button>
+                <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
               </div>
               {extensionSettingsError && <p role="alert">{extensionSettingsError}</p>}
             </>
@@ -179,7 +177,7 @@ export function DictionaryCatalogPanel({
           type="button"
           onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
         >
-           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} {t('из')} {numberFormat.format(shuffledEntries.length)}
+           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
         </button>
       )}
       </>}

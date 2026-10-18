@@ -7,7 +7,6 @@ import { dictionaryQuickActions } from '../../config/dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 import { DictionaryStats } from '../catalog/DictionaryStats.jsx';
 import { DICTIONARY_THEMES } from '../../utils/settings.js';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function SettingsPanel({
   settings,
@@ -17,7 +16,6 @@ export function SettingsPanel({
   speechLanguage = 'en',
   modal = false
 }) {
-  const t = useInterfaceText();
   const [availableVoices, setAvailableVoices] = useState([]);
 
   useEffect(() => {
@@ -55,16 +53,16 @@ export function SettingsPanel({
     });
 
   return (
-    <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label={t('Настройки')}>
-      <section className={panelStyles.settings} aria-label={t('Настройки Vocabee')}>
+    <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label='Настройки'>
+      <section className={panelStyles.settings} aria-label='Настройки Vocabee'>
         <SettingsActionButtons
           actions={actions}
         />
         <DictionaryStats sources={catalog.availableSources} selectedSourceLanguage={catalog.selectedSourceLanguage} />
-        <section className={panelStyles.fontSizeSettings} aria-label={t('Размер текста')}>
+        <section className={panelStyles.fontSizeSettings} aria-label='Размер текста'>
           <label className={panelStyles.fontSizeControl} htmlFor="content-font-size">
             <span>
-              <strong>{t('Основной текст')}</strong>
+              <strong>Основной текст</strong>
             </span>
             <output htmlFor="content-font-size">{settings.contentFontSize} px</output>
             <input
@@ -79,7 +77,7 @@ export function SettingsPanel({
           </label>
           <label className={panelStyles.fontSizeControl} htmlFor="additional-font-size">
             <span>
-              <strong>{t('Дополнительный текст')}</strong>
+              <strong>Дополнительный текст</strong>
             </span>
             <output htmlFor="additional-font-size">{settings.additionalFontSize} px</output>
             <input
@@ -94,7 +92,7 @@ export function SettingsPanel({
           </label>
         </section>
         <fieldset className={panelStyles.themeSetting}>
-          <legend>{t('Тема приложения')}</legend>
+          <legend>Тема приложения</legend>
           <div className={panelStyles.themeOptions}>
             {DICTIONARY_THEMES.map(({ id, label }) => (
               <label
@@ -110,14 +108,14 @@ export function SettingsPanel({
                   onChange={() => updateSetting('theme', id)}
                 />
                 <span className={panelStyles.themeSwatch} aria-hidden="true" />
-                <span>{t(label)}</span>
+                <span>{label}</span>
               </label>
             ))}
           </div>
         </fieldset>
-        {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{t(catalog.importStatus)}</p>}
+        {catalog.importStatus && <p className={panelStyles.settingsStatus} role="status">{catalog.importStatus}</p>}
         <label className={panelStyles.batchSizeSetting} htmlFor="cards-per-load">
-          <span>{t('Карточек за загрузку')}</span>
+          <span>Карточек за загрузку</span>
           <select
             id="cards-per-load"
             value={settings.cardsPerLoad}
@@ -130,7 +128,7 @@ export function SettingsPanel({
         </label>
         <label className={panelStyles.voiceSetting} htmlFor="dictionary-speech-voice">
           <span>
-            <strong>{t('Голос озвучки')} · {speechLanguage.toUpperCase()}</strong>
+            <strong>Голос озвучки · {speechLanguage.toUpperCase()}</strong>
           </span>
           <select
             id="dictionary-speech-voice"
@@ -140,19 +138,19 @@ export function SettingsPanel({
               [speechLanguage]: event.target.value
             })}
           >
-            <option value="">{t('Автоматический голос')}</option>
+            <option value="">Автоматический голос</option>
             {speechVoiceURI && !selectedVoiceAvailable && (
-              <option value={speechVoiceURI}>{t('Сохранённый голос недоступен')}</option>
+              <option value={speechVoiceURI}>Сохранённый голос недоступен</option>
             )}
             {availableVoices.map((voice) => (
               <option key={voice.voiceURI} value={voice.voiceURI}>
-                {voice.name} · {voice.lang}{voice.default ? ` · ${t('по умолчанию')}` : ''}
+                {voice.name} · {voice.lang}{voice.default ? ' · по умолчанию' : ''}
               </option>
             ))}
           </select>
         </label>
         <label className={panelStyles.toggleSetting} htmlFor="hide-translations-until-hover">
-          <span>{t('Скрывать перевод до наведения')}</span>
+          <span>Скрывать перевод до наведения</span>
           <input
             id="hide-translations-until-hover"
             type="checkbox"
@@ -160,7 +158,7 @@ export function SettingsPanel({
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
           />
         </label>
-        {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{t(settingsStatus)}</p>}
+        {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
         <DatabaseManager />
       </section>
     </section>

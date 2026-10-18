@@ -5,7 +5,6 @@ import { DictionaryCatalogPanel } from './components/catalog/DictionaryCatalogPa
 import { SettingsDialog } from './components/settings/SettingsDialog.jsx';
 import { useDictionaryCatalog } from './hooks/useDictionaryCatalog.js';
 import { enterMobileFullscreen, exitMobileFullscreen } from './utils/mobileFullscreen.js';
-import { InterfaceLanguageProvider } from './i18n/interfaceLanguage.jsx';
 import { useDictionarySettings } from './hooks/useDictionarySettings.js';
 
 export function DictionaryPage() {
@@ -30,7 +29,6 @@ export function DictionaryPage() {
   const catalog = useDictionaryCatalog();
 
   return (
-    <InterfaceLanguageProvider>
     <main className={styles.page} style={pageStyle}>
       <DictionaryCatalogPanel
         catalog={catalog}
@@ -54,6 +52,5 @@ export function DictionaryPage() {
       />
 
     </main>
-    </InterfaceLanguageProvider>
   );
 }

@@ -1,8 +1,6 @@
 import styles from './SettingsActionButtons.module.css';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function SettingsActionButtons({ variant = 'page', firstAction, actions = [], ariaLabel = 'Дополнительные настройки' }) {
-  const t = useInterfaceText();
   const visibleActions = actions;
   return (
     <div
@@ -10,7 +8,7 @@ export function SettingsActionButtons({ variant = 'page', firstAction, actions =
       data-variant={variant}
       data-count={visibleActions.length + Number(Boolean(firstAction))}
       role="group"
-      aria-label={t(ariaLabel)}
+      aria-label={ariaLabel}
     >
       {firstAction}
       {visibleActions.map(({ label, onClick, disabled, checked, active }) => (
@@ -22,8 +20,8 @@ export function SettingsActionButtons({ variant = 'page', firstAction, actions =
           disabled={disabled}
           aria-pressed={active}
         >
-          <span>{t(label)}</span>
-          {checked && <span className={styles.checkmark} aria-label={t('База подключена')}>✓</span>}
+          <span>{label}</span>
+          {checked && <span className={styles.checkmark} aria-label='База подключена'>✓</span>}
         </button>
       ))}
     </div>

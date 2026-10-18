@@ -1,7 +1,6 @@
 import catalogStyles from './DictionaryCatalogPanel.module.css';
 import pageStyles from '../../styles/DictionaryPage.module.css';
 import { DictionaryWordCard } from '../cards/DictionaryWordCard.jsx';
-import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 import { formatVerbForms, getEntryLearningLevel } from '../../utils/dictionaryUtils.js';
 
 export function DictionaryEntriesList({
@@ -16,13 +15,12 @@ export function DictionaryEntriesList({
   onAddToLearning,
   onSpeakWord
 }) {
-  const t = useInterfaceText();
   const visibleEntries = entries.slice(0, visibleCount);
 
   return (
     <section
       className={pageStyles.wordList}
-      aria-label={t(catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря')}
+      aria-label={catalogView === 'phrases' ? 'Фразы' : 'Записи выбранного словаря'}
     >
       <ul>
         {visibleEntries.map((entry) => {
@@ -44,7 +42,7 @@ export function DictionaryEntriesList({
               onSpeakWord={() => onSpeakWord(entry)}
             >
               {entry.examples?.length > 0 && (
-                <section className={catalogStyles.entrySection} aria-label={t('Примеры')}>
+                <section className={catalogStyles.entrySection} aria-label='Примеры'>
                   <ul className={catalogStyles.exampleList}>
                     {entry.examples
                       .filter((example) => (
@@ -68,8 +66,8 @@ export function DictionaryEntriesList({
 
               {(entry.synonyms?.length > 0 || entry.antonyms?.length > 0) && (
                 <div className={catalogStyles.wordRelations}>
-                  {entry.synonyms?.length > 0 && <p><strong>{t('Синонимы:')}</strong> {entry.synonyms.join(', ')}</p>}
-                  {entry.antonyms?.length > 0 && <p><strong>{t('Антонимы:')}</strong> {entry.antonyms.join(', ')}</p>}
+                  {entry.synonyms?.length > 0 && <p><strong>Синонимы:</strong> {entry.synonyms.join(', ')}</p>}
+                  {entry.antonyms?.length > 0 && <p><strong>Антонимы:</strong> {entry.antonyms.join(', ')}</p>}
                 </div>
               )}
             </DictionaryWordCard>
@@ -77,7 +75,7 @@ export function DictionaryEntriesList({
         })}
       </ul>
       {!hasMatches && (
-        <p className={pageStyles.message}>{t('Ничего не найдено. Измените фильтры или поисковый запрос.')}</p>
+        <p className={pageStyles.message}>Ничего не найдено. Измените фильтры или поисковый запрос.</p>
       )}
     </section>
   );
