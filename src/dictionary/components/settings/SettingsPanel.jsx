@@ -200,12 +200,33 @@ export function SettingsPanel({
           </select>
         </label>
         <label className={panelStyles.toggleSetting} htmlFor="hide-translations-until-hover">
-          <span>Скрывать перевод до наведения</span>
+          <span>Скрывать перевод</span>
           <input
             id="hide-translations-until-hover"
             type="checkbox"
             checked={settings.hideTranslationsUntilHover}
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
+          />
+        </label>
+        <label className={panelStyles.batchSizeSetting} htmlFor="examples-per-card">
+          <span>Примеров на карточке</span>
+          <select
+            id="examples-per-card"
+            value={settings.examplesPerCard}
+            onChange={(event) => updateSetting('examplesPerCard', event.target.value)}
+          >
+            {[0, 1, 2, 3].map((count) => (
+              <option key={count} value={count}>{count}</option>
+            ))}
+          </select>
+        </label>
+        <label className={panelStyles.toggleSetting} htmlFor="show-word-relations">
+          <span>Показывать синонимы и антонимы</span>
+          <input
+            id="show-word-relations"
+            type="checkbox"
+            checked={settings.showWordRelations}
+            onChange={(event) => updateSetting('showWordRelations', event.target.checked)}
           />
         </label>
         <DatabaseManager />

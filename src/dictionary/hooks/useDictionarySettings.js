@@ -26,7 +26,9 @@ export const DEFAULT_DICTIONARY_SETTINGS = {
   speechVoiceURIs: DEFAULT_SPEECH_VOICE_URIS,
   theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
-  hideTranslationsUntilHover: true
+  hideTranslationsUntilHover: true,
+  examplesPerCard: 3,
+  showWordRelations: true
 };
 
 function normalizeLoadedSettings(result) {
@@ -42,7 +44,11 @@ function normalizeLoadedSettings(result) {
     cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
       ? result.cardsPerLoad
       : DEFAULT_DICTIONARY_SETTINGS.cardsPerLoad,
-    hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false
+    hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false,
+    examplesPerCard: [0, 1, 2, 3].includes(result.examplesPerCard)
+      ? result.examplesPerCard
+      : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard,
+    showWordRelations: result.showWordRelations !== false
   };
 }
 
@@ -56,7 +62,10 @@ function normalizeSettingValue(key, value) {
     cardsPerLoad: (setting) => Math.min(
       200,
       Math.max(1, Math.round(Number(setting)) || DEFAULT_DICTIONARY_SETTINGS.cardsPerLoad)
-    )
+    ),
+    examplesPerCard: (setting) => [0, 1, 2, 3].includes(Number(setting))
+      ? Number(setting)
+      : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard
   };
   return normalizers[key] ? normalizers[key](value) : value;
 }

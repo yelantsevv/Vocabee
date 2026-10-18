@@ -47,6 +47,8 @@ export function DictionaryCatalogPanel({
   onOpenSettings,
   cardsPerLoad,
   hideTranslationsUntilHover,
+  examplesPerCard,
+  showWordRelations,
   speechVoiceURIs
 }) {
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
@@ -237,6 +239,8 @@ export function DictionaryCatalogPanel({
         learningLevelOverrides={learningLevelOverrides}
         sourceCategories={sourceCategories}
         hideTranslationsUntilHover={hideTranslationsUntilHover}
+        examplesPerCard={examplesPerCard}
+        showWordRelations={showWordRelations}
         onAddToLearning={onAddToLearning}
         onSpeakWord={speakEntry}
       />
@@ -254,6 +258,7 @@ export function DictionaryCatalogPanel({
         <LearningSessionModal
           entries={learningSessionEntries}
           catalogView={catalogView}
+          examplesPerCard={examplesPerCard}
           speechVoiceURIs={speechVoiceURIs}
           getLearningLevel={(entry) => getEntryLearningLevel(
             entry,

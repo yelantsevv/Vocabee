@@ -55,6 +55,8 @@ export function DictionaryPage() {
         onOpenSettings={openSettings}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
+        examplesPerCard={appliedSettings.examplesPerCard}
+        showWordRelations={appliedSettings.showWordRelations}
         speechVoiceURIs={appliedSettings.speechVoiceURIs}
       />
 

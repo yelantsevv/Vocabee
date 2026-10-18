@@ -5,6 +5,7 @@ import { formatVerbForms, MAX_LEARNING_LEVEL } from '../../utils/dictionaryUtils
 export function LearningSessionModal({
   entries,
   catalogView,
+  examplesPerCard = 3,
   speechVoiceURIs = {},
   initialIndex = 0,
   getLearningLevel,
@@ -22,7 +23,7 @@ export function LearningSessionModal({
   const spokenText = String(entry?.word || entry?.examples?.[0]?.phrase || '').trim();
   const learningLevel = entry ? getLearningLevel(entry) : 0;
   const example = entry?.examples?.[0];
-  const translationExamples = entry?.examples?.slice(0, 3) || [];
+  const translationExamples = entry?.examples?.slice(0, examplesPerCard) || [];
 
   useEffect(() => {
     const body = document.body;

@@ -12,6 +12,8 @@ export function DictionaryEntriesList({
   learningLevelOverrides,
   sourceCategories,
   hideTranslationsUntilHover,
+  examplesPerCard,
+  showWordRelations,
   onAddToLearning,
   onSpeakWord
 }) {
@@ -35,7 +37,7 @@ export function DictionaryEntriesList({
             return typeof phrase === 'string'
               && phrase.trim().length > 0
               && (sourceCategories.length === 0 || sourceCategories.includes(example.category));
-          });
+          }).slice(0, examplesPerCard);
           return (
             <DictionaryWordCard
               key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry._entryKey || entry.word}`}
@@ -65,7 +67,7 @@ export function DictionaryEntriesList({
                 </section>
               )}
 
-              {(entry.synonyms?.length > 0 || entry.antonyms?.length > 0) && (
+              {showWordRelations && (entry.synonyms?.length > 0 || entry.antonyms?.length > 0) && (
                 <div className={catalogStyles.wordRelations}>
                   {entry.synonyms?.length > 0 && <p><strong>Синонимы:</strong> {entry.synonyms.join(', ')}</p>}
                   {entry.antonyms?.length > 0 && <p><strong>Антонимы:</strong> {entry.antonyms.join(', ')}</p>}
