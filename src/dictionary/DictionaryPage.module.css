@@ -173,11 +173,18 @@
   stroke-width: 1.7;
 }
 
-.navButton:hover,
 .navButton.active {
   border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 75%, transparent);
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
   color: var(--theme-text, #f3f4fc);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navButton:hover {
+    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 75%, transparent);
+    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    color: var(--theme-text, #f3f4fc);
+  }
 }
 
 .content {

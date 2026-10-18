@@ -178,11 +178,18 @@
   stroke-width: 1.7;
 }
 
-.sourceViewButton:hover,
 .sourceViewButton.selected {
   border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
   color: var(--theme-text, #f3f4fc);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sourceViewButton:hover {
+    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    color: var(--theme-text, #f3f4fc);
+  }
 }
 
 .sourceBadge {
@@ -286,11 +293,18 @@
   transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
-.filterChip:hover,
 .filterChip.selected {
   border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
   color: var(--theme-text, #f3f4fc);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filterChip:hover {
+    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    color: var(--theme-text, #f3f4fc);
+  }
 }
 
 .typeChip {
@@ -404,9 +418,11 @@
   font-weight: 650;
 }
 
-.startLearningButton:hover {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 90%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 36%, transparent);
+@media (hover: hover) and (pointer: fine) {
+  .startLearningButton:hover {
+    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 90%, transparent);
+    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 36%, transparent);
+  }
 }
 
 .startLearningButton:disabled {
@@ -414,11 +430,18 @@
   opacity: 0.45;
 }
 
-.progressButton:hover,
 .progressButton.selected {
   border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
   color: var(--theme-text, #f3f4fc);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .progressButton:hover {
+    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
+    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    color: var(--theme-text, #f3f4fc);
+  }
 }
 
 .phraseMetadata {
