@@ -7,7 +7,8 @@
 
 .dictionaryFilters {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: clamp(12px, 1.5vw, 20px);
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
   border-radius: var(--vocabee-radius-panel);
@@ -44,49 +45,31 @@
 }
 
 .filterLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: clamp(12px, 1.5vw, 20px);
 }
 
 .filterLeftGroup,
 .filterRightGroup {
-  display: grid;
+  display: flex;
   width: 100%;
   min-width: 0;
-  grid-template-rows: auto auto;
-  align-content: stretch;
-  justify-items: center;
+  flex-direction: column;
+  align-items: center;
   gap: 10px;
   padding: 0;
 }
 
 .filterLeftTopRow {
-  display: grid;
+  display: flex;
   width: max-content;
   min-width: 0;
-  grid-template-columns: max-content;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
-  justify-self: center;
+  align-self: center;
   gap: 8px;
-}
-
-.filterLeftBottomRow {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  justify-items: center;
-  gap: 8px;
-}
-
-.filterLeftBottomRow .filterField {
-    width: min(100%, max(calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-source-width) + var(--vocabee-filter-source-width) + 18px),
-        calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + 18px)));
-  max-width: 100%;
 }
 
 .emptyCatalog {
@@ -116,21 +99,21 @@
 }
 
 .sourceViewButtons {
-  display: grid;
+  display: flex;
   width: max-content;
   min-width: max-content;
-  grid-template-columns: repeat(2, var(--vocabee-filter-square-size)) repeat(2, var(--vocabee-filter-source-width));
   gap: 6px;
 }
 
 .sourceViewButton {
-  display: grid;
+  display: flex;
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
   height: var(--vocabee-filter-square-size);
   min-height: var(--vocabee-filter-square-size);
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: var(--vocabee-radius-control);
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
@@ -142,30 +125,15 @@
   transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
 }
 
-.myDictionarySourceButton,
-.languageSourceButton {
-  box-sizing: border-box;
-  width: var(--vocabee-filter-square-size);
-  min-width: var(--vocabee-filter-square-size);
-  height: var(--vocabee-filter-square-size);
-  min-height: var(--vocabee-filter-square-size);
-  flex: 0 0 var(--vocabee-filter-square-size);
-  padding: 0;
-}
-
 .wordsViewButton,
 .phrasesViewButton {
   width: var(--vocabee-filter-source-width);
   min-width: var(--vocabee-filter-source-width);
 }
 
-.mobileCategoryControl,
-.mobileSettingsButton {
+.categoryFilterControl,
+.settingsControlButton {
   display: none;
-}
-
-.desktopSearchControl {
-  display: contents;
 }
 
 .sourceViewButton svg {
@@ -192,55 +160,6 @@
   }
 }
 
-.sourceBadge {
-  display: flex;
-  min-height: var(--vocabee-filter-square-size);
-  align-items: center;
-  color: var(--theme-text-soft, #dce0f1);
-  font-size: 14px;
-  font-weight: 650;
-}
-
-.filterField {
-  display: grid;
-  min-width: 290px;
-  gap: 8px;
-  color: var(--theme-muted, #a5acc4);
-  font-size: calc(13px * var(--vocabee-ui-font-scale, 1));
-}
-
-.filterField select {
-  width: 100%;
-  min-width: 0;
-  min-height: var(--vocabee-filter-square-size);
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
-  border-radius: var(--vocabee-radius-control);
-  background-color: var(--theme-surface-raised, #202640);
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--theme-muted, #aeb5cb) 50%),
-    linear-gradient(135deg, var(--theme-muted, #aeb5cb) 50%, transparent 50%);
-  background-position:
-    calc(100% - 15px) 50%,
-    calc(100% - 10px) 50%;
-  background-repeat: no-repeat;
-  background-size: 5px 5px;
-  color: var(--theme-text, #f6f7ff);
-  cursor: pointer;
-  padding: 0 32px 0 11px;
-  font: inherit;
-  font-size: 14px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.filterField select option {
-  background: var(--theme-surface-raised, #202640);
-  color: var(--theme-text, #f6f7ff);
-}
-
 .filterGroup {
   width: max-content;
   min-width: 0;
@@ -264,10 +183,10 @@
 }
 
 .levelControls>.filterChips {
-  display: grid;
+  display: flex;
   min-width: 0;
   flex: 0 0 auto;
-  grid-template-columns: repeat(4, var(--vocabee-filter-square-size));
+  flex-wrap: nowrap;
   gap: 6px;
 }
 
@@ -277,6 +196,7 @@
   min-width: var(--vocabee-filter-square-size);
   height: var(--vocabee-filter-square-size);
   min-height: var(--vocabee-filter-square-size);
+  flex: 0 0 var(--vocabee-filter-square-size);
   padding: 0;
 }
 
@@ -322,7 +242,7 @@
 }
 
 .typeChip svg,
-.progressButton:not(.settingsButton) svg,
+.progressButton svg,
 .startLearningButton svg {
   display: none;
 }
@@ -342,8 +262,8 @@
 }
 
 .verbTypeChips {
-  display: grid;
-  grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
+  display: flex;
+  width: 100%;
   align-items: stretch;
   gap: 8px;
 }
@@ -353,8 +273,8 @@
 }
 
 .progressFilters {
-  display: grid;
-  grid-template-columns: repeat(4, var(--vocabee-filter-text-width)) var(--vocabee-filter-square-size);
+  display: flex;
+  width: 100%;
   align-items: stretch;
   gap: 6px;
 }
@@ -363,6 +283,7 @@
   display: flex;
   box-sizing: border-box;
   width: var(--vocabee-filter-text-width);
+  flex: 1 1 0;
   min-width: 0;
   min-height: var(--vocabee-filter-square-size);
   align-items: center;
@@ -379,29 +300,11 @@
   line-height: 1.2;
 }
 
-.settingsButton {
-  box-sizing: border-box;
-  width: var(--vocabee-filter-square-size);
-  height: var(--vocabee-filter-square-size);
-  min-height: var(--vocabee-filter-square-size);
-  justify-self: center;
-  padding: 0;
-}
-
-.settingsButton svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
-}
-
 .startLearningButton {
   display: flex;
   box-sizing: border-box;
   width: var(--vocabee-filter-text-width);
+  flex: 1 1 0;
   min-width: 0;
   min-height: var(--vocabee-filter-square-size);
   align-items: center;
@@ -470,7 +373,8 @@
 }
 
 .entrySection {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 9px;
 }
 
@@ -484,7 +388,8 @@
 }
 
 .exampleList {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 7px;
   margin: 0;
   padding: 0;
@@ -492,8 +397,7 @@
 }
 
 .exampleList li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
   align-items: start;
   gap: 12px;
   border-left: 2px solid rgba(67, 213, 176, 0.55);
@@ -504,11 +408,13 @@
 }
 
 .exampleList li span:first-child {
+  flex: 1 1 50%;
   color: var(--theme-text-soft, #e2e5f2);
 }
 
 .exampleTranslation {
   min-width: 0;
+  flex: 1 1 50%;
   color: var(--theme-faint, #929bb7);
   text-align: right;
 }
@@ -518,7 +424,8 @@
 }
 
 .wordRelations {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
   border-top: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
   padding-top: 12px;
@@ -538,13 +445,8 @@
 }
 
 @media (max-width: 1260px) {
-
   .dictionaryFilters {
     padding: 12px;
-  }
-
-  .filterLayout {
-    gap: 8px;
   }
 
   .filterLayout,
@@ -554,9 +456,13 @@
     min-width: 0;
   }
 
+  .filterLayout {
+    gap: 8px;
+  }
+
   .filterLeftGroup,
   .filterRightGroup {
-    justify-items: stretch;
+    align-items: stretch;
     gap: 8px;
   }
 
@@ -564,162 +470,56 @@
   .filterRightGroup > * {
     width: 100%;
     min-width: 0;
-    justify-self: stretch;
+    align-self: stretch;
   }
 
   .filterLeftTopRow {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-  }
-
-  .filterLeftGroup {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    grid-auto-rows: auto;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
   }
 
   .filterLeftGroup .filterGroup {
+    display: flex;
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    justify-self: stretch;
+    flex-direction: column;
+    align-self: stretch;
   }
 
-  .levelControls > .filterChips {
-    display: grid;
-    width: 100%;
-    min-width: 0;
-    gap: 8px;
-  }
-
-  .levelControls .filterChip {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .dictionaryContent.dictionaryContent {
-    --vocabee-filter-text-width: 0px;
-  }
-
-  .sourceViewButtons {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .sourceViewButtons .sourceViewButton {
-    box-sizing: border-box;
-    padding-right: 4px;
-    padding-left: 4px;
-  }
-
-  .sourceViewButtons .myDictionarySourceButton,
-  .sourceViewButtons .languageSourceButton {
-    display: none;
-  }
-
-  .sourceViewButtons .mobileCategoryControl {
-    position: relative;
-    display: grid;
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    height: var(--vocabee-filter-square-size);
-    min-height: var(--vocabee-filter-square-size);
-    padding: 0;
-  }
-
-  .mobileCategoryIcon {
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-  }
-
-  .mobileCategorySelect {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .sourceViewButtons .mobileSettingsButton {
-    display: grid;
-    grid-column: 4;
-    grid-row: 1;
-    width: 100%;
-    min-width: 0;
-    height: var(--vocabee-filter-square-size);
-    min-height: var(--vocabee-filter-square-size);
-    padding: 0;
-  }
-
-  .sourceViewButtons .wordsViewButton {
-    grid-column: 2;
-    grid-row: 1;
-    width: 100%;
-    min-width: 0;
-    display: grid;
-  }
-
-  .sourceViewButtons .phrasesViewButton {
-    grid-column: 3;
-    grid-row: 1;
-    width: 100%;
-    min-width: 0;
-    display: grid;
-  }
-
-  .filterLeftBottomRow,
-  .desktopSearchControl,
-  .progressFilters .desktopSettingsButton {
-    display: none;
-  }
-
-  .filterLeftGroup .filterGroup {
-    box-sizing: border-box;
-    display: grid;
+  .levelControls {
+    display: flex;
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    min-inline-size: 0;
-    justify-self: stretch;
+    flex-direction: column;
   }
 
-  .filterLeftGroup .levelControls {
-    display: grid;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
+  .levelControls > .filterChips,
   .filterLeftGroup .levelControls > .filterChips {
-    display: grid;
+    display: flex;
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    flex: none;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
     gap: 8px;
   }
 
+  .levelControls .filterChip,
   .filterLeftGroup .levelControls .filterChip {
+    display: flex;
     box-sizing: border-box;
-    display: grid;
     width: 100%;
     min-width: 0;
     max-width: 100%;
     height: var(--vocabee-filter-square-size);
     min-height: var(--vocabee-filter-square-size);
-    place-items: center;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
     padding: 0;
     white-space: nowrap;
     font-size: 16px;
@@ -728,62 +528,122 @@
     text-align: center;
   }
 
-  .verbTypeChips {
+  .dictionaryContent.dictionaryContent {
+    --vocabee-filter-text-width: 0px;
+  }
+
+  .sourceViewButtons {
+    display: flex;
+    box-sizing: border-box;
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-width: 0;
     gap: 8px;
   }
 
-  .settingsButton svg {
-    width: 22px;
-    height: 22px;
+  .sourceViewButtons .sourceViewButton {
+    box-sizing: border-box;
+    min-width: 0;
+    flex: 1 1 0;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .sourceViewButtons .categoryFilterControl {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: var(--vocabee-filter-square-size);
+    min-height: var(--vocabee-filter-square-size);
+    order: 1;
+    padding: 0;
+  }
+
+  .categoryFilterIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .categoryFilterSelect {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .sourceViewButtons .settingsControlButton {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    height: var(--vocabee-filter-square-size);
+    min-height: var(--vocabee-filter-square-size);
+    order: 4;
+    padding: 0;
+  }
+
+  .sourceViewButtons .wordsViewButton {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    order: 2;
+  }
+
+  .sourceViewButtons .phrasesViewButton {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    order: 3;
+  }
+
+  .verbTypeChips {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .verbTypeChips .typeChip {
+    flex: 1 1 0;
   }
 
   .progressFilters {
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
   .progressFilters .startLearningButton {
-    grid-column: 4;
-    grid-row: 1;
+    order: 4;
   }
 
   .progressFilters .progressButton[aria-label='Изучаю'] {
-    grid-column: 2;
-    grid-row: 1;
+    order: 2;
   }
 
   .progressFilters .progressButton[aria-label='Изученные'] {
-    grid-column: 3;
-    grid-row: 1;
+    order: 3;
   }
 
   .progressFilters .progressButton[aria-label='Не изученные'] {
-    grid-column: 1;
-    grid-row: 1;
+    order: 1;
   }
 
-  .progressFilters .progressButton {
-    width: 100%;
-    padding: 3px 1px;
-  }
-
+  .progressFilters .progressButton,
   .progressFilters .startLearningButton {
     width: 100%;
+    min-width: 0;
+    flex: 1 1 0;
     padding: 3px 1px;
   }
 
   .exampleList li {
-    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
     gap: 3px;
   }
 
   .exampleTranslation {
     text-align: left;
   }
-
 }
 
 @media (max-width: 1260px) {
@@ -815,16 +675,91 @@
 
 @media (min-width: 1261px) {
   .filterLayout {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(14px, 2vw, 30px);
+    flex-direction: row;
+    align-items: stretch;
+    gap: clamp(16px, 2vw, 28px);
+  }
+
+  .filterLeftGroup,
+  .filterRightGroup {
+    width: 0;
+    min-width: 0;
+    flex: 1 1 50%;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .filterLeftTopRow {
-    grid-template-columns: max-content max-content;
-    gap: 12px;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
+    align-self: stretch;
+    gap: 10px;
   }
 
-  .filterLeftBottomRow .filterField {
-    width: min(100%, calc(var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-source-width) + var(--vocabee-filter-source-width) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + var(--vocabee-filter-square-size) + 48px));
+  .filterRightGroup {
+    box-sizing: border-box;
+    border-left: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 14%, transparent);
+    padding-left: clamp(14px, 1.5vw, 22px);
+  }
+
+  .sourceViewButtons,
+  .levelControls,
+  .levelControls > .filterChips,
+  .verbTypeChips,
+  .progressFilters {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .sourceViewButton,
+  .filterLeftGroup .filterChip,
+  .verbTypeChips .typeChip,
+  .progressFilters .progressButton,
+  .progressFilters .startLearningButton {
+    box-sizing: border-box;
+    width: 0;
+    min-width: 0;
+    flex: 1 1 25%;
+  }
+
+  .levelControls .filterChip {
+    width: 0;
+    min-width: 0;
+    flex: 1 1 25%;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .categoryFilterControl,
+  .settingsControlButton {
+    display: flex;
+  }
+
+  .categoryFilterControl {
+    position: relative;
+  }
+
+  .categoryFilterIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .categoryFilterSelect {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
   }
 }

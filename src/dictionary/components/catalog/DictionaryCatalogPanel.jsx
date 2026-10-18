@@ -16,7 +16,6 @@ import { CatalogFilterPanel } from './CatalogFilterPanel.jsx';
 export function DictionaryCatalogPanel({
   catalog,
   settingsOpen = false,
-  searchLanguage,
   onAddToLearning,
   onOpenSettings,
   onRefreshCards,
@@ -142,7 +141,6 @@ export function DictionaryCatalogPanel({
       <CatalogFilterPanel
         catalog={catalog}
         filtersRef={filtersRef}
-        searchLanguage={searchLanguage}
         progressValue={filteredDictionaryProgress}
         onOpenSettings={onOpenSettings}
         onStartLearning={(entries) => {

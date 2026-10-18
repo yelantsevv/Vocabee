@@ -34,8 +34,8 @@
 }
 
 .fontSizeControl {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
   color: var(--theme-text, #f3f4fc);
@@ -43,6 +43,7 @@
 
 .fontSizeControl > span {
   display: flex;
+  flex: 1 1 auto;
   min-width: 0;
   flex-direction: column;
   gap: 3px;
@@ -60,14 +61,15 @@
 }
 
 .fontSizeControl output {
+  flex: 0 0 auto;
   color: var(--theme-accent-text, #c9baff);
   font-size: calc(var(--vocabee-font-size-small) * var(--vocabee-ui-font-scale, 1));
   font-variant-numeric: tabular-nums;
 }
 
 .fontSizeControl input {
-  grid-column: 1 / -1;
   width: 100%;
+  flex: 1 0 100%;
   accent-color: var(--theme-accent-solid, #a15cff);
   cursor: pointer;
 }
@@ -227,13 +229,14 @@
 }
 
 .themeOptions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .themeOption {
   display: flex;
+  flex: 1 1 calc(50% - 5px);
   min-width: 0;
   min-height: 56px;
   align-items: center;
@@ -289,7 +292,12 @@
   }
 
   .themeOptions {
-    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+
+  .themeOption {
+    width: 100%;
+    flex: 0 0 auto;
   }
 
   .voiceSetting {

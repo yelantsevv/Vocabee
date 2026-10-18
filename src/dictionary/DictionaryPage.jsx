@@ -42,9 +42,6 @@ export function DictionaryPage() {
       <DictionaryCatalogPanel
         catalog={catalog}
         settingsOpen={settingsOpen}
-        searchLanguage={catalog.selectedSourceLanguage || (
-          ['my', 'words', 'phrases'].includes(catalog.catalogView) ? 'my-vocabee' : null
-        )}
         onAddToLearning={catalog.addToLearning}
         onOpenSettings={openSettings}
         onRefreshCards={refreshCards}

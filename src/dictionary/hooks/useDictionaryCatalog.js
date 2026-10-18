@@ -41,7 +41,6 @@ export function useDictionaryCatalog() {
   const [sourceLevels, setSourceLevels] = useState(initialFilters.sourceLevels);
   const [sourceVerbTypes, setSourceVerbTypes] = useState(initialFilters.sourceVerbTypes);
   const [sourceCategories, setSourceCategories] = useState(initialFilters.sourceCategories);
-  const [sourceSearch, setSourceSearch] = useState(initialFilters.sourceSearch);
   const [progressViews, setProgressViews] = useState(initialFilters.progressViews);
   const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
   const [catalogView, setCatalogView] = useState(initialFilters.catalogView);
@@ -210,13 +209,12 @@ export function useDictionaryCatalog() {
         sourceLevels,
         sourceVerbTypes,
         sourceCategories,
-        sourceSearch,
         progressViews
       }));
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
     }
-  }, [catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, sourceSearch, progressViews]);
+  }, [catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, progressViews]);
 
   useEffect(() => {
     try {
@@ -340,7 +338,6 @@ export function useDictionaryCatalog() {
   const sourceEntriesByFilters = useMemo(() => filterCatalogEntries(selectedSourceDictionary, {
     catalogView,
     selectedSourceLanguage,
-    sourceSearch,
     sourceCategories,
     sourceLevels,
     sourceVerbTypes,
@@ -349,7 +346,6 @@ export function useDictionaryCatalog() {
     catalogView,
     selectedSourceDictionary,
     selectedSourceLanguage,
-    sourceSearch,
     sourceCategories,
     sourceLevels,
     sourceVerbTypes,
@@ -514,10 +510,8 @@ export function useDictionaryCatalog() {
     setSourceVerbTypes,
     sourceCategories,
     setSourceCategories,
-    sourceSearch,
     catalogView,
     setCatalogView,
-    setSourceSearch,
     progressViews,
     setProgressViews,
     sourceConnections,

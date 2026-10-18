@@ -63,7 +63,6 @@ export function readCatalogFilters() {
     sourceLevels: ['A1', 'A2', 'B1'],
     sourceVerbTypes: ['irregular', 'phrasal'],
     sourceCategories: [],
-    sourceSearch: '',
     progressViews
   };
 
@@ -86,7 +85,6 @@ export function readCatalogFilters() {
       sourceCategories: Array.isArray(saved.sourceCategories)
         ? saved.sourceCategories.filter((category) => availableCategories.has(category))
         : [],
-      sourceSearch: typeof saved.sourceSearch === 'string' ? saved.sourceSearch : defaults.sourceSearch,
       progressViews: Array.isArray(saved.progressViews)
         ? saved.progressViews.filter((view) => progressViews.includes(view))
         : saved.progressView === 'all'

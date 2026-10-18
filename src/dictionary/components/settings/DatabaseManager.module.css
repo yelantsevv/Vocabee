@@ -1,5 +1,6 @@
 .manager {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   border-top: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 13%, transparent);
   padding: 20px 2px 8px;
@@ -22,9 +23,17 @@
 }
 
 .controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.controls select {
+  flex: 1 1 240px;
+}
+
+.controls button {
+  flex: 0 0 auto;
 }
 
 .controls select,
@@ -60,6 +69,12 @@
 
 @media (max-width: 1260px) {
   .controls {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .controls select,
+  .controls button {
+    width: 100%;
+    flex-basis: auto;
   }
 }

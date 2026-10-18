@@ -47,8 +47,9 @@
   position: fixed;
   z-index: 10000;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow-y: auto;
   background: var(--vocabee-modal-backdrop);
   padding: var(--vocabee-space-6);
@@ -87,11 +88,12 @@
 }
 
 .settingsModalClose {
-  display: grid;
+  display: flex;
   width: 40px;
   height: 40px;
   flex: 0 0 auto;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
@@ -137,10 +139,11 @@
 }
 
 .logo {
-  display: grid;
+  display: flex;
   width: 42px;
   height: 42px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border-radius: 13px;
   background: linear-gradient(140deg, var(--theme-accent-solid, #885bff), #28c9db);
   color: white;
@@ -155,10 +158,11 @@
 }
 
 .navButton {
-  display: grid;
+  display: flex;
   width: 46px;
   height: 46px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
   border-radius: 12px;
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 6%, transparent);
@@ -239,7 +243,8 @@
 }
 
 .word {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   border-bottom: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 13%, transparent);
   padding: 20px 2px 16px;
@@ -280,10 +285,11 @@
 }
 
 .message {
-  display: grid;
+  display: flex;
   min-height: 280px;
   margin: 0;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   padding: 32px;
   color: var(--theme-muted, #a5acc4);
   font-size: 16px;

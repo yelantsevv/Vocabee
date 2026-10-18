@@ -1,17 +1,18 @@
 .entryHeader {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
 }
 
 .entryMain {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
   align-items: center;
   gap: 24px;
 }
 
 .entryWordBlock {
   display: flex;
+  flex: 1 1 50%;
   min-width: 0;
   align-items: center;
   flex-wrap: wrap;
@@ -68,6 +69,7 @@
 
 .entryTranslationBlock {
   display: flex;
+  flex: 1 1 50%;
   min-width: 0;
   min-height: 58px;
   align-items: center;
@@ -77,11 +79,12 @@
 
 .addToLearningButton {
   position: relative;
-  display: grid;
+  display: flex;
   width: 58px;
   height: 58px;
   flex: 0 0 58px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 50%, transparent);
   border-radius: 50%;
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 15%, transparent);
@@ -103,11 +106,12 @@
 }
 
 .learnedMark {
-  display: grid;
+  display: flex;
   width: 58px;
   height: 58px;
   flex: 0 0 58px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(83, 211, 161, 0.4);
   border-radius: 50%;
   background: rgba(83, 211, 161, 0.13);
@@ -119,11 +123,12 @@
 }
 
 .progressCircle {
-  display: grid;
+  display: flex;
   width: 58px;
   height: 58px;
   flex: 0 0 58px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -133,10 +138,11 @@
 }
 
 .progressCircle span {
-  display: grid;
+  display: flex;
   width: 46px;
   height: 46px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background: var(--theme-surface, #171b30);
   color: var(--theme-accent-text, #e2d8ff);
@@ -161,8 +167,14 @@
   }
 
   .entryMain {
-    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
     gap: 10px;
+  }
+
+  .entryWordBlock,
+  .entryTranslationBlock {
+    width: 100%;
+    flex-basis: auto;
   }
 
   .entryTranslationBlock {

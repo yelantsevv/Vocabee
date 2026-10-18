@@ -14,14 +14,15 @@
   position: absolute;
   top: 30px;
   left: 50%;
-  display: grid;
+  display: flex;
   box-sizing: border-box;
   width: var(--square-filter-control, 46px);
   min-width: var(--square-filter-control, 46px);
   height: var(--square-filter-control, 46px);
   min-height: var(--square-filter-control, 46px);
   flex: 0 0 var(--square-filter-control, 46px);
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
   border-radius: 9px;
   background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
