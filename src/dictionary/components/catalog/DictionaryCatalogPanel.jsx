@@ -118,15 +118,14 @@ export function DictionaryCatalogPanel({
     window.speechSynthesis?.cancel();
   }, []);
 
-  function speakEntry(entry) {
-    const text = String(entry?.word || '').trim();
-    if (!text) return;
+  function speakText(text, language) {
+    const spokenText = String(text || '').trim();
+    if (!spokenText) return;
 
     const speechSynthesis = window.speechSynthesis;
     if (!speechSynthesis || !window.SpeechSynthesisUtterance) return;
     speechSynthesis.cancel();
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    const language = entry._catalogLanguage || entry.source_language || selectedSourceLanguage || 'en';
+    const utterance = new window.SpeechSynthesisUtterance(spokenText);
     utterance.lang = language === 'de' ? 'de-DE' : 'en-US';
     const voices = speechSynthesis.getVoices();
     utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURIs?.[language]
@@ -134,6 +133,16 @@ export function DictionaryCatalogPanel({
       || voices.find((voice) => new RegExp(`^${language}(?:-|$)`, 'i').test(voice.lang))
       || null;
     speechSynthesis.speak(utterance);
+  }
+
+  function speakEntry(entry) {
+    const language = entry._catalogLanguage || entry.source_language || selectedSourceLanguage || 'en';
+    speakText(entry?.word, language);
+  }
+
+  function speakExample(text, entry) {
+    const language = entry._catalogLanguage || entry.source_language || selectedSourceLanguage || 'en';
+    speakText(text, language);
   }
 
   useEffect(() => {
@@ -243,6 +252,7 @@ export function DictionaryCatalogPanel({
         showWordRelations={showWordRelations}
         onAddToLearning={onAddToLearning}
         onSpeakWord={speakEntry}
+        onSpeakExample={speakExample}
       />
       {displayedCardCount < shuffledEntries.length && (
         <button

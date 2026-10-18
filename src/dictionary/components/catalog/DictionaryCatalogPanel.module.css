@@ -416,9 +416,23 @@
   overflow-wrap: anywhere;
 }
 
-.exampleList li span:first-child {
+.exampleSpeechButton {
   flex: 1 1 50%;
+  border: 0;
+  background: transparent;
   color: var(--theme-text-soft, #e2e5f2);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exampleSpeechButton:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
+  outline-offset: 2px;
 }
 
 .exampleTranslation {

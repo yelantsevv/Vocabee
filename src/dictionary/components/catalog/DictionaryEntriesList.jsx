@@ -15,7 +15,8 @@ export function DictionaryEntriesList({
   examplesPerCard,
   showWordRelations,
   onAddToLearning,
-  onSpeakWord
+  onSpeakWord,
+  onSpeakExample
 }) {
   const visibleEntries = entries.slice(0, visibleCount);
 
@@ -54,7 +55,13 @@ export function DictionaryEntriesList({
                   <ul className={catalogStyles.exampleList}>
                     {examples.map((example, index) => (
                       <li key={`${example.phrase || example.example}-${index}`}>
-                        <span>{example.phrase || example.example}</span>
+                        <button
+                          className={catalogStyles.exampleSpeechButton}
+                          type="button"
+                          onClick={() => onSpeakExample(example.phrase || example.example, entry)}
+                          aria-label={`Озвучить пример: ${example.phrase || example.example}`}
+                          title="Озвучить пример"
+                        >{example.phrase || example.example}</button>
                         <span
                           className={translationVisible
                             ? catalogStyles.exampleTranslation
