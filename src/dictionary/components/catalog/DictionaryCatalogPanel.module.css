@@ -631,6 +631,17 @@
   }
 }
 
+@media (max-width: 759px) {
+  .exampleList li {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .exampleTranslation {
+    text-align: left;
+  }
+}
+
 @container catalog-filters (max-width: 820px) {
 
   .typeChip,
