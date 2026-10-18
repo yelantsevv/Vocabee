@@ -43,8 +43,10 @@
     },
     {
       "matches": [
-        "http://localhost/dictionary/dictionary.html*",
-        "http://127.0.0.1/dictionary/dictionary.html*"
+        "http://localhost/dictionary",
+        "http://localhost/dictionary/*",
+        "http://127.0.0.1/dictionary",
+        "http://127.0.0.1/dictionary/*"
       ],
       "js": ["content/runtime/dev-bridge.js"],
       "run_at": "document_start"

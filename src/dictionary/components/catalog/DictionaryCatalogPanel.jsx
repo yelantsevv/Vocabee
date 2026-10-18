@@ -4,12 +4,12 @@ import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from '../../styles/DictionaryPage.module.css';
 import { getEntryLearningLevel } from '../../utils/dictionaryUtils.js';
 import { getCatalogEntryKey, shuffleEntries } from '../../utils/catalogEntries.js';
-import { openBrowserExtensionSettings } from '../../data/storage.js';
 import { LearningSessionModal } from '../cards/LearningSessionModal.jsx';
 import { enterMobileFullscreen } from '../../utils/mobileFullscreen.js';
 import { FilteredProgressBar } from './FilteredProgressBar.jsx';
 import { DictionaryEntriesList } from './DictionaryEntriesList.jsx';
 import { CatalogFilterPanel } from './CatalogFilterPanel.jsx';
+import { ExtensionInstallGuide } from './ExtensionInstallGuide.jsx';
 
 function getNextCardSet(entries, currentEntries, visibleCount) {
   const shuffledEntries = shuffleEntries(entries);
@@ -51,7 +51,6 @@ export function DictionaryCatalogPanel({
   showWordRelations,
   speechVoiceURIs
 }) {
-  const [extensionSettingsError, setExtensionSettingsError] = useState('');
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const [showStickyProgress, setShowStickyProgress] = useState(false);
   const filtersRef = useRef(null);
@@ -185,19 +184,10 @@ export function DictionaryCatalogPanel({
     setDisplayedCardCount(cardsPerLoad);
   }, [cardsPerLoad, filteredEntrySignature]);
 
-  async function openExtensionSettings() {
-    setExtensionSettingsError('');
-    try {
-      await openBrowserExtensionSettings();
-    } catch (error) {
-      setExtensionSettingsError(error.message || 'Не удалось открыть настройки расширений.');
-    }
-  }
-
   return (
     <section
       className={clsx(commonStyles.content, styles.dictionaryContent)}
-      aria-label='Каталог словарей'
+      aria-label="Каталог словарей"
       onTouchStart={handlePullStart}
       onTouchEnd={handlePullEnd}
       onTouchCancel={handlePullCancel}
@@ -221,60 +211,80 @@ export function DictionaryCatalogPanel({
       ) : catalogError ? (
         <div className={styles.emptyCatalog} role="status">
           <p>{catalogError}</p>
-          <button type="button" onClick={onOpenSettings}>Открыть настройки</button>
+          <button type="button" onClick={onOpenSettings}>
+            Открыть настройки
+          </button>
         </div>
       ) : !hasViewableSource ? (
         <div className={styles.emptyCatalog}>
           {hasMyDictionary || loadedLanguages.length ? (
-            <p>Оба источника отключены. Включите нужный словарь кнопками выше.</p>
+            <p>
+              Оба источника отключены. Включите нужный словарь кнопками выше.
+            </p>
           ) : (
             <>
-              <p>База словарей пока не загружена. Установите расширение для «Моего словаря» или загрузите EN → RU / DE → RU.</p>
+              <p>
+                Словарь не загружен. В настройках загрузите EN → RU / DE → RU
+                или установите расширение для YouTube.
+              </p>
               <div className={styles.emptyCatalogActions}>
-                <button type="button" onClick={openExtensionSettings}>Установить расширение</button>
-                <button type="button" onClick={onOpenSettings}>Перейти в настройки и загрузить базу</button>
+                <button type="button" onClick={onOpenSettings}>
+                  Перейти в настройки и загрузить словарь
+                </button>
               </div>
-              {extensionSettingsError && <p role="alert">{extensionSettingsError}</p>}
+              <ExtensionInstallGuide />
             </>
           )}
         </div>
-      ) : <>
-      <DictionaryEntriesList
-        entries={shuffledEntries}
-        hasMatches={filteredSourceEntries.length > 0}
-        visibleCount={displayedCardCount}
-        catalogView={catalogView}
-        selectedSourceLanguage={selectedSourceLanguage}
-        learningLevelOverrides={learningLevelOverrides}
-        sourceCategories={sourceCategories}
-        hideTranslationsUntilHover={hideTranslationsUntilHover}
-        examplesPerCard={examplesPerCard}
-        showWordRelations={showWordRelations}
-        onAddToLearning={onAddToLearning}
-        onSpeakWord={speakEntry}
-        onSpeakExample={speakExample}
-      />
-      {displayedCardCount < shuffledEntries.length && (
-        <button
-          className={styles.loadMoreButton}
-          type="button"
-          onClick={() => setDisplayedCardCount((count) => count + cardsPerLoad)}
-        >
-           {numberFormat.format(Math.min(displayedCardCount, shuffledEntries.length))} из {numberFormat.format(shuffledEntries.length)}
-        </button>
+      ) : (
+        <>
+          <DictionaryEntriesList
+            entries={shuffledEntries}
+            hasMatches={filteredSourceEntries.length > 0}
+            visibleCount={displayedCardCount}
+            catalogView={catalogView}
+            selectedSourceLanguage={selectedSourceLanguage}
+            learningLevelOverrides={learningLevelOverrides}
+            sourceCategories={sourceCategories}
+            hideTranslationsUntilHover={hideTranslationsUntilHover}
+            examplesPerCard={examplesPerCard}
+            showWordRelations={showWordRelations}
+            onAddToLearning={onAddToLearning}
+            onSpeakWord={speakEntry}
+            onSpeakExample={speakExample}
+          />
+          {displayedCardCount < shuffledEntries.length && (
+            <button
+              className={styles.loadMoreButton}
+              type="button"
+              onClick={() =>
+                setDisplayedCardCount((count) => count + cardsPerLoad)
+              }
+            >
+              {numberFormat.format(
+                Math.min(displayedCardCount, shuffledEntries.length),
+              )}{" "}
+              из {numberFormat.format(shuffledEntries.length)}
+            </button>
+          )}
+        </>
       )}
-      </>}
       {learningSessionEntries && (
         <LearningSessionModal
           entries={learningSessionEntries}
           catalogView={catalogView}
           examplesPerCard={examplesPerCard}
           speechVoiceURIs={speechVoiceURIs}
-          getLearningLevel={(entry) => getEntryLearningLevel(
-            entry,
-            entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
-            learningLevelOverrides
-          )}
+          getLearningLevel={(entry) =>
+            getEntryLearningLevel(
+              entry,
+              entry._learningSource ||
+                entry._catalogId ||
+                entry._catalogLanguage ||
+                selectedSourceLanguage,
+              learningLevelOverrides,
+            )
+          }
           onSetLearningLevel={setEntryLearningLevel}
           onClose={() => {
             setLearningSessionEntries(null);

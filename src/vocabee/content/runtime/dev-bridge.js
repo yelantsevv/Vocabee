@@ -3,11 +3,13 @@
   const isLocalHost = window.location.protocol === 'http:'
     && window.location.port === '5173'
     && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const isLocalDictionary = isLocalHost
+    && ['/dictionary', '/dictionary/', '/dictionary/dictionary.html'].includes(window.location.pathname);
   const isPublishedDictionary = window.location.protocol === 'https:'
     && window.location.hostname === 'yelantsevv.github.io'
     && ['/Vocabee/', '/Vocabee/index.html'].includes(window.location.pathname);
 
-  if (!(isLocalHost && window.location.pathname === '/dictionary/dictionary.html') && !isPublishedDictionary) {
+  if (!isLocalDictionary && !isPublishedDictionary) {
     return;
   }
 

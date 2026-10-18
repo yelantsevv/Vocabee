@@ -74,21 +74,20 @@ export async function openBrowserExtensionSettings() {
     return;
   }
 
-  let bridgeError;
-  if (['localhost', '127.0.0.1'].includes(window.location.hostname)) {
-    try {
-      await requestExtension('OPEN_EXTENSION_SETTINGS', {}, 2000);
+  try {
+    // Ask the installed extension to open the privileged Chrome page. A website
+    // window.open() may silently create an empty tab instead of navigating there.
+    await requestExtension('OPEN_EXTENSION_SETTINGS', {}, 2000);
+  } catch {
+    // Keep a direct, user initiated fallback for environments where Chrome
+    // allows navigation to its internal pages from a website.
+    const settingsTab = window.open('chrome://extensions/', '_blank');
+    if (settingsTab) {
+      settingsTab.opener = null;
       return;
-    } catch (error) {
-      bridgeError = error;
     }
+    throw new Error('Не удалось открыть страницу расширений. Убедитесь, что Vocabee установлено и включено, либо введите chrome://extensions/ в адресной строке Chrome.');
   }
-
-  const settingsWindow = window.open('chrome://extensions/', '_blank');
-  if (!settingsWindow) {
-    throw new Error(`Не удалось открыть настройки расширений браузера.${bridgeError ? ` ${bridgeError.message}` : ''}`);
-  }
-  settingsWindow.opener = null;
 }
 
 export async function getDictionarySettings(defaults) {
