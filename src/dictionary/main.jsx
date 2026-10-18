@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { DictionaryPage } from './DictionaryPage.jsx';
-import { normalizeDictionaryTheme } from './settings.js';
+import { normalizeDictionaryTheme } from './utils/settings.js';
 
 try {
   const settings = JSON.parse(localStorage.getItem('vocabee-settings') || '{}');

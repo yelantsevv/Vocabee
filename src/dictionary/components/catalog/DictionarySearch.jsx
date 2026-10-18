@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './DictionarySearch.module.css';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 const SEARCH_PLACEHOLDER = 'Поиск слова или перевода';
 

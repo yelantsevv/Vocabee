@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useId, useState } from 'react';
 import { DictionaryEntryHeader } from './DictionaryEntryHeader.jsx';
 import styles from './DictionaryWordCard.module.css';
-import { useInterfaceText } from '../interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function DictionaryWordCard({
   className,

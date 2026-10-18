@@ -1,5 +1,5 @@
 import styles from './DictionaryEntryHeader.module.css';
-import { useInterfaceText } from '../interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function DictionaryEntryHeader({
   word,

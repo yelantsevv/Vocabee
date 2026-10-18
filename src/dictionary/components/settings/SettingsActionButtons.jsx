@@ -1,5 +1,5 @@
 import styles from './SettingsActionButtons.module.css';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function SettingsActionButtons({ variant = 'page', firstAction, actions = [], ariaLabel = 'Дополнительные настройки' }) {
   const t = useInterfaceText();

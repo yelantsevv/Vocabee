@@ -31,9 +31,9 @@
   --vocabee-border-width: 1px;
 
   /* Размеры и эффекты: ширина областей, высота кнопок, тени, размытие и скорость переходов. */
-  --vocabee-content-max-width: 1900px;
+  --vocabee-content-max-width: 1360px;
   --vocabee-settings-max-width: 840px;
-  --vocabee-learning-modal-width: 80vw;
+  --vocabee-learning-modal-width: min(82vw, 1180px);
   --vocabee-learning-modal-height: 90dvh;
   --vocabee-control-height: 42px;
   --vocabee-card-gap: 18px;

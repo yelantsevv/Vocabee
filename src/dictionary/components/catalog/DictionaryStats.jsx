@@ -1,5 +1,5 @@
 import styles from './DictionaryStats.module.css';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 const numberFormat = new Intl.NumberFormat('ru-RU');
 

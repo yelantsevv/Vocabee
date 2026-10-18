@@ -1,131 +1,37 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import phraseCategories from './phrase-categories.json';
 import {
   CATALOG_SOURCES,
   createCustomDictionary as createStoredCustomDictionary,
   readCatalogDictionaries,
   writeCustomDictionary,
   writeCatalogDictionary
-} from './catalogDatabase.js';
-import { deleteMyVocabularyEntry, getMyVocabularyEntries } from './storage.js';
-import { DEFAULT_DICTIONARY_URL, DEFAULT_GERMAN_DICTIONARY_URL } from './dictionaryConfig.js';
+} from '../data/catalogDatabase.js';
+import { getMyVocabularyEntries } from '../data/storage.js';
+import { DEFAULT_DICTIONARY_URL, DEFAULT_GERMAN_DICTIONARY_URL } from '../config/dictionaryConfig.js';
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
   LEARNED_ENTRIES_KEY,
-  matchesVerbType,
   normalizeImportedEntries
-} from './dictionaryUtils.js';
-
-const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
-const CATALOG_FILTERS_VERSION = 4;
-const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
-const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'modal', 'phrasal'];
-const PROGRESS_VIEWS = ['learning', 'learned', 'remaining'];
-const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
-const DICTIONARY_STATS_KEY = 'vocabee-dictionary-stats-v1';
-const DEFAULT_SOURCE_CONNECTIONS = { my: true, language: true };
-const AVAILABLE_CATEGORIES = new Set(phraseCategories.map(({ id }) => id));
-function createMyDictionaryRecord(entries) {
-  if (!entries.length) return null;
-  return {
-    catalogId: 'my-vocabee',
-    databaseName: 'my-vocabee',
-    title: 'Мой словарь',
-    language: entries[0].source_language || 'en',
-    targetLanguage: entries[0].target_language || 'ru',
-    isCustom: true,
-    entries
-  };
-}
-
-function readSourceConnections() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SOURCE_CONNECTIONS_KEY) || '{}');
-    return {
-      my: typeof saved.my === 'boolean' ? saved.my : DEFAULT_SOURCE_CONNECTIONS.my,
-      language: typeof saved.language === 'boolean' ? saved.language : DEFAULT_SOURCE_CONNECTIONS.language
-    };
-  } catch {
-    return DEFAULT_SOURCE_CONNECTIONS;
-  }
-}
-
-function getCatalogSourceIds(language, sourceConnections) {
-  return [
-    ...(sourceConnections.my ? ['my-vocabee'] : []),
-    ...(sourceConnections.language && ['en', 'de'].includes(language) ? [language] : [])
-  ];
-}
-
-function createLearningStats() {
-  return { total: 0, inProgress: 0, learned: 0 };
-}
-
-function addLearningStat(stats, entry, language, overrides) {
-  const level = getEntryLearningLevel(entry, language, overrides);
-  stats.total += 1;
-  if (level === 9) stats.learned += 1;
-  else if (level > 0) stats.inProgress += 1;
-}
-
-function readCatalogFilters() {
-  const defaults = {
-    catalogView: 'words',
-    selectedSourceLanguage: null,
-    sourceLevels: ['A1', 'A2', 'B1'],
-    sourceVerbTypes: ['irregular', 'phrasal'],
-    sourceCategories: [],
-    sourceSearch: '',
-    progressViews: PROGRESS_VIEWS
-  };
-
-  try {
-    const saved = JSON.parse(localStorage.getItem(CATALOG_FILTERS_KEY) || '{}');
-    const isMigrated = saved.version === CATALOG_FILTERS_VERSION;
-    return {
-      catalogView: ['words', 'phrases'].includes(saved.catalogView)
-        ? saved.catalogView
-        : defaults.catalogView,
-      selectedSourceLanguage: isMigrated
-        && ([...Object.keys(CATALOG_SOURCES), 'all'].includes(saved.selectedSourceLanguage)
-          || String(saved.selectedSourceLanguage || '').startsWith('custom-dictionary-'))
-        ? saved.selectedSourceLanguage
-        : defaults.selectedSourceLanguage,
-      sourceLevels: Array.isArray(saved.sourceLevels)
-        ? saved.sourceLevels.filter((level) => AVAILABLE_LEVELS.includes(level))
-        : defaults.sourceLevels,
-      sourceVerbTypes: Array.isArray(saved.sourceVerbTypes)
-        ? saved.sourceVerbTypes.filter((type) => AVAILABLE_VERB_TYPES.includes(type))
-        : defaults.sourceVerbTypes,
-      sourceCategories: Array.isArray(saved.sourceCategories)
-        ? saved.sourceCategories.filter((category) => AVAILABLE_CATEGORIES.has(category))
-        : [],
-      sourceSearch: typeof saved.sourceSearch === 'string' ? saved.sourceSearch : defaults.sourceSearch,
-      progressViews: Array.isArray(saved.progressViews)
-        ? saved.progressViews.filter((view) => PROGRESS_VIEWS.includes(view))
-        : saved.progressView === 'all'
-          ? PROGRESS_VIEWS
-          : PROGRESS_VIEWS.includes(saved.progressView)
-            ? [saved.progressView]
-            : defaults.progressViews
-    };
-  } catch {
-    return defaults;
-  }
-}
-
-function readStoredObject(key, legacyArrayAsLearned = false) {
-  try {
-    const saved = JSON.parse(localStorage.getItem(key) || (legacyArrayAsLearned ? '[]' : '{}'));
-    if (legacyArrayAsLearned && Array.isArray(saved)) {
-      return Object.fromEntries(saved.map((item) => [item, 9]));
-    }
-    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
-  } catch {
-    return {};
-  }
-}
+} from '../utils/dictionaryUtils.js';
+import { filterCatalogEntries } from '../utils/catalogFiltering.js';
+import {
+  filterEntriesByProgress,
+  getAverageProgress,
+  getStudySessionEntries
+} from '../utils/catalogProgress.js';
+import {
+  addLearningStat,
+  createLearningStats,
+  createMyDictionaryRecord,
+  getCatalogSourceIds,
+  readCatalogFilters,
+  readSourceConnections,
+  readStoredObject,
+  CATALOG_FILTERS_KEY,
+  DICTIONARY_STATS_KEY,
+  SOURCE_CONNECTIONS_KEY
+} from '../utils/catalogPreferences.js';
 
 export function useDictionaryCatalog() {
   const [initialFilters] = useState(readCatalogFilters);
@@ -142,7 +48,6 @@ export function useDictionaryCatalog() {
   const [importStatus, setImportStatus] = useState('');
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
-  const importInputRef = useRef(null);
   const catalogMutationRef = useRef(0);
   const [importedDictionaries, setImportedDictionaries] = useState({});
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
@@ -432,39 +337,16 @@ export function useDictionaryCatalog() {
     learningLevelOverrides
   );
 
-  const sourceEntriesByFilters = useMemo(() => {
-    const query = sourceSearch.trim().toLocaleLowerCase();
-    const entries = selectedSourceDictionary.filter((entry) => {
-      const entryLanguage = entry._catalogLanguage || selectedSourceLanguage;
-      const searchableText = [
-        entry.word,
-        ...entry.definitions,
-        ...(entry.synonyms || []),
-        ...(entry.examples || []).flatMap((example) => [
-          example.phrase,
-          example.translation,
-          example.category || ''
-        ])
-      ].join(' ').toLocaleLowerCase();
-      const matchesCategory = catalogView !== 'phrases'
-        || sourceCategories.length === 0
-        || sourceCategories.includes(entry.category);
-
-      const matchesLevel = sourceLevels.length === 0 || sourceLevels.includes(entry.level);
-      const matchesType = entry._isPhrase
-        ? (sourceMetadata[entry._catalogId]?.isCustom && entry.part_of_speech === 'phrase')
-          || sourceVerbTypes.length === 0
-          || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage))
-        : sourceMetadata[entry._catalogId]?.isCustom
-          || entry.part_of_speech === 'phrase'
-          || sourceVerbTypes.length === 0
-          || sourceVerbTypes.some((type) => matchesVerbType(entry, type, entryLanguage));
-      return matchesLevel && matchesType && matchesCategory
-        && (!query || searchableText.includes(query));
-    });
-
-    return entries.sort((a, b) => (a.frequency_rank ?? Infinity) - (b.frequency_rank ?? Infinity));
-  }, [
+  const sourceEntriesByFilters = useMemo(() => filterCatalogEntries(selectedSourceDictionary, {
+    catalogView,
+    selectedSourceLanguage,
+    sourceSearch,
+    sourceCategories,
+    sourceLevels,
+    sourceVerbTypes,
+    sourceMetadata
+  }), [
+    catalogView,
     selectedSourceDictionary,
     selectedSourceLanguage,
     sourceSearch,
@@ -474,49 +356,24 @@ export function useDictionaryCatalog() {
     sourceMetadata
   ]);
 
-  const filteredSourceEntries = useMemo(() => sourceEntriesByFilters.filter((entry) => {
-    const learningLevel = getEntryLearningLevel(
-      entry,
-      entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
-      learningLevelOverrides
-    );
-    const progressCategory = learningLevel === 9
-      ? 'learned'
-      : learningLevel > 0
-        ? 'learning'
-        : 'remaining';
-    return progressViews.length === 0 || progressViews.includes(progressCategory);
-  }), [sourceEntriesByFilters, progressViews, learningLevelOverrides, selectedSourceLanguage]);
+  const filteredSourceEntries = useMemo(() => filterEntriesByProgress(
+    sourceEntriesByFilters,
+    progressViews,
+    selectedSourceLanguage,
+    learningLevelOverrides
+  ), [sourceEntriesByFilters, progressViews, learningLevelOverrides, selectedSourceLanguage]);
   const filteredDictionaryProgress = getAverageProgress(
     filteredSourceEntries,
     selectedSourceLanguage,
     learningLevelOverrides
   );
 
-  const studySessionEntries = useMemo(() => sourceEntriesByFilters
-    .filter((entry) => {
-      const learningLevel = getEntryLearningLevel(
-        entry,
-        entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
-        learningLevelOverrides
-      );
-      const progressCategory = learningLevel === 9
-        ? 'learned'
-        : learningLevel > 0
-          ? 'learning'
-          : 'remaining';
-      return learningLevel < 9
-        && (progressViews.length === 0 || progressViews.includes(progressCategory));
-    })
-    .sort((left, right) => {
-      const leftLevel = getEntryLearningLevel(left, left._learningSource || left._catalogId || left._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
-      const rightLevel = getEntryLearningLevel(right, right._learningSource || right._catalogId || right._catalogLanguage || selectedSourceLanguage, learningLevelOverrides);
-      const leftInProgress = leftLevel > 0 ? 0 : 1;
-      const rightInProgress = rightLevel > 0 ? 0 : 1;
-      return leftInProgress - rightInProgress
-        || leftLevel - rightLevel
-        || (left.frequency_rank ?? Infinity) - (right.frequency_rank ?? Infinity);
-    }), [sourceEntriesByFilters, learningLevelOverrides, selectedSourceLanguage, progressViews]);
+  const studySessionEntries = useMemo(() => getStudySessionEntries(
+    sourceEntriesByFilters,
+    progressViews,
+    selectedSourceLanguage,
+    learningLevelOverrides
+  ), [sourceEntriesByFilters, learningLevelOverrides, selectedSourceLanguage, progressViews]);
 
   async function saveImportedDictionary(payload, sourceName, forcedLanguage) {
     const declaredLanguage = [
@@ -572,19 +429,6 @@ export function useDictionaryCatalog() {
     setImportedDictionaries(nextDictionaries);
     setSelectedSourceLanguage(language);
     setImportStatus(`Импортировано записей: ${importedEntries.length}.`);
-  }
-
-  async function importDictionaryFile(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      await saveImportedDictionary(JSON.parse(await file.text()), file.name);
-    } catch (error) {
-      setImportStatus(`Не удалось импортировать базу: ${error.message}`);
-    } finally {
-      event.target.value = '';
-    }
   }
 
   async function importDictionaryFromUrl(language = 'en') {
@@ -658,50 +502,6 @@ export function useDictionaryCatalog() {
     updateEntryLearningLevel(entry, () => level);
   }
 
-  async function deleteDictionaryEntry(entry) {
-    const sourceId = entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
-    const metadata = sourceMetadata[sourceId];
-    if (!metadata) throw new Error('Не удалось определить словарь для удаления слова.');
-
-    if (sourceId === 'my-vocabee') {
-      const removed = await deleteMyVocabularyEntry({
-        word: entry.word,
-        sourceLang: entry.source_language || metadata.language,
-        targetLang: entry.target_language || metadata.targetLanguage || 'ru'
-      });
-      if (!removed) return false;
-    } else {
-      const normalizedWord = entry.word.toLocaleLowerCase(metadata.language || 'en');
-      const entries = importedDictionaries[sourceId] || [];
-      const nextEntries = entries.filter((candidate) => (
-        candidate.word.toLocaleLowerCase(metadata.language || 'en') !== normalizedWord
-      ));
-      if (nextEntries.length === entries.length) return false;
-
-      if (metadata.isCustom) {
-        await writeCustomDictionary({ ...metadata, catalogId: sourceId, entries: nextEntries });
-      } else if (sourceId === 'en' || sourceId === 'de') {
-        await writeCatalogDictionary(sourceId, nextEntries);
-      } else {
-        throw new Error('Удаление не поддерживается для этого словаря.');
-      }
-
-      catalogMutationRef.current += 1;
-      setImportedDictionaries((current) => ({ ...current, [sourceId]: nextEntries }));
-    }
-
-    const learningSource = entry._learningSource || sourceId;
-    const learningKey = getLearnedEntryKey(learningSource, entry.word);
-    setLearningLevelOverrides((current) => {
-      if (!(learningKey in current)) return current;
-      const next = { ...current };
-      delete next[learningKey];
-      localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
-      return next;
-    });
-    return true;
-  }
-
   return {
     selectedSourceLanguage,
     setSelectedSourceLanguage,
@@ -725,8 +525,6 @@ export function useDictionaryCatalog() {
     importStatus,
     sourceMetadata,
     createCustomDictionary,
-    importInputRef,
-    importDictionaryFile,
     importDictionaryFromUrl,
     remoteImportLoading,
     learningLevelOverrides,
@@ -738,15 +536,7 @@ export function useDictionaryCatalog() {
     levelLearningProgress,
     filteredSourceEntries,
     addToLearning,
-    setEntryLearningLevel,
-    deleteDictionaryEntry
+    setEntryLearningLevel
   };
 }
 
-function getAverageProgress(entries, language, overrides) {
-  if (!entries.length) return 0;
-  const total = entries.reduce((sum, entry) => (
-    sum + getEntryLearningLevel(entry, entry._learningSource || entry._catalogId || entry._catalogLanguage || language, overrides)
-  ), 0);
-  return Math.round(total / (entries.length * 9) * 100);
-}

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
 import entryHeaderStyles from './DictionaryEntryHeader.module.css';
-import { useInterfaceText } from '../interfaceLanguage.jsx';
-import { formatVerbForms } from '../dictionaryUtils.js';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
+import { formatVerbForms } from '../../utils/dictionaryUtils.js';
 
 export function LearningSessionModal({
   entries,

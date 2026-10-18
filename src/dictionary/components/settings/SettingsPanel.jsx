@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import styles from './DictionaryPage.module.css';
+import styles from '../../styles/DictionaryPage.module.css';
 import panelStyles from './SettingsPanel.module.css';
 import { SettingsActionButtons } from './SettingsActionButtons.jsx';
-import { dictionaryQuickActions } from './dictionaryQuickActions.js';
+import { dictionaryQuickActions } from '../../config/dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
-import { DictionaryStats } from './DictionaryStats.jsx';
-import { DICTIONARY_THEMES } from './settings.js';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { DictionaryStats } from '../catalog/DictionaryStats.jsx';
+import { DICTIONARY_THEMES } from '../../utils/settings.js';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function SettingsPanel({
   settings,

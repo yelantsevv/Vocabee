@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './RefreshCardsButton.module.css';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));

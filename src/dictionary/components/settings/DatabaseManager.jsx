@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { deleteExtensionIndexedDatabase, getExtensionIndexedDatabases } from './storage.js';
+import { deleteExtensionIndexedDatabase, getExtensionIndexedDatabases } from '../../data/storage.js';
 import styles from './DatabaseManager.module.css';
-import { useInterfaceText } from './interfaceLanguage.jsx';
+import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 
 export function DatabaseManager() {
   const t = useInterfaceText();
