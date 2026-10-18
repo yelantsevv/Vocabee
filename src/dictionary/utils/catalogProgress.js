@@ -1,4 +1,4 @@
-import { getEntryLearningLevel } from './dictionaryUtils.js';
+import { getEntryLearningLevel, MAX_LEARNING_LEVEL } from './dictionaryUtils.js';
 
 function getEntryProgressCategory(entry, selectedSourceLanguage, learningLevelOverrides) {
   const learningLevel = getEntryLearningLevel(
@@ -8,7 +8,7 @@ function getEntryProgressCategory(entry, selectedSourceLanguage, learningLevelOv
   );
   return {
     learningLevel,
-    category: learningLevel === 9 ? 'learned' : learningLevel > 0 ? 'learning' : 'remaining'
+    category: learningLevel === MAX_LEARNING_LEVEL ? 'learned' : learningLevel > 0 ? 'learning' : 'remaining'
   };
 }
 
@@ -17,7 +17,7 @@ export function getAverageProgress(entries, selectedSourceLanguage, learningLeve
   const totalLevel = entries.reduce((total, entry) => (
     total + getEntryProgressCategory(entry, selectedSourceLanguage, learningLevelOverrides).learningLevel
   ), 0);
-  return Math.round(totalLevel / (entries.length * 9) * 100);
+  return Math.round(totalLevel / (entries.length * MAX_LEARNING_LEVEL) * 100);
 }
 
 export function filterEntriesByProgress(entries, progressViews, selectedSourceLanguage, learningLevelOverrides) {
@@ -34,7 +34,7 @@ export function getStudySessionEntries(entries, progressViews, selectedSourceLan
       ...getEntryProgressCategory(entry, selectedSourceLanguage, learningLevelOverrides)
     }))
     .filter(({ learningLevel, category }) => (
-      learningLevel < 9 && (progressViews.length === 0 || progressViews.includes(category))
+      learningLevel < MAX_LEARNING_LEVEL && (progressViews.length === 0 || progressViews.includes(category))
     ))
     .sort((first, second) => {
       const firstInProgress = first.learningLevel > 0 ? 0 : 1;

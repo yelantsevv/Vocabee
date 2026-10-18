@@ -1,5 +1,8 @@
 export const LEARNED_ENTRIES_KEY = 'vocabee-learned-source-entries';
 export const IMPORTED_DICTIONARIES_KEY = 'vocabee-imported-dictionaries-v1';
+export const MAX_LEARNING_LEVEL = 3;
+export const LEARNING_LEVEL_SCALE_VERSION = 4;
+export const LEARNING_LEVEL_SCALE_KEY = 'vocabee-learning-level-scale';
 
 const VALID_PARTS_OF_SPEECH = new Set([
   'noun', 'verb', 'r-verb', 'i-verb', 'm-verb', 'ph-verb',
@@ -12,9 +15,15 @@ export function getLearnedEntryKey(language, word) {
   return `${language}:${word.toLocaleLowerCase()}`;
 }
 
+export function normalizeLearningLevel(level) {
+  if (!Number.isInteger(level) || level <= 0) return 0;
+  if (level <= MAX_LEARNING_LEVEL) return level;
+  return Math.min(MAX_LEARNING_LEVEL, Math.ceil(level * MAX_LEARNING_LEVEL / 9));
+}
+
 export function getEntryLearningLevel(entry, language, overrides) {
   const override = overrides[getLearnedEntryKey(language, entry.word)];
-  return Number.isInteger(override) ? override : entry.learning_level ?? 0;
+  return normalizeLearningLevel(Number.isInteger(override) ? override : entry.learning_level ?? 0);
 }
 
 export function normalizeImportedEntries(payload) {
@@ -43,7 +52,7 @@ export function normalizeImportedEntries(payload) {
           ? entry.part_of_speech
           : 'verb',
       level: VALID_CEFR_LEVELS.has(entry.level) ? entry.level : 'A1',
-      learning_level: entry.learning_level ?? 0,
+      learning_level: normalizeLearningLevel(entry.learning_level ?? 0),
       frequency_rank: Number.isFinite(entry.frequency_rank) ? entry.frequency_rank : 10000 + index,
       definitions: entry.definitions,
       ...(typeof entry.is_irregular === 'boolean' ? { is_irregular: entry.is_irregular } : {}),

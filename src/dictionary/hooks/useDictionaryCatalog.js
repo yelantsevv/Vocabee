@@ -12,6 +12,7 @@ import {
   getEntryLearningLevel,
   getLearnedEntryKey,
   LEARNED_ENTRIES_KEY,
+  MAX_LEARNING_LEVEL,
   normalizeImportedEntries
 } from '../utils/dictionaryUtils.js';
 import { filterCatalogEntries } from '../utils/catalogFiltering.js';
@@ -25,6 +26,7 @@ import {
   createLearningStats,
   createMyDictionaryRecord,
   getCatalogSourceIds,
+  readLearningLevelOverrides,
   readCatalogFilters,
   readSourceConnections,
   readStoredObject,
@@ -51,7 +53,7 @@ export function useDictionaryCatalog() {
   const catalogMutationRef = useRef(0);
   const [importedDictionaries, setImportedDictionaries] = useState({});
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
-    readStoredObject(LEARNED_ENTRIES_KEY, true)
+    readLearningLevelOverrides()
   ));
   const persistedFiltersRef = useRef({
     catalogView: initialFilters.catalogView,
@@ -523,7 +525,7 @@ export function useDictionaryCatalog() {
     const key = getLearnedEntryKey(learningSource, entry.word);
     setLearningLevelOverrides((current) => {
       const currentLevel = getEntryLearningLevel(entry, learningSource, current);
-      const nextLevel = Math.max(0, Math.min(9, getNextLevel(currentLevel)));
+      const nextLevel = Math.max(0, Math.min(MAX_LEARNING_LEVEL, getNextLevel(currentLevel)));
       if (nextLevel === currentLevel) return current;
       const next = { ...current };
       if (nextLevel === (entry.learning_level ?? 0)) delete next[key];

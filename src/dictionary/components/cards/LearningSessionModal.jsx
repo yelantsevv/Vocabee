@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
-import { formatVerbForms } from '../../utils/dictionaryUtils.js';
+import { formatVerbForms, MAX_LEARNING_LEVEL } from '../../utils/dictionaryUtils.js';
 
 export function LearningSessionModal({
   entries,
@@ -211,9 +211,9 @@ export function LearningSessionModal({
             <button
               className={styles.learnedButton}
               type="button"
-              onClick={() => rateAndContinue(9)}
-              disabled={learningLevel === 9}
-            >{learningLevel === 9 ? '✓ Изучено' : '✓  Изученное'}</button>
+              onClick={() => rateAndContinue(MAX_LEARNING_LEVEL)}
+              disabled={learningLevel === MAX_LEARNING_LEVEL}
+            >{learningLevel === MAX_LEARNING_LEVEL ? '✓ Изучено' : '✓  Изученное'}</button>
             <button className={styles.closeButton} type="button" onClick={onClose} aria-label='Закрыть изучение'>
               <span className={styles.closeSymbol} aria-hidden="true">×</span>
               <span className={styles.closeLabel}>Закрыть</span>

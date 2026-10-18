@@ -3,10 +3,8 @@ import styles from './DictionaryEntryHeader.module.css';
 export function DictionaryEntryHeader({
   word,
   translation,
-  learningLevel,
   forms,
   translationVisible = false,
-  onAddToLearning,
   onSpeakWord
 }) {
   return (
@@ -36,27 +34,6 @@ export function DictionaryEntryHeader({
               : `${styles.entryTranslation} ${styles.entryTranslationHidden}`}
             data-translation-hidden={!translationVisible || undefined}
           >{translation}</p>
-          {learningLevel < 9 && onAddToLearning ? (
-            <button
-              className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
-              type="button"
-              aria-label={`Повысить уровень знания: ${word}: ${learningLevel}`}
-              data-translation-trigger=""
-              title={`Повысить уровень знания: ${learningLevel}`}
-              style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / 9 * 360}deg` } : undefined}
-              onClick={onAddToLearning}
-            >
-              {learningLevel === 0
-                ? <span aria-hidden="true">+</span>
-                : <span>{learningLevel}</span>}
-            </button>
-          ) : learningLevel === 9 ? (
-            <span
-              className={styles.learnedMark}
-              aria-label='Слово выучено'
-              data-translation-trigger=""
-            >✓</span>
-          ) : null}
         </div>
       </div>
     </div>

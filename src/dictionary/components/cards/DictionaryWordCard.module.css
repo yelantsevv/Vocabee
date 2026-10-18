@@ -49,6 +49,74 @@
   pointer-events: auto;
 }
 
+.addToLearningButton,
+.progressCircle,
+.learnedMark {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.addToLearningButton {
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 50%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 15%, transparent);
+  color: var(--theme-accent-text, #e2d8ff);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--vocabee-motion-fast) ease, border-color var(--vocabee-motion-fast) ease;
+}
+
+.addToLearningButton span {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.addToLearningButton:hover {
+  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 85%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 28%, transparent);
+}
+
+.progressCircle {
+  border: 0;
+  background: conic-gradient(var(--theme-accent-solid, #8b5cf6) var(--progress-angle), color-mix(in srgb, var(--theme-text, #aeb5cb) 15%, transparent) 0);
+  color: inherit;
+  cursor: pointer;
+}
+
+.progressCircle span {
+  display: flex;
+  width: 46px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--theme-surface, #171b30);
+  color: var(--theme-accent-text, #e2d8ff);
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.learnedMark {
+  border: 1px solid rgba(83, 211, 161, 0.4);
+  background: rgba(83, 211, 161, 0.13);
+  color: #78e2ae;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.addToLearningButton:focus-visible,
+.progressCircle:focus-visible {
+  outline: 2px solid var(--theme-accent-text, #d2c4ff);
+  outline-offset: 3px;
+}
+
 .card.revealed [data-translation-hidden="true"] {
   visibility: visible;
 }
@@ -74,5 +142,28 @@
 
   .cardContent {
     gap: var(--vocabee-card-mobile-gap);
+  }
+
+  .addToLearningButton,
+  .progressCircle,
+  .learnedMark {
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .addToLearningButton span {
+    font-size: 22px;
+  }
+
+  .progressCircle span {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .learnedMark {
+    font-size: 17px;
   }
 }

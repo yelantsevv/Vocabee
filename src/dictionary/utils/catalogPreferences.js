@@ -1,6 +1,12 @@
 import phraseCategories from '../data/phrase-categories.json';
 import { CATALOG_SOURCES } from '../data/catalogDatabase.js';
-import { getEntryLearningLevel } from './dictionaryUtils.js';
+import {
+  getEntryLearningLevel,
+  LEARNED_ENTRIES_KEY,
+  LEARNING_LEVEL_SCALE_KEY,
+  LEARNING_LEVEL_SCALE_VERSION,
+  MAX_LEARNING_LEVEL
+} from './dictionaryUtils.js';
 
 export const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
 export const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
@@ -57,8 +63,30 @@ export function createLearningStats() {
 export function addLearningStat(stats, entry, language, overrides) {
   const level = getEntryLearningLevel(entry, language, overrides);
   stats.total += 1;
-  if (level === 9) stats.learned += 1;
+  if (level === MAX_LEARNING_LEVEL) stats.learned += 1;
   else if (level > 0) stats.inProgress += 1;
+}
+
+export function readLearningLevelOverrides() {
+  const overrides = readStoredObject(LEARNED_ENTRIES_KEY, true);
+  try {
+    const savedVersion = Number(localStorage.getItem(LEARNING_LEVEL_SCALE_KEY)) || 1;
+    if (savedVersion >= LEARNING_LEVEL_SCALE_VERSION) return overrides;
+
+    const migrateLevel = (level) => {
+      if (!Number.isInteger(level) || level <= 0) return 0;
+      if (savedVersion === 3) return level >= 2 ? MAX_LEARNING_LEVEL : 1;
+      if (savedVersion === 2) return level >= 5 ? MAX_LEARNING_LEVEL : Math.ceil(level * 2 / 4);
+      return Math.min(MAX_LEARNING_LEVEL, Math.ceil(level * MAX_LEARNING_LEVEL / 9));
+    };
+    const migratedOverrides = Object.fromEntries(Object.entries(overrides)
+      .map(([key, level]) => [key, migrateLevel(level)]));
+    localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(migratedOverrides));
+    localStorage.setItem(LEARNING_LEVEL_SCALE_KEY, String(LEARNING_LEVEL_SCALE_VERSION));
+    return migratedOverrides;
+  } catch {
+    return overrides;
+  }
 }
 
 export function readCatalogFilters() {
