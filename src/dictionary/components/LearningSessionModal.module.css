@@ -40,30 +40,23 @@
 
 .headerActions {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .headerActions .learnedButton,
-.deleteButton {
+.headerActions .closeButton {
   width: auto;
   min-height: 40px;
-  flex: 0 1 auto;
+  flex: 1 1 0;
   padding: 0 12px;
   white-space: nowrap;
 }
 
-.deleteButton:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-
-.deleteError {
-  flex: 0 0 auto;
-  margin: 8px 0 0;
-  color: #ff9da9;
-  font-size: 13px;
+.headerLearningLevel {
+  flex: 0 0 40px;
 }
 
 .headerLearningLevel {
@@ -130,7 +123,7 @@
   max-width: 960px;
   flex: 1 1 auto;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
+  grid-template-rows: minmax(min-content, 1.15fr) minmax(min-content, 1.85fr);
   gap: clamp(12px, 2.5vh, 22px);
   align-self: center;
   overflow: auto;
@@ -151,6 +144,7 @@
 
 .englishBlock {
   width: 100%;
+  min-height: max-content;
   justify-content: center;
   border: 0;
   background: transparent;
@@ -168,6 +162,7 @@
 }
 
 .translationBlock {
+  min-height: max-content;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -312,7 +307,6 @@
   flex: 0 0 auto;
   gap: 0;
   margin-top: auto;
-  padding-top: 18px;
 }
 
 .knowledgeActions {
@@ -333,15 +327,6 @@
   min-height: 56px;
   font-size: 17px;
   border-radius: 0;
-}
-
-.knowledgeActions button::before {
-  position: absolute;
-  right: 0;
-  bottom: 100%;
-  left: 0;
-  height: 200px;
-  content: '';
 }
 
 .knowledgeActions .dontKnowButton {
@@ -415,7 +400,7 @@
   }
 
   .cardContent {
-    grid-template-rows: minmax(0, 1fr) minmax(0, 5fr);
+    grid-template-rows: minmax(min-content, 1.15fr) minmax(min-content, 4.85fr);
     gap: 10px;
     padding: 12px;
   }
@@ -445,16 +430,12 @@
   }
 
   .headerActions .learnedButton,
-  .deleteButton {
+  .headerActions .closeButton {
     min-height: 38px;
     padding: 0 8px;
     font-size: 11px;
     white-space: normal;
     line-height: 1.1;
-  }
-
-  .cardActions {
-    padding-top: 18px;
   }
 
 }
@@ -464,7 +445,7 @@
     display: grid;
     width: 100%;
     max-width: none;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: stretch;
   }
 
@@ -473,23 +454,17 @@
     grid-row: 1;
   }
 
-  .headerActions>.deleteButton {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
   .headerActions>.closeButton {
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1;
   }
 
   .headerActions>.headerLearningLevel {
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 2;
   }
 
   .headerActions .learnedButton,
-  .headerActions .deleteButton,
   .headerActions .closeButton {
     box-sizing: border-box;
     width: 100%;

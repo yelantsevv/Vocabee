@@ -11,15 +11,12 @@ export function LearningSessionModal({
   initialIndex = 0,
   getLearningLevel,
   onSetLearningLevel,
-  onDeleteEntry,
   onClose
 }) {
   const t = useInterfaceText();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [translationVisible, setTranslationVisible] = useState(false);
   const [translationClickArmed, setTranslationClickArmed] = useState(false);
-  const [deleteError, setDeleteError] = useState('');
-  const [deleting, setDeleting] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = useRef(null);
   const touchStartRef = useRef(null);
@@ -90,7 +87,6 @@ export function LearningSessionModal({
       setCurrentIndex(randomIndex);
       setTranslationVisible(false);
       setTranslationClickArmed(false);
-      setDeleteError('');
       return;
     }
 
@@ -111,7 +107,7 @@ export function LearningSessionModal({
   }
 
   function handleTouchEnd(event) {
-    if (!touchStartRef.current || deleting) return;
+    if (!touchStartRef.current) return;
     const touchStart = touchStartRef.current;
     const touch = event.changedTouches[0];
     if (!touch) return;
@@ -144,7 +140,6 @@ export function LearningSessionModal({
     setCurrentIndex(randomIndex);
     setTranslationVisible(false);
     setTranslationClickArmed(false);
-    setDeleteError('');
   }
 
   function playWithGoogleVoice() {
@@ -204,22 +199,6 @@ export function LearningSessionModal({
     }
   }
 
-  async function deleteCurrentEntry() {
-    setDeleting(true);
-    setDeleteError('');
-    try {
-      const removed = await onDeleteEntry(entry);
-      if (!removed) return;
-      setTranslationVisible(false);
-      if (entries.length <= 1) onClose();
-      else setCurrentIndex((index) => Math.min(index, entries.length - 2));
-    } catch (error) {
-      setDeleteError(t(error.message || 'Не удалось удалить слово из словаря.'));
-    } finally {
-      setDeleting(false);
-    }
-  }
-
   return (
     <div className={styles.backdrop} onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose();
@@ -238,13 +217,6 @@ export function LearningSessionModal({
               onClick={() => rateAndContinue(9)}
               disabled={learningLevel === 9}
             >{t(learningLevel === 9 ? '✓ Изучено' : '✓  Изученное')}</button>
-            <button
-              className={`${styles.learnedButton} ${styles.deleteButton}`}
-              type="button"
-              onClick={deleteCurrentEntry}
-              disabled={deleting}
-              aria-label={`${t('Удалить')} ${entry.word}`}
-            >{deleting ? t('Удаление…') : t(catalogView === 'phrases' ? 'Удалить фразу' : 'Удалить слово')}</button>
             <div className={styles.headerLearningLevel}>
               {learningLevel === 9 ? (
                 <span className={entryHeaderStyles.learnedMark} aria-label={t('Слово выучено')}>✓</span>
@@ -348,7 +320,6 @@ export function LearningSessionModal({
             </div>
           </div>
         </div>
-        {deleteError && <p className={styles.deleteError} role="alert">{deleteError}</p>}
       </section>
     </div>
   );
