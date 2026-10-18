@@ -49,7 +49,11 @@ export function CatalogFilterPanel({
                   className={styles.categoryFilterSelect}
                   aria-label='Категории фраз'
                   value={sourceCategories[0] || ''}
-                  onChange={(event) => setSourceCategories(event.target.value ? [event.target.value] : [])}
+                  onChange={(event) => {
+                    const category = event.target.value;
+                    setSourceCategories(category ? [category] : []);
+                    if (category) setCatalogView('phrases');
+                  }}
                 >
                   <option value="">Все категории</option>
                   {phraseCategories.map(({ id, label }) => <option key={id} value={id}>{label}</option>)}
@@ -58,6 +62,7 @@ export function CatalogFilterPanel({
               <button
                 className={clsx(styles.sourceViewButton, styles.wordsViewButton, catalogView === 'words' && styles.selected)}
                 type="button"
+                disabled={sourceCategories.length > 0}
                 aria-label='Слова'
                 title="Слова"
                 aria-pressed={catalogView === 'words'}

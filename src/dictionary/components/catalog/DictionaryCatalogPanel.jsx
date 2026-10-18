@@ -6,10 +6,39 @@ import { getEntryLearningLevel } from '../../utils/dictionaryUtils.js';
 import { getCatalogEntryKey, shuffleEntries } from '../../utils/catalogEntries.js';
 import { openBrowserExtensionSettings } from '../../data/storage.js';
 import { LearningSessionModal } from '../cards/LearningSessionModal.jsx';
-import { enterMobileFullscreen, exitMobileFullscreen } from '../../utils/mobileFullscreen.js';
+import { enterMobileFullscreen } from '../../utils/mobileFullscreen.js';
 import { FilteredProgressBar } from './FilteredProgressBar.jsx';
 import { DictionaryEntriesList } from './DictionaryEntriesList.jsx';
 import { CatalogFilterPanel } from './CatalogFilterPanel.jsx';
+
+function getNextCardSet(entries, currentEntries, visibleCount) {
+  const shuffledEntries = shuffleEntries(entries);
+  if (shuffledEntries.length < 2) return shuffledEntries;
+
+  const pageSize = Math.min(visibleCount, shuffledEntries.length);
+  const currentPage = currentEntries.slice(0, pageSize).map(getCatalogEntryKey);
+  const hasSamePage = (candidate) => {
+    const candidatePage = candidate.slice(0, pageSize).map(getCatalogEntryKey);
+    if (entries.length > pageSize) {
+      const currentKeys = new Set(currentPage);
+      return candidatePage.length === currentKeys.size
+        && candidatePage.every((key) => currentKeys.has(key));
+    }
+    return candidatePage.every((key, index) => key === currentPage[index]);
+  };
+
+  if (!hasSamePage(shuffledEntries)) return shuffledEntries;
+
+  for (let offset = 1; offset < shuffledEntries.length; offset += 1) {
+    const rotatedEntries = [
+      ...shuffledEntries.slice(offset),
+      ...shuffledEntries.slice(0, offset)
+    ];
+    if (!hasSamePage(rotatedEntries)) return rotatedEntries;
+  }
+
+  return shuffledEntries;
+}
 
 export function DictionaryCatalogPanel({
   catalog,
@@ -24,6 +53,7 @@ export function DictionaryCatalogPanel({
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const [showStickyProgress, setShowStickyProgress] = useState(false);
   const filtersRef = useRef(null);
+  const pullStartRef = useRef(null);
   const {
     selectedSourceLanguage,
     catalogView,
@@ -48,6 +78,39 @@ export function DictionaryCatalogPanel({
     || loadedLanguages[0];
   const hasViewableSource = (sourceConnections.my && hasMyDictionary)
     || (sourceConnections.language && Boolean(activeLanguage));
+  const isPageAtTop = () => Math.max(
+    window.scrollY,
+    document.documentElement.scrollTop,
+    document.body.scrollTop
+  ) <= 0;
+
+  function handlePullStart(event) {
+    pullStartRef.current = null;
+    if (learningSessionEntries || !isPageAtTop()) return;
+
+    const touch = event.touches[0];
+    if (!touch) return;
+    pullStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }
+
+  function handlePullEnd(event) {
+    const start = pullStartRef.current;
+    pullStartRef.current = null;
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    const deltaY = touch.clientY - start.y;
+    const deltaX = touch.clientX - start.x;
+    if (deltaY < 36 || Math.abs(deltaX) > Math.max(36, deltaY * 0.8)) return;
+
+    setShuffledEntries((current) => getNextCardSet(filteredSourceEntries, current, cardsPerLoad));
+    setDisplayedCardCount(cardsPerLoad);
+  }
+
+  function handlePullCancel() {
+    pullStartRef.current = null;
+  }
 
   useEffect(() => () => {
     window.speechSynthesis?.cancel();
@@ -121,7 +184,13 @@ export function DictionaryCatalogPanel({
   }
 
   return (
-    <section className={clsx(commonStyles.content, styles.dictionaryContent)} aria-label='Каталог словарей'>
+    <section
+      className={clsx(commonStyles.content, styles.dictionaryContent)}
+      aria-label='Каталог словарей'
+      onTouchStart={handlePullStart}
+      onTouchEnd={handlePullEnd}
+      onTouchCancel={handlePullCancel}
+    >
       <CatalogFilterPanel
         catalog={catalog}
         filtersRef={filtersRef}
@@ -193,7 +262,6 @@ export function DictionaryCatalogPanel({
           )}
           onSetLearningLevel={setEntryLearningLevel}
           onClose={() => {
-            exitMobileFullscreen();
             setLearningSessionEntries(null);
           }}
         />

@@ -153,6 +153,14 @@
   color: var(--theme-text, #f3f4fc);
 }
 
+.sourceViewButton:disabled {
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 2%, transparent);
+  color: var(--theme-faint, #7f879e);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .sourceViewButton:hover {
     border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);

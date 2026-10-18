@@ -201,6 +201,8 @@ export function useDictionaryCatalog() {
   }, []);
 
   useEffect(() => {
+    if (catalogLoading) return;
+
     try {
       localStorage.setItem(CATALOG_FILTERS_KEY, JSON.stringify({
         version: CATALOG_FILTERS_VERSION,
@@ -214,7 +216,7 @@ export function useDictionaryCatalog() {
     } catch (error) {
       console.warn('Vocabee: unable to save dictionary filters.', error);
     }
-  }, [catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, progressViews]);
+  }, [catalogLoading, catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, progressViews]);
 
   useEffect(() => {
     try {

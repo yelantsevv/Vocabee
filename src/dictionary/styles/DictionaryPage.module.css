@@ -5,6 +5,7 @@
 :global(html) {
   min-width: 320px;
   min-height: 100%;
+  overscroll-behavior-y: contain;
   background: var(--theme-page, #101426);
   font-size: var(--vocabee-font-size-body);
 }
@@ -12,6 +13,7 @@
 :global(body) {
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   background:
     radial-gradient(ellipse at 8% 0%, var(--theme-glow-a, color-mix(in srgb, var(--theme-accent, #a95bff) 20%, transparent)), transparent 42%),
@@ -35,11 +37,13 @@
 
 :global(#root) {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .page {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
   flex-direction: column;
 }
 
@@ -312,13 +316,13 @@
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100vh;
-  max-height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border-radius: 0;
   }
 

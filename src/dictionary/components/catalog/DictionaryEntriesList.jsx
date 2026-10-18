@@ -30,6 +30,12 @@ export function DictionaryEntriesList({
             entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,
             learningLevelOverrides
           );
+          const examples = (entry.examples || []).filter((example) => {
+            const phrase = example.phrase || example.example;
+            return typeof phrase === 'string'
+              && phrase.trim().length > 0
+              && (sourceCategories.length === 0 || sourceCategories.includes(example.category));
+          });
           return (
             <DictionaryWordCard
               key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry._entryKey || entry.word}`}
@@ -41,25 +47,20 @@ export function DictionaryEntriesList({
               onAddToLearning={() => onAddToLearning(entry)}
               onSpeakWord={() => onSpeakWord(entry)}
             >
-              {entry.examples?.length > 0 && (
+              {examples.length > 0 && (
                 <section className={catalogStyles.entrySection} aria-label='Примеры'>
                   <ul className={catalogStyles.exampleList}>
-                    {entry.examples
-                      .filter((example) => (
-                        sourceCategories.length === 0
-                        || sourceCategories.includes(example.category)
-                      ))
-                      .map((example, index) => (
-                        <li key={`${example.phrase}-${index}`}>
-                          <span>{example.phrase}</span>
-                          <span
-                            className={translationVisible
-                              ? catalogStyles.exampleTranslation
-                              : `${catalogStyles.exampleTranslation} ${catalogStyles.exampleTranslationHidden}`}
-                            data-translation-hidden={!translationVisible || undefined}
-                          >{example.translation}</span>
-                        </li>
-                      ))}
+                    {examples.map((example, index) => (
+                      <li key={`${example.phrase || example.example}-${index}`}>
+                        <span>{example.phrase || example.example}</span>
+                        <span
+                          className={translationVisible
+                            ? catalogStyles.exampleTranslation
+                            : `${catalogStyles.exampleTranslation} ${catalogStyles.exampleTranslationHidden}`}
+                          data-translation-hidden={!translationVisible || undefined}
+                        >{example.translation}</span>
+                      </li>
+                    ))}
                   </ul>
                 </section>
               )}
