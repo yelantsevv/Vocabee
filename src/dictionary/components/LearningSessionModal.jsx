@@ -104,22 +104,35 @@ export function LearningSessionModal({
       return;
     }
     const touch = event.touches[0];
-    touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+    const scrollContainer = event.target.closest(`.${styles.cardContent}`);
+    touchStartRef.current = touch
+      ? { x: touch.clientX, y: touch.clientY, scrollContainer }
+      : null;
   }
 
   function handleTouchEnd(event) {
     if (!touchStartRef.current || deleting) return;
+    const touchStart = touchStartRef.current;
     const touch = event.changedTouches[0];
     if (!touch) return;
 
-    const deltaX = touch.clientX - touchStartRef.current.x;
-    const deltaY = touch.clientY - touchStartRef.current.y;
+    const deltaX = touch.clientX - touchStart.x;
+    const deltaY = touch.clientY - touchStart.y;
     touchStartRef.current = null;
     const swipeThreshold = 20;
     const swipeLength = Math.hypot(deltaX, deltaY);
     if (swipeLength < swipeThreshold) return;
 
     const angleFromVertical = Math.atan2(Math.abs(deltaX), Math.abs(deltaY)) * (180 / Math.PI);
+    if (angleFromVertical <= 45 && touchStart.scrollContainer) {
+      const { scrollContainer } = touchStart;
+      const maxScrollTop = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      const canScroll = deltaY < 0
+        ? scrollContainer.scrollTop < maxScrollTop - 1
+        : scrollContainer.scrollTop > 1;
+      if (maxScrollTop > 1 && canScroll) return;
+    }
+
     if (angleFromVertical <= 18) {
       onClose();
       return;
