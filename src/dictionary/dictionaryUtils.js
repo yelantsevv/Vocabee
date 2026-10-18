@@ -81,3 +81,17 @@ export function matchesVerbType(entry, type, language) {
   }
   return false;
 }
+
+export function formatVerbForms(entry, separator = ' · ') {
+  const verbType = entry?.part_of_speech || entry?.type;
+  if (!['verb', 'i-verb', 'm-verb', 'ph-verb', 'r-verb', 'phrasal_verb', 'phrasal-verb'].includes(verbType)) {
+    return null;
+  }
+
+  const forms = entry.forms || {};
+  const values = forms.partizip_2
+    ? [forms.present_3sg, forms.past_simple, forms.partizip_2]
+    : [forms.past_simple, forms.past_participle];
+  const availableValues = values.filter((value) => typeof value === 'string' && value.trim());
+  return availableValues.length > 1 ? availableValues.join(separator) : null;
+}

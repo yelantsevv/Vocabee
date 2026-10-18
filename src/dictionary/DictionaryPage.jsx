@@ -12,13 +12,13 @@ import {
   DEFAULT_INTERFACE_FONT_SCALE,
   DEFAULT_CONTENT_FONT_SIZE,
   DEFAULT_ADDITIONAL_FONT_SIZE,
-  DEFAULT_SPEECH_VOICE_URI,
+  DEFAULT_SPEECH_VOICE_URIS,
   normalizeDictionaryTheme,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale,
   normalizeContentFontSize,
   normalizeAdditionalFontSize,
-  normalizeSpeechVoiceURI,
+  normalizeSpeechVoiceURIS,
   normalizeRefreshButtonPosition
 } from './settings.js';
 import { targetLanguages } from './dictionaryUtils.js';
@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS = {
   interfaceFontScale: DEFAULT_INTERFACE_FONT_SCALE,
   contentFontSize: DEFAULT_CONTENT_FONT_SIZE,
   additionalFontSize: DEFAULT_ADDITIONAL_FONT_SIZE,
-  speechVoiceURI: DEFAULT_SPEECH_VOICE_URI,
+  speechVoiceURIs: DEFAULT_SPEECH_VOICE_URIS,
   theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
   hideTranslationsUntilHover: true,
@@ -91,7 +91,7 @@ export function DictionaryPage() {
         interfaceFontScale: normalizeInterfaceFontScale(result.interfaceFontScale),
         contentFontSize: normalizeContentFontSize(result.contentFontSize),
         additionalFontSize: normalizeAdditionalFontSize(result.additionalFontSize),
-        speechVoiceURI: normalizeSpeechVoiceURI(result.speechVoiceURI),
+        speechVoiceURIs: normalizeSpeechVoiceURIS(result.speechVoiceURIs, result.speechVoiceURI),
         theme: normalizeDictionaryTheme(result.theme),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
@@ -118,7 +118,6 @@ export function DictionaryPage() {
       interfaceFontScale: normalizeInterfaceFontScale,
       contentFontSize: normalizeContentFontSize,
       additionalFontSize: normalizeAdditionalFontSize,
-      speechVoiceURI: normalizeSpeechVoiceURI,
       refreshButtonPosition: normalizeRefreshButtonPosition,
       cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
     };
@@ -174,7 +173,7 @@ export function DictionaryPage() {
         onRefreshButtonPositionChange={(position) => updateSetting('refreshButtonPosition', position)}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
-        speechVoiceURI={appliedSettings.speechVoiceURI}
+        speechVoiceURIs={appliedSettings.speechVoiceURIs}
         showRefreshButton={appliedSettings.showRefreshButton}
         refreshVersion={cardRefreshVersion}
       />
@@ -203,6 +202,7 @@ export function DictionaryPage() {
               updateSetting={updateSetting}
               settingsStatus={settingsStatus}
               catalog={catalog}
+              speechLanguage={catalog.availableSources.find(({ id }) => id === catalog.selectedSourceLanguage)?.language === 'de' ? 'de' : 'en'}
               refreshButtonPosition={settings.refreshButtonPosition}
               refreshButtonPositionEditing={refreshButtonPositionEditing}
               onRefreshButtonPositionEditingChange={setRefreshButtonPositionEditing}

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from './DictionaryPage.module.css';
-import { getEntryLearningLevel } from './dictionaryUtils.js';
+import { formatVerbForms, getEntryLearningLevel } from './dictionaryUtils.js';
 import { openBrowserExtensionSettings } from './storage.js';
 import phraseCategories from './phrase-categories.json';
 import { DictionaryWordCard } from './components/DictionaryWordCard.jsx';
@@ -73,7 +73,7 @@ export function DictionaryCatalogPanel({
   onRefreshButtonPositionChange,
   cardsPerLoad,
   hideTranslationsUntilHover,
-  speechVoiceURI,
+  speechVoiceURIs,
   showRefreshButton = true,
   refreshVersion
 }) {
@@ -120,6 +120,7 @@ export function DictionaryCatalogPanel({
   const numberFormat = new Intl.NumberFormat('ru-RU');
   const loadedLanguages = availableSources.filter(({ id }) => ['en', 'de'].includes(id));
   const hasMyDictionary = availableSources.some(({ id }) => id === 'my-vocabee');
+  const isGermanDictionary = selectedSourceLanguage === 'de';
   const activeLanguage = loadedLanguages.find(({ id }) => id === selectedSourceLanguage)
     || loadedLanguages[0];
   const hasViewableSource = (sourceConnections.my && hasMyDictionary)
@@ -137,10 +138,12 @@ export function DictionaryCatalogPanel({
     if (!speechSynthesis || !window.SpeechSynthesisUtterance) return;
     speechSynthesis.cancel();
     const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
+    const language = entry._catalogLanguage || entry.source_language || selectedSourceLanguage || 'en';
+    utterance.lang = language === 'de' ? 'de-DE' : 'en-US';
     const voices = speechSynthesis.getVoices();
-    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURI)
-      || voices.find((voice) => /^en(?:-|$)/i.test(voice.lang))
+    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURIs?.[language]
+      && new RegExp(`^${language}(?:-|$)`, 'i').test(voice.lang))
+      || voices.find((voice) => new RegExp(`^${language}(?:-|$)`, 'i').test(voice.lang))
       || null;
     speechSynthesis.speak(utterance);
   }
@@ -324,21 +327,21 @@ export function DictionaryCatalogPanel({
             <fieldset className={clsx(styles.filterGroup, styles.verbTypeGroup)} aria-label={t(catalogView === 'phrases' ? 'Тип слова — источника фразы' : 'Тип глагола')}>
               <div className={clsx(styles.filterChips, styles.verbTypeChips)}>
                 {[
-                  ['regular', 'Regular', 'Правильные', 'Правил.'],
-                  ['irregular', 'Irregular', 'Неправильные', 'Неправ.'],
-                  ['modal', 'Modal', 'Модальные', 'Модал.'],
-                  ['phrasal', 'Phrasal', 'Фразовые', 'Фразов.']
-                ].map(([type, label, russianLabel, shortLabel]) => (
+                  ['regular', 'Regular', 'Правильные', 'Правил.', 'Слабые', 'Слабые глаголы'],
+                  ['irregular', 'Irregular', 'Неправильные', 'Неправ.', 'Сильные', 'Сильные глаголы'],
+                  ['modal', 'Modal', 'Модальные', 'Модал.', 'Мод.', 'Модальные глаголы'],
+                  ['phrasal', 'Phrasal', 'Фразовые', 'Фразов.', 'Отдел.', 'Отделяемые глаголы']
+                ].map(([type, label, russianLabel, shortLabel, germanShortLabel, germanLabel]) => (
                   <button
                     className={clsx(styles.filterChip, styles.typeChip, sourceVerbTypes.includes(type) && styles.selected)}
                     key={type}
                     type="button"
-                    aria-label={t(russianLabel)}
-                    title={`${t(russianLabel)} · ${label}`}
+                    aria-label={t(isGermanDictionary ? germanLabel : russianLabel)}
+                    title={`${t(isGermanDictionary ? germanLabel : russianLabel)} · ${label}`}
                     aria-pressed={sourceVerbTypes.includes(type)}
                     onClick={() => toggleValue(sourceVerbTypes, setSourceVerbTypes, type)}
                   >
-                    <span>{t(shortLabel)}</span>
+                    <span>{t(isGermanDictionary ? germanShortLabel : shortLabel)}</span>
                   </button>
                 ))}
                 <div className={styles.desktopSearchControl}>
@@ -443,11 +446,7 @@ export function DictionaryCatalogPanel({
                 word={entry.word}
                 translation={entry.definitions.join(' · ')}
                 learningLevel={learningLevel}
-                forms={['verb', 'i-verb', 'm-verb', 'ph-verb', 'r-verb', 'phrasal_verb', 'phrasal-verb']
-                  .includes(entry.part_of_speech)
-                  && entry.forms?.past_simple && entry.forms?.past_participle
-                  ? `${entry.word} - ${entry.forms.past_simple} - ${entry.forms.past_participle}`
-                  : undefined}
+                forms={formatVerbForms(entry, ' - ') || undefined}
                 translationVisible={translationVisible}
                 onAddToLearning={() => onAddToLearning(entry)}
                 onSpeakWord={() => speakEntry(entry)}
@@ -504,7 +503,7 @@ export function DictionaryCatalogPanel({
         <LearningSessionModal
           entries={learningSessionEntries}
           catalogView={catalogView}
-          speechVoiceURI={speechVoiceURI}
+          speechVoiceURIs={speechVoiceURIs}
           getLearningLevel={(entry) => getEntryLearningLevel(
             entry,
             entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage,

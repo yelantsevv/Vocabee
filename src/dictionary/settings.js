@@ -2,7 +2,7 @@ export const DEFAULT_DICTIONARY_FONT_SIZE = 16;
 export const DEFAULT_INTERFACE_FONT_SCALE = 100;
 export const DEFAULT_CONTENT_FONT_SIZE = 30;
 export const DEFAULT_ADDITIONAL_FONT_SIZE = 16;
-export const DEFAULT_SPEECH_VOICE_URI = '';
+export const DEFAULT_SPEECH_VOICE_URIS = { en: '', de: '' };
 export const DICTIONARY_THEMES = [
   { id: 'classic-dark', label: 'Классическая · Тёмная' },
   { id: 'android-light', label: 'Облачная · Светлая' },
@@ -41,8 +41,11 @@ export function normalizeAdditionalFontSize(value) {
   return Math.max(12, Math.min(28, Math.round(parsedValue)));
 }
 
-export function normalizeSpeechVoiceURI(value) {
-  return typeof value === 'string' ? value : DEFAULT_SPEECH_VOICE_URI;
+export function normalizeSpeechVoiceURIS(value, legacyVoiceURI = '') {
+  return {
+    en: typeof value?.en === 'string' ? value.en : (typeof legacyVoiceURI === 'string' ? legacyVoiceURI : ''),
+    de: typeof value?.de === 'string' ? value.de : ''
+  };
 }
 
 export function normalizeRefreshButtonPosition(value) {

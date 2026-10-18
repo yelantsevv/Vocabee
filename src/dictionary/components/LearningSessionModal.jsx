@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
 import entryHeaderStyles from './DictionaryEntryHeader.module.css';
 import { useInterfaceText } from '../interfaceLanguage.jsx';
+import { formatVerbForms } from '../dictionaryUtils.js';
 
 export function LearningSessionModal({
   entries,
   catalogView,
-  speechVoiceURI = '',
+  speechVoiceURIs = {},
   initialIndex = 0,
   getLearningLevel,
   onSetLearningLevel,
@@ -72,10 +73,7 @@ export function LearningSessionModal({
 
   if (!entry) return null;
 
-  const verbTypes = ['verb', 'i-verb', 'm-verb', 'ph-verb', 'r-verb', 'phrasal_verb', 'phrasal-verb'];
-  const forms = verbTypes.includes(entry.type) && entry.forms?.past_simple && entry.forms?.past_participle
-    ? `${entry.word} · ${entry.forms.past_simple} · ${entry.forms.past_participle}`
-    : null;
+  const forms = formatVerbForms(entry);
   function rateAndContinue(nextLevel) {
     onSetLearningLevel(entry, nextLevel);
     setTranslationVisible(false);
@@ -140,7 +138,7 @@ export function LearningSessionModal({
     const parameters = new URLSearchParams({
       client: 'gtx',
       ie: 'UTF-8',
-      tl: 'en',
+      tl: entryLanguage === 'de' ? 'de' : 'en',
       q: spokenText
     });
     const audio = new Audio(`https://translate.googleapis.com/translate_tts?${parameters}`);
@@ -153,7 +151,7 @@ export function LearningSessionModal({
     audio.play().catch(() => setAudioPlaying(false));
   }
 
-  function toggleEnglishAudio() {
+  function toggleSpeechAudio() {
     if (audioPlaying) {
       audioRef.current?.pause();
       if (audioRef.current) audioRef.current.currentTime = 0;
@@ -171,10 +169,11 @@ export function LearningSessionModal({
 
     speechSynthesis.cancel();
     const utterance = new window.SpeechSynthesisUtterance(spokenText);
-    utterance.lang = 'en-US';
+    utterance.lang = entryLanguage === 'de' ? 'de-DE' : 'en-US';
     const voices = speechSynthesis.getVoices();
-    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURI)
-      || voices.find((voice) => /^en(?:-|$)/i.test(voice.lang))
+    utterance.voice = voices.find((voice) => voice.voiceURI === speechVoiceURIs[entryLanguage]
+      && new RegExp(`^${entryLanguage}(?:-|$)`, 'i').test(voice.lang))
+      || voices.find((voice) => new RegExp(`^${entryLanguage}(?:-|$)`, 'i').test(voice.lang))
       || null;
     utterance.onend = () => setAudioPlaying(false);
     utterance.onerror = (event) => {
@@ -264,21 +263,21 @@ export function LearningSessionModal({
           onTouchCancel={() => { touchStartRef.current = null; }}
         >
           <div className={styles.cardContent}>
-            {entryLanguage === 'en' ? (
+            {['en', 'de'].includes(entryLanguage) ? (
               <section
                 className={styles.englishBlock}
                 role="button"
                 tabIndex={0}
-                onClick={toggleEnglishAudio}
+                onClick={toggleSpeechAudio}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
-                    toggleEnglishAudio();
+                    toggleSpeechAudio();
                   }
                 }}
-                aria-label={audioPlaying ? t('Остановить озвучивание английского текста') : `${t('Озвучить: ')}${spokenText}`}
+                aria-label={audioPlaying ? t('Остановить озвучивание текста') : `${t('Озвучить: ')}${spokenText}`}
                 aria-pressed={audioPlaying}
-                title={t('Нажмите, чтобы озвучить английский текст')}
+                title={t('Нажмите, чтобы озвучить текст')}
               >
                 <h3>{entry.word}</h3>
                 {forms && <p className={styles.forms}>{forms}</p>}

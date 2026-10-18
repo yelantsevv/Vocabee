@@ -14,6 +14,7 @@ export function SettingsPanel({
   updateSetting,
   settingsStatus,
   catalog,
+  speechLanguage = 'en',
   refreshButtonPosition,
   refreshButtonPositionEditing,
   onRefreshButtonPositionEditingChange,
@@ -21,24 +22,25 @@ export function SettingsPanel({
   modal = false
 }) {
   const t = useInterfaceText();
-  const [englishVoices, setEnglishVoices] = useState([]);
+  const [availableVoices, setAvailableVoices] = useState([]);
 
   useEffect(() => {
     const speechSynthesis = window.speechSynthesis;
     if (!speechSynthesis) return undefined;
 
     const updateVoices = () => {
-      setEnglishVoices(speechSynthesis.getVoices()
-        .filter((voice) => /^en(?:-|$)/i.test(voice.lang))
+      setAvailableVoices(speechSynthesis.getVoices()
+        .filter((voice) => new RegExp(`^${speechLanguage}(?:-|$)`, 'i').test(voice.lang))
         .sort((first, second) => first.name.localeCompare(second.name)));
     };
 
     updateVoices();
     speechSynthesis.addEventListener?.('voiceschanged', updateVoices);
     return () => speechSynthesis.removeEventListener?.('voiceschanged', updateVoices);
-  }, []);
+  }, [speechLanguage]);
 
-  const selectedVoiceAvailable = englishVoices.some((voice) => voice.voiceURI === settings.speechVoiceURI);
+  const speechVoiceURI = settings.speechVoiceURIs?.[speechLanguage] || '';
+  const selectedVoiceAvailable = availableVoices.some((voice) => voice.voiceURI === speechVoiceURI);
 
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
   const actions = dictionaryQuickActions.map((action) => {
@@ -130,20 +132,23 @@ export function SettingsPanel({
             ))}
           </select>
         </label>
-        <label className={panelStyles.voiceSetting} htmlFor="english-speech-voice">
+        <label className={panelStyles.voiceSetting} htmlFor="dictionary-speech-voice">
           <span>
-            <strong>{t('Голос английской озвучки')}</strong>
+            <strong>{t('Голос озвучки')} · {speechLanguage.toUpperCase()}</strong>
           </span>
           <select
-            id="english-speech-voice"
-            value={settings.speechVoiceURI || ''}
-            onChange={(event) => updateSetting('speechVoiceURI', event.target.value)}
+            id="dictionary-speech-voice"
+            value={speechVoiceURI}
+            onChange={(event) => updateSetting('speechVoiceURIs', {
+              ...settings.speechVoiceURIs,
+              [speechLanguage]: event.target.value
+            })}
           >
             <option value="">{t('Автоматический голос')}</option>
-            {settings.speechVoiceURI && !selectedVoiceAvailable && (
-              <option value={settings.speechVoiceURI}>{t('Сохранённый голос недоступен')}</option>
+            {speechVoiceURI && !selectedVoiceAvailable && (
+              <option value={speechVoiceURI}>{t('Сохранённый голос недоступен')}</option>
             )}
-            {englishVoices.map((voice) => (
+            {availableVoices.map((voice) => (
               <option key={voice.voiceURI} value={voice.voiceURI}>
                 {voice.name} · {voice.lang}{voice.default ? ` · ${t('по умолчанию')}` : ''}
               </option>
