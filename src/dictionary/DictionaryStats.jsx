@@ -3,34 +3,28 @@ import { useInterfaceText } from './interfaceLanguage.jsx';
 
 const numberFormat = new Intl.NumberFormat('ru-RU');
 
-export function DictionaryStats({ sources }) {
+export function DictionaryStats({ sources, selectedSourceLanguage }) {
   const t = useInterfaceText();
-  const totals = sources.reduce((total, source) => ({
-    words: {
-      total: total.words.total + source.words.total,
-      inProgress: total.words.inProgress + source.words.inProgress,
-      learned: total.words.learned + source.words.learned
-    },
-    phrases: {
-      total: total.phrases.total + source.phrases.total,
-      inProgress: total.phrases.inProgress + source.phrases.inProgress,
-      learned: total.phrases.learned + source.phrases.learned
-    }
-  }), {
+  const activeSource = sources.find(({ id }) => id === selectedSourceLanguage);
+  const totals = activeSource || {
     words: { total: 0, inProgress: 0, learned: 0 },
     phrases: { total: 0, inProgress: 0, learned: 0 }
-  });
+  };
+  const dictionaryLanguage = selectedSourceLanguage === 'de' ? 'DE-RU' : 'EN-RU';
+  const title = selectedSourceLanguage
+    ? `Статистика словаря ${dictionaryLanguage}`
+    : 'Статистика словарей';
 
   return (
     <section className={styles.stats} aria-labelledby="dictionary-stats-title">
       <header className={styles.header}>
         <div>
-          <h2 id="dictionary-stats-title">{t('Статистика словарей')}</h2>
-          {sources.length === 0 && <p>{t('Сводка появится после загрузки словаря')}</p>}
+          <h2 id="dictionary-stats-title">{t(title)}</h2>
+          {!activeSource && <p>{t('Сводка появится после загрузки словаря')}</p>}
         </div>
       </header>
 
-      {sources.length > 0 && (
+      {activeSource && (
         <div className={styles.tableScroll}>
           <table className={styles.table}>
             <thead>

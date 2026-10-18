@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import styles from './DictionaryPage.module.css';
 import panelStyles from './SettingsPanel.module.css';
 import { SettingsActionButtons } from './SettingsActionButtons.jsx';
-import { DictionaryImportButton } from './DictionaryImportButton.jsx';
 import { dictionaryQuickActions } from './dictionaryQuickActions.js';
 import { DatabaseManager } from './DatabaseManager.jsx';
 import { DictionaryStats } from './DictionaryStats.jsx';
@@ -42,55 +41,28 @@ export function SettingsPanel({
   const selectedVoiceAvailable = englishVoices.some((voice) => voice.voiceURI === settings.speechVoiceURI);
 
   const loadedSources = new Set(catalog.availableSources.map(({ id }) => id));
-  const loadedSourceActions = dictionaryQuickActions
-    .filter((action) => loadedSources.has(action.id.slice('words-'.length)))
-    .map((action) => {
+  const actions = dictionaryQuickActions.map((action) => {
       const sourceId = action.id.slice('words-'.length);
       const active = catalog.selectedSourceLanguage === sourceId;
+      const loaded = loadedSources.has(sourceId);
       return {
-        label: action.label,
-        checked: true,
-        active,
-        disabled: catalog.catalogLoading,
-        onClick: () => catalog.setSelectedSourceLanguage(sourceId)
+        label: loaded ? action.label : `Загрузить словарь ${action.label}`,
+        checked: loaded,
+        active: loaded && active,
+        disabled: catalog.catalogLoading || catalog.remoteImportLoading,
+        onClick: loaded
+          ? () => catalog.setSelectedSourceLanguage(sourceId)
+          : () => catalog.importDictionaryFromUrl(sourceId)
       };
     });
-  const hasEnglishDictionary = loadedSources.has('en');
-  const actions = [
-    ...(!hasEnglishDictionary ? [{
-      label: catalog.remoteImportLoading ? t('Загружаю словарь EN → RU…') : t('Загрузить словарь EN → RU'),
-      disabled: catalog.catalogLoading || catalog.remoteImportLoading,
-      onClick: catalog.importDictionaryFromUrl
-    }] : []),
-    ...loadedSourceActions
-  ];
 
   return (
     <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label={t('Настройки')}>
       <section className={panelStyles.settings} aria-label={t('Настройки Vocabee')}>
         <SettingsActionButtons
           actions={actions}
-          firstAction={(
-            <DictionaryImportButton
-              key="import-dictionary"
-              inputRef={catalog.importInputRef}
-              onImportFile={catalog.importDictionaryFile}
-              fill
-            />
-          )}
         />
-        <DictionaryStats sources={catalog.availableSources} />
-        <label className={panelStyles.voiceSetting} htmlFor="interface-language">
-          <span><strong>{t('Язык интерфейса')}</strong></span>
-          <select
-            id="interface-language"
-            value={settings.interfaceLanguage}
-            onChange={(event) => updateSetting('interfaceLanguage', event.target.value)}
-          >
-            <option value="en">{t('Английский')}</option>
-            <option value="ru">{t('Русский')}</option>
-          </select>
-        </label>
+        <DictionaryStats sources={catalog.availableSources} selectedSourceLanguage={catalog.selectedSourceLanguage} />
         <section className={panelStyles.fontSizeSettings} aria-label={t('Размер текста')}>
           <label className={panelStyles.fontSizeControl} htmlFor="content-font-size">
             <span>

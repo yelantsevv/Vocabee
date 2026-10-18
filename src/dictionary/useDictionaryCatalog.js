@@ -8,7 +8,7 @@ import {
   writeCatalogDictionary
 } from './catalogDatabase.js';
 import { deleteMyVocabularyEntry, getMyVocabularyEntries } from './storage.js';
-import { DEFAULT_DICTIONARY_URL } from './dictionaryConfig.js';
+import { DEFAULT_DICTIONARY_URL, DEFAULT_GERMAN_DICTIONARY_URL } from './dictionaryConfig.js';
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
@@ -23,6 +23,7 @@ const AVAILABLE_LEVELS = ['A1', 'A2', 'B1', 'B2'];
 const AVAILABLE_VERB_TYPES = ['regular', 'irregular', 'modal', 'phrasal'];
 const PROGRESS_VIEWS = ['learning', 'learned', 'remaining'];
 const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
+const DICTIONARY_STATS_KEY = 'vocabee-dictionary-stats-v1';
 const DEFAULT_SOURCE_CONNECTIONS = { my: true, language: true };
 const AVAILABLE_CATEGORIES = new Set(phraseCategories.map(({ id }) => id));
 function createMyDictionaryRecord(entries) {
@@ -353,6 +354,25 @@ export function useDictionaryCatalog() {
         phrases
       };
     }), [importedDictionaries, learningLevelOverrides, sourceMetadata]);
+
+  useEffect(() => {
+    if (catalogLoading) return;
+    const statistics = {
+      selectedSourceLanguage,
+      updatedAt: Date.now(),
+      sources: availableSources.map(({ id, words, phrases }) => ({
+        id,
+        words: { ...words },
+        phrases: { ...phrases }
+      }))
+    };
+    try {
+      localStorage.setItem(DICTIONARY_STATS_KEY, JSON.stringify(statistics));
+    } catch (error) {
+      console.warn('Vocabee: unable to save dictionary statistics.', error);
+    }
+  }, [availableSources, catalogLoading, selectedSourceLanguage]);
+
   const selectedSourceDictionary = useMemo(() => {
     const sourceIds = getCatalogSourceIds(selectedSourceLanguage, sourceConnections);
     const entries = sourceIds.flatMap((sourceId) => (importedDictionaries[sourceId] || [])
@@ -567,20 +587,22 @@ export function useDictionaryCatalog() {
     }
   }
 
-  async function importDictionaryFromUrl() {
+  async function importDictionaryFromUrl(language = 'en') {
     if (remoteImportLoading) return;
     setRemoteImportLoading(true);
-    setImportStatus('Скачиваю базу EN → RU…');
+    const languageLabel = language === 'de' ? 'DE' : 'EN';
+    const dictionaryUrl = language === 'de' ? DEFAULT_GERMAN_DICTIONARY_URL : DEFAULT_DICTIONARY_URL;
+    setImportStatus(`Скачиваю базу ${languageLabel} → RU…`);
 
     try {
-      const response = await fetch(DEFAULT_DICTIONARY_URL, { cache: 'no-cache' });
+      const response = await fetch(dictionaryUrl, { cache: 'no-cache' });
       if (!response.ok) {
         throw new Error(`Сервер вернул HTTP ${response.status}.`);
       }
       const payload = await response.json();
-      await saveImportedDictionary(payload, 'en-ru.json', 'en');
+      await saveImportedDictionary(payload, `${language}-ru.json`, language);
     } catch (error) {
-      setImportStatus(`Не удалось загрузить базу EN → RU: ${error.message}`);
+      setImportStatus(`Не удалось загрузить базу ${languageLabel} → RU: ${error.message}`);
     } finally {
       setRemoteImportLoading(false);
     }

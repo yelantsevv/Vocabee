@@ -13,14 +13,12 @@ import {
   DEFAULT_CONTENT_FONT_SIZE,
   DEFAULT_ADDITIONAL_FONT_SIZE,
   DEFAULT_SPEECH_VOICE_URI,
-  DEFAULT_INTERFACE_LANGUAGE,
   normalizeDictionaryTheme,
   normalizeDictionaryFontSize,
   normalizeInterfaceFontScale,
   normalizeContentFontSize,
   normalizeAdditionalFontSize,
   normalizeSpeechVoiceURI,
-  normalizeInterfaceLanguage,
   normalizeRefreshButtonPosition
 } from './settings.js';
 import { targetLanguages } from './dictionaryUtils.js';
@@ -42,8 +40,7 @@ const DEFAULT_SETTINGS = {
   cardsPerLoad: 20,
   hideTranslationsUntilHover: true,
   refreshButtonPosition: null,
-  showRefreshButton: true,
-  interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE
+  showRefreshButton: true
 };
 
 export function DictionaryPage() {
@@ -69,9 +66,9 @@ export function DictionaryPage() {
   const catalog = useDictionaryCatalog();
 
   useEffect(() => {
-    document.documentElement.lang = settings.interfaceLanguage;
-    document.title = settings.interfaceLanguage === 'en' ? 'My Dictionary — Vocabee' : 'Мой словарь — Vocabee';
-  }, [settings.interfaceLanguage]);
+    document.documentElement.lang = 'ru';
+    document.title = 'Мой словарь — Vocabee';
+  }, []);
 
   useEffect(() => {
     if (!settingsOpen) return undefined;
@@ -95,7 +92,6 @@ export function DictionaryPage() {
         contentFontSize: normalizeContentFontSize(result.contentFontSize),
         additionalFontSize: normalizeAdditionalFontSize(result.additionalFontSize),
         speechVoiceURI: normalizeSpeechVoiceURI(result.speechVoiceURI),
-        interfaceLanguage: normalizeInterfaceLanguage(result.interfaceLanguage),
         theme: normalizeDictionaryTheme(result.theme),
         cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
           ? result.cardsPerLoad
@@ -123,7 +119,6 @@ export function DictionaryPage() {
       contentFontSize: normalizeContentFontSize,
       additionalFontSize: normalizeAdditionalFontSize,
       speechVoiceURI: normalizeSpeechVoiceURI,
-      interfaceLanguage: normalizeInterfaceLanguage,
       refreshButtonPosition: normalizeRefreshButtonPosition,
       cardsPerLoad: (value) => Math.min(200, Math.max(1, Math.round(Number(value)) || DEFAULT_SETTINGS.cardsPerLoad))
     };
@@ -163,7 +158,7 @@ export function DictionaryPage() {
   }
 
   return (
-    <InterfaceLanguageProvider language={settings.interfaceLanguage}>
+    <InterfaceLanguageProvider language="ru">
     <main className={styles.page} style={pageStyle}>
       <DictionaryCatalogPanel
         catalog={catalog}
@@ -194,12 +189,12 @@ export function DictionaryPage() {
         >
           <section className={styles.settingsModal} role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
             <header className={styles.settingsModalHeader}>
-              <h2 id="settings-modal-title">{settings.interfaceLanguage === 'en' ? 'Settings' : 'Настройки'}</h2>
+              <h2 id="settings-modal-title">Настройки</h2>
               <button
                 ref={settingsCloseButtonRef}
                 className={styles.settingsModalClose}
                 type="button"
-                aria-label={settings.interfaceLanguage === 'en' ? 'Close settings' : 'Закрыть настройки'}
+                aria-label="Закрыть настройки"
                 onClick={closeSettings}
               >×</button>
             </header>

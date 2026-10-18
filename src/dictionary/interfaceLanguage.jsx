@@ -102,6 +102,8 @@ const englishText = {
   'Не удалось удалить слово из словаря.': 'Could not delete this entry from the dictionary.',
   'Удалить': 'Delete',
   'Статистика словарей': 'Dictionary statistics',
+  'Статистика словаря EN-RU': 'EN-RU dictionary statistics',
+  'Статистика словаря DE-RU': 'DE-RU dictionary statistics',
   'Сводка появится после загрузки словаря': 'Statistics will appear after a dictionary is loaded',
   'Тип': 'Type',
   'Всего': 'Total',
