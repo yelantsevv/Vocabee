@@ -1,7 +1,7 @@
 export const DEFAULT_DICTIONARY_FONT_SIZE = 16;
 export const DEFAULT_INTERFACE_FONT_SCALE = 100;
-export const DEFAULT_CONTENT_FONT_SIZE = 30;
-export const DEFAULT_ADDITIONAL_FONT_SIZE = 16;
+export const DEFAULT_CONTENT_FONT_SIZE = 28;
+export const DEFAULT_ADDITIONAL_FONT_SIZE = 17;
 export const DEFAULT_SPEECH_VOICE_URIS = { en: '', de: '' };
 export const DICTIONARY_THEMES = [
   { id: 'classic-dark', label: 'Классическая · Тёмная' },
@@ -30,12 +30,14 @@ export function normalizeInterfaceFontScale(value) {
 }
 
 export function normalizeContentFontSize(value) {
+  if (value === null || value === undefined || value === '') return DEFAULT_CONTENT_FONT_SIZE;
   const parsedValue = Number(value);
   if (!Number.isFinite(parsedValue)) return DEFAULT_CONTENT_FONT_SIZE;
   return Math.max(18, Math.min(48, Math.round(parsedValue)));
 }
 
 export function normalizeAdditionalFontSize(value) {
+  if (value === null || value === undefined || value === '') return DEFAULT_ADDITIONAL_FONT_SIZE;
   const parsedValue = Number(value);
   if (!Number.isFinite(parsedValue)) return DEFAULT_ADDITIONAL_FONT_SIZE;
   return Math.max(12, Math.min(28, Math.round(parsedValue)));

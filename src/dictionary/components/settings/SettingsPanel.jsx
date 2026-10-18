@@ -23,14 +23,61 @@ export function SettingsPanel({
     if (!speechSynthesis) return undefined;
 
     const updateVoices = () => {
-      setAvailableVoices(speechSynthesis.getVoices()
-        .filter((voice) => new RegExp(`^${speechLanguage}(?:-|$)`, 'i').test(voice.lang))
-        .sort((first, second) => first.name.localeCompare(second.name)));
+      let voices = [];
+
+      try {
+        voices = speechSynthesis.getVoices();
+      } catch {
+        return;
+      }
+
+      const languagePrefix = speechLanguage.toLowerCase();
+      const languageVoices = voices
+        .filter((voice) => {
+          const voiceLanguage = voice.lang?.replaceAll('_', '-').toLowerCase();
+          return voiceLanguage === languagePrefix || voiceLanguage?.startsWith(`${languagePrefix}-`);
+        })
+        .sort((first, second) => first.name.localeCompare(second.name));
+
+      setAvailableVoices((currentVoices) => {
+        const currentURIs = currentVoices.map((voice) => voice.voiceURI).join('|');
+        const nextURIs = languageVoices.map((voice) => voice.voiceURI).join('|');
+        return currentURIs === nextURIs ? currentVoices : languageVoices;
+      });
     };
 
     updateVoices();
-    speechSynthesis.addEventListener?.('voiceschanged', updateVoices);
-    return () => speechSynthesis.removeEventListener?.('voiceschanged', updateVoices);
+
+    // Mobile browsers may populate the voice list asynchronously or only
+    // after the page has been shown again.
+    const retryTimers = [150, 500, 1200, 2500].map((delay) => window.setTimeout(updateVoices, delay));
+    const supportsVoiceEvents = typeof speechSynthesis.addEventListener === 'function';
+    let previousVoiceChangeHandler;
+
+    if (supportsVoiceEvents) {
+      speechSynthesis.addEventListener('voiceschanged', updateVoices);
+    } else if ('onvoiceschanged' in speechSynthesis) {
+      previousVoiceChangeHandler = speechSynthesis.onvoiceschanged;
+      speechSynthesis.onvoiceschanged = updateVoices;
+    }
+
+    const updateWhenVisible = () => {
+      if (!document.hidden) updateVoices();
+    };
+
+    document.addEventListener('visibilitychange', updateWhenVisible);
+    window.addEventListener('pageshow', updateVoices);
+
+    return () => {
+      retryTimers.forEach(window.clearTimeout);
+      if (supportsVoiceEvents) {
+        speechSynthesis.removeEventListener('voiceschanged', updateVoices);
+      } else if (speechSynthesis.onvoiceschanged === updateVoices) {
+        speechSynthesis.onvoiceschanged = previousVoiceChangeHandler || null;
+      }
+      document.removeEventListener('visibilitychange', updateWhenVisible);
+      window.removeEventListener('pageshow', updateVoices);
+    };
   }, [speechLanguage]);
 
   const speechVoiceURI = settings.speechVoiceURIs?.[speechLanguage] || '';
@@ -125,6 +172,9 @@ export function SettingsPanel({
               <option key={count} value={count}>{count}</option>
             ))}
           </select>
+          {availableVoices.length === 0 && (
+            <small>Дополнительные голоса {speechLanguage.toUpperCase()} не предоставлены браузером устройства.</small>
+          )}
         </label>
         <label className={panelStyles.voiceSetting} htmlFor="dictionary-speech-voice">
           <span>
