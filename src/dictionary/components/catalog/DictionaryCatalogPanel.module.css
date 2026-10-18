@@ -7,6 +7,7 @@
 
 .dictionaryFilters {
   position: relative;
+  container: catalog-filters / inline-size;
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 1.5vw, 20px);
@@ -444,11 +445,7 @@
   font-weight: 600;
 }
 
-@media (max-width: 1260px) {
-  .dictionaryFilters {
-    padding: 12px;
-  }
-
+@container catalog-filters (max-width: 820px) {
   .filterLayout,
   .filterLeftGroup,
   .filterRightGroup {
@@ -554,7 +551,6 @@
     width: 100%;
     height: var(--vocabee-filter-square-size);
     min-height: var(--vocabee-filter-square-size);
-    order: 1;
     padding: 0;
   }
 
@@ -580,7 +576,6 @@
     min-width: 0;
     height: var(--vocabee-filter-square-size);
     min-height: var(--vocabee-filter-square-size);
-    order: 4;
     padding: 0;
   }
 
@@ -588,14 +583,12 @@
     display: flex;
     width: 100%;
     min-width: 0;
-    order: 2;
   }
 
   .sourceViewButtons .phrasesViewButton {
     display: flex;
     width: 100%;
     min-width: 0;
-    order: 3;
   }
 
   .verbTypeChips {
@@ -610,22 +603,6 @@
   .progressFilters {
     width: 100%;
     gap: 8px;
-  }
-
-  .progressFilters .startLearningButton {
-    order: 4;
-  }
-
-  .progressFilters .progressButton[aria-label='Изучаю'] {
-    order: 2;
-  }
-
-  .progressFilters .progressButton[aria-label='Изученные'] {
-    order: 3;
-  }
-
-  .progressFilters .progressButton[aria-label='Не изученные'] {
-    order: 1;
   }
 
   .progressFilters .progressButton,
@@ -646,7 +623,7 @@
   }
 }
 
-@media (max-width: 1260px) {
+@container catalog-filters (max-width: 820px) {
 
   .typeChip,
   .progressButton,
@@ -673,7 +650,7 @@
   }
 }
 
-@media (min-width: 1261px) {
+@container catalog-filters (min-width: 821px) {
   .filterLayout {
     flex-direction: row;
     align-items: stretch;
@@ -701,8 +678,6 @@
 
   .filterRightGroup {
     box-sizing: border-box;
-    border-left: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 14%, transparent);
-    padding-left: clamp(14px, 1.5vw, 22px);
   }
 
   .sourceViewButtons,

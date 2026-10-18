@@ -129,7 +129,6 @@
 
 .brand {
   display: inline-flex;
-  order: 1;
   align-items: center;
   gap: 12px;
   color: var(--theme-text, #f3f4fc);
@@ -153,7 +152,6 @@
 
 .navigation {
   display: flex;
-  order: 3;
   gap: 10px;
 }
 
@@ -329,10 +327,6 @@
   .header {
     flex-wrap: wrap;
     min-height: 64px;
-  }
-
-  .navigation {
-    order: 2;
   }
 
   .navButton {

@@ -469,18 +469,9 @@
     justify-content: stretch;
   }
 
-  .headerActions>.learnedButton {
-    order: 1;
-  }
-
-  .headerActions>.closeButton {
-    order: 2;
-  }
-
   .headerActions>.headerLearningLevel {
     width: 100%;
     flex: 0 0 100%;
-    order: 3;
   }
 
   .headerActions .learnedButton,

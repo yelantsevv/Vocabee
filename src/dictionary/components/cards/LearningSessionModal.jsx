@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './LearningSessionModal.module.css';
-import entryHeaderStyles from './DictionaryEntryHeader.module.css';
 import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 import { formatVerbForms } from '../../utils/dictionaryUtils.js';
 
@@ -217,23 +216,6 @@ export function LearningSessionModal({
               onClick={() => rateAndContinue(9)}
               disabled={learningLevel === 9}
             >{t(learningLevel === 9 ? '✓ Изучено' : '✓  Изученное')}</button>
-            <div className={styles.headerLearningLevel}>
-              {learningLevel === 9 ? (
-                <span className={entryHeaderStyles.learnedMark} aria-label={t('Слово выучено')}>✓</span>
-              ) : (
-                <span
-                  className={entryHeaderStyles.progressCircle}
-                  role="progressbar"
-              aria-label={`${t('Уровень знания: ')}${learningLevel}`}
-                  aria-valuemin={0}
-                  aria-valuemax={9}
-                  aria-valuenow={learningLevel}
-                  style={{ '--progress-angle': `${learningLevel / 9 * 360}deg` }}
-                >
-                  <span>{learningLevel}</span>
-                </span>
-              )}
-            </div>
             <button className={styles.closeButton} type="button" onClick={onClose} aria-label={t('Закрыть изучение')}>
               <span className={styles.closeSymbol} aria-hidden="true">×</span>
               <span className={styles.closeLabel}>{t('Закрыть')}</span>

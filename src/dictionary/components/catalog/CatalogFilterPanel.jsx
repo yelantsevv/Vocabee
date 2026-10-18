@@ -58,13 +58,6 @@ export function CatalogFilterPanel({
                 </select>
               </label>
               <button
-                className={clsx(styles.sourceViewButton, styles.settingsControlButton)}
-                type="button"
-                aria-label={t('Открыть настройки')}
-                title={t('Настройки')}
-                onClick={onOpenSettings}
-              ><FilterButtonIcon name="settings" /></button>
-              <button
                 className={clsx(styles.sourceViewButton, styles.wordsViewButton, catalogView === 'words' && styles.selected)}
                 type="button"
                 aria-label={t('Слова')}
@@ -80,6 +73,13 @@ export function CatalogFilterPanel({
                 aria-pressed={catalogView === 'phrases'}
                 onClick={() => setCatalogView('phrases')}
               >Phrases</button>
+              <button
+                className={clsx(styles.sourceViewButton, styles.settingsControlButton)}
+                type="button"
+                aria-label={t('Открыть настройки')}
+                title={t('Настройки')}
+                onClick={onOpenSettings}
+              ><FilterButtonIcon name="settings" /></button>
             </div>
             <fieldset className={styles.filterGroup} aria-label={t('Уровень')}>
               <div className={styles.levelControls}>
@@ -120,18 +120,10 @@ export function CatalogFilterPanel({
             </div>
           </fieldset>
           <div className={styles.progressFilters} role="group" aria-label={t('Статус изучения слов')}>
-            <button
-              className={styles.startLearningButton}
-              type="button"
-              aria-label={t('Начать изучение')}
-              title={t('Начать изучение')}
-              disabled={studySessionEntries.length === 0}
-              onClick={() => onStartLearning(studySessionEntries)}
-            ><span>{t('Начать')}</span></button>
             {[
+              ['remaining', 'Not learned', 'Не изученные', 'К изучению'],
               ['learning', 'Learning', 'Изучаю', 'Учу'],
-              ['learned', 'Learned', 'Изученные', 'Выучено'],
-              ['remaining', 'Not learned', 'Не изученные', 'К изучению']
+              ['learned', 'Learned', 'Изученные', 'Выучено']
             ].map(([view, englishLabel, russianLabel, shortLabel]) => (
               <button
                 className={clsx(styles.progressButton, progressViews.includes(view) && styles.selected)}
@@ -143,6 +135,14 @@ export function CatalogFilterPanel({
                 onClick={() => toggleArrayValue(setProgressViews, view)}
               ><span>{t(shortLabel)}</span></button>
             ))}
+            <button
+              className={styles.startLearningButton}
+              type="button"
+              aria-label={t('Начать изучение')}
+              title={t('Начать изучение')}
+              disabled={studySessionEntries.length === 0}
+              onClick={() => onStartLearning(studySessionEntries)}
+            ><span>{t('Начать')}</span></button>
           </div>
         </div>
       </div>
