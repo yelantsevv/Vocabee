@@ -49,7 +49,7 @@
   pointer-events: auto;
 }
 
-.card:has(.revealToggle:checked) [data-translation-hidden="true"] {
+.card.revealed [data-translation-hidden="true"] {
   visibility: visible;
 }
 

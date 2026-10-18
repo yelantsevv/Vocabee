@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { DictionaryEntryHeader } from './DictionaryEntryHeader.jsx';
 import styles from './DictionaryWordCard.module.css';
 import { useInterfaceText } from '../interfaceLanguage.jsx';
@@ -17,19 +17,26 @@ export function DictionaryWordCard({
 }) {
   const t = useInterfaceText();
   const revealToggleId = useId();
+  const [revealed, setRevealed] = useState(false);
 
   return (
-    <li className={clsx(styles.card, className)}>
+    <li className={clsx(styles.card, revealed && styles.revealed, className)}>
       <input
         className={styles.revealToggle}
         id={revealToggleId}
         type="checkbox"
+        checked={revealed}
+        onChange={(event) => setRevealed(event.target.checked)}
         aria-label={`${t('Показать перевод карточки: ')}${word}`}
       />
       <label
         className={styles.revealClickSurface}
         htmlFor={revealToggleId}
         aria-hidden="true"
+        onClick={(event) => {
+          event.preventDefault();
+          setRevealed((current) => !current);
+        }}
       />
       <div className={styles.cardContent}>
         <DictionaryEntryHeader

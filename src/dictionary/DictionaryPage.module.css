@@ -29,6 +29,10 @@
   font: inherit;
 }
 
+:global(button) {
+  -webkit-tap-highlight-color: transparent;
+}
+
 :global(#root) {
   min-height: 100vh;
 }
