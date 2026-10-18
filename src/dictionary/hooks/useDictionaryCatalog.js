@@ -156,7 +156,7 @@ export function useDictionaryCatalog() {
         setSelectedSourceLanguage(
           Object.prototype.hasOwnProperty.call(dictionaries, preferredLanguage)
             ? preferredLanguage
-            : loadedLanguages[0] || null
+            : loadedLanguages[0] || (dictionaries['my-vocabee'] ? 'my-vocabee' : null)
         );
       } catch (error) {
         if (active) setCatalogError(error.message || 'Не удалось прочитать базу словарей.');

@@ -98,6 +98,15 @@ export function SettingsPanel({
           : () => catalog.importDictionaryFromUrl(sourceId)
       };
     });
+  if (loadedSources.has('my-vocabee')) {
+    actions.push({
+      label: 'Мой словарь Vocabee',
+      checked: true,
+      active: catalog.selectedSourceLanguage === 'my-vocabee',
+      disabled: catalog.catalogLoading,
+      onClick: () => catalog.setSelectedSourceLanguage('my-vocabee')
+    });
+  }
 
   return (
     <section className={clsx(styles.content, modal && panelStyles.modalContent)} aria-label='Настройки'>

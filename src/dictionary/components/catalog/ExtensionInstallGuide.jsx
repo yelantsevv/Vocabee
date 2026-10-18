@@ -59,6 +59,15 @@ export function ExtensionInstallGuide({ error }) {
             <span className={styles.srOnly} aria-live="polite">{copyStatus}</span>
           </button>
         </div>
+        <a
+          className={styles.downloadButton}
+          href="https://github.com/yelantsevv/Vocabee/blob/dev/vocabee.zip?raw=1"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3" /></svg>
+          Скачать расширение для Chrome на ПК
+        </a>
       </header>
 
       <div className={styles.body}>
@@ -77,12 +86,12 @@ export function ExtensionInstallGuide({ error }) {
         <div className={styles.capabilities}>
           <h3><span className={styles.sectionIcon}>✦</span> Возможности</h3>
           <ul className={styles.features}>
-            <li><span className={styles.featureIcon}>Aa</span><span><strong>Перевод слов и фраз</strong><small>Выделите слово или фрагмент текста в субтитрах YouTube, чтобы увидеть перевод.</small></span></li>
-            <li><span className={styles.featureIcon}>♫</span><span><strong>Озвучивание и сохранение</strong><small>Прослушайте перевод и нажмите звезду, чтобы добавить его в «Мой словарь».</small></span></li>
+            <li><span className={styles.featureIcon}>Aa</span><span><strong>Перевод английских слов и фраз</strong><small>Выделите слово или фрагмент английского текста в субтитрах YouTube, чтобы увидеть перевод.</small></span></li>
+            <li><span className={styles.featureIcon}>♫</span><span><strong>Озвучивание и сохранение английского</strong><small>Прослушайте перевод и нажмите звезду, чтобы сохранить английское слово или фразу из субтитров в «Мой словарь».</small></span></li>
             <li><span className={styles.featureIcon}>☷</span><span><strong>Словарь и настройки</strong><small>В плавающей панели доступны сохранённые выражения, переключатель перевода, тема и размер текста.</small></span></li>
             <li><span className={styles.featureIcon}>Ⅱ</span><span><strong>Удобный просмотр</strong><small>Видео приостанавливается, пока указатель находится над субтитром или подсказкой.</small></span></li>
           </ul>
-          <p className={styles.note}>Расширение работает на YouTube в настольном Chrome. Сохранённые слова также доступны в разделе «Мой словарь» этого приложения.</p>
+          <p className={styles.note}>Перевод субтитров и сохранение слов из подсказки доступны только для английского языка. Расширение предназначено только для Google Chrome на компьютере (Windows, macOS или Linux); в мобильных браузерах оно не устанавливается. Сохранённые слова также доступны в разделе «Мой словарь» этого приложения.</p>
         </div>
       </div>
     </section>

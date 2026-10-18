@@ -14,9 +14,10 @@
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 18px;
   padding: clamp(22px, 4vw, 36px);
   border-bottom: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 12%, transparent);
 }
@@ -47,6 +48,10 @@
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 .addressBlock .copyButton:hover { color: var(--theme-accent, #c39aff); }
 .addressBlock .copyButton:focus-visible { outline: 0; }
+.downloadButton { display: inline-flex; width: min(100%, 380px); min-height: 46px; box-sizing: border-box; align-items: center; justify-content: center; gap: 10px; border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 56%, transparent); border-radius: 12px; background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 19%, transparent); color: var(--theme-text, #f3f4fc); padding: 0 16px; font-size: 14px; font-weight: 700; text-decoration: none; transition: background 150ms ease, border-color 150ms ease, transform 150ms ease; }
+.downloadButton svg { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.downloadButton:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 78%, transparent); background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 30%, transparent); }
+.downloadButton:focus-visible { outline: 2px solid var(--theme-accent, #a95bff); outline-offset: 3px; }
 .body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: 0; }
 .install, .capabilities { min-width: 0; padding: clamp(20px, 3.5vw, 32px); }
 .install { border-right: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 12%, transparent); }
@@ -67,7 +72,7 @@
 .note { margin: 20px 0 0; color: var(--theme-faint, #8d94ab); font-size: 12px; line-height: 1.5; }
 
 @media (max-width: 720px) {
-  .header { align-items: stretch; flex-direction: column; gap: 18px; }
+  .header { align-items: stretch; gap: 18px; }
   .body { grid-template-columns: minmax(0, 1fr); }
   .install { border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 12%, transparent); }
 }
@@ -75,5 +80,5 @@
 @media (max-width: 420px) {
   .guide { border-radius: 17px; }
   .header, .install, .capabilities { padding: 18px; }
-  .addressBlock { width: 100%; }
+  .addressBlock, .downloadButton { width: 100%; }
 }

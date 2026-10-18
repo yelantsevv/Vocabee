@@ -8,9 +8,15 @@ export function DictionaryStats({ sources, selectedSourceLanguage }) {
     words: { total: 0, inProgress: 0, learned: 0 },
     phrases: { total: 0, inProgress: 0, learned: 0 }
   };
-  const dictionaryLanguage = selectedSourceLanguage === 'de' ? 'DE-RU' : 'EN-RU';
-  const title = selectedSourceLanguage
-    ? `Статистика словаря ${dictionaryLanguage}`
+  const dictionaryName = selectedSourceLanguage === 'my-vocabee'
+    ? 'Vocabee'
+    : selectedSourceLanguage === 'de'
+      ? 'DE-RU'
+      : selectedSourceLanguage === 'en'
+        ? 'EN-RU'
+        : activeSource?.title;
+  const title = dictionaryName
+    ? `Статистика словаря ${dictionaryName}`
     : 'Статистика словарей';
 
   return (
