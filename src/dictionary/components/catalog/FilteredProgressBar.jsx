@@ -1,9 +1,9 @@
 import styles from './DictionaryCatalogPanel.module.css';
 
-export function FilteredProgressBar({ value, sticky = false }) {
+export function FilteredProgressBar({ value, sticky = false, mobilePinned = false }) {
   return (
     <div
-      className={`${styles.overallProgress}${sticky ? ` ${styles.stickyProgress}` : ''}`}
+      className={`${styles.overallProgress}${sticky ? ` ${styles.stickyProgress}` : ''}${mobilePinned ? ` ${styles.mobilePinnedProgress}` : ''}`}
       role="progressbar"
       aria-label={`Прогресс отфильтрованного содержимого: ${value}%`}
       aria-valuemin={0}

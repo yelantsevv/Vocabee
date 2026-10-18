@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import phraseCategories from '../../data/phrase-categories.json';
@@ -12,6 +13,7 @@ export function CatalogFilterPanel({
   onOpenSettings,
   onStartLearning
 }) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const {
     selectedSourceLanguage,
     catalogView,
@@ -28,10 +30,71 @@ export function CatalogFilterPanel({
   } = catalog;
   const isGermanDictionary = selectedSourceLanguage === 'de';
 
+  function openSettings() {
+    setMobileFiltersOpen(false);
+    onOpenSettings();
+  }
+
+  function startLearning() {
+    setMobileFiltersOpen(false);
+    onStartLearning(studySessionEntries);
+  }
+
+  useEffect(() => {
+    if (!mobileFiltersOpen) return undefined;
+
+    const closeOnOutsidePress = (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest('#dictionary-catalog-filter-options')) return;
+      if (target.closest('[aria-controls="dictionary-catalog-filter-options"]')) return;
+      setMobileFiltersOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMobileFiltersOpen(false);
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePress);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePress);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mobileFiltersOpen]);
+
   return (
-    <section ref={filtersRef} className={styles.dictionaryFilters} aria-label='Фильтры словаря'>
-      <FilteredProgressBar value={progressValue} />
-      <div className={styles.filterLayout}>
+    <section
+      ref={filtersRef}
+      className={clsx(
+        styles.dictionaryFilters,
+        !mobileFiltersOpen && styles.dictionaryFiltersMobileCollapsed,
+        mobileFiltersOpen && styles.dictionaryFiltersMobileOpen
+      )}
+      aria-label='Фильтры словаря'
+    >
+      <FilteredProgressBar value={progressValue} mobilePinned />
+      <div className={styles.filterControlsAnchor}>
+        <div className={styles.mobileFiltersToggleSlot}>
+          <button
+            className={clsx(styles.mobileFiltersToggle, styles.mobileFiltersTogglePinned)}
+            type="button"
+            aria-label={mobileFiltersOpen ? 'Скрыть фильтры' : 'Показать фильтры'}
+            aria-controls="dictionary-catalog-filter-options"
+            aria-expanded={mobileFiltersOpen}
+            onClick={() => setMobileFiltersOpen((open) => !open)}
+          >
+            <span className={styles.mobileFiltersChevron} aria-hidden="true" />
+            <span className={styles.mobileFiltersChevron} aria-hidden="true" />
+          </button>
+        </div>
+        <div
+          id="dictionary-catalog-filter-options"
+          className={clsx(
+            styles.filterLayout,
+            mobileFiltersOpen && styles.filterLayoutMobileOpen,
+            mobileFiltersOpen && styles.filterLayoutMobilePinned
+          )}
+        >
         <div className={styles.filterLeftGroup}>
           <div className={styles.filterLeftTopRow}>
             <div className={styles.sourceViewButtons} role="group" aria-label='Раздел словаря'>
@@ -81,7 +144,7 @@ export function CatalogFilterPanel({
                 type="button"
                 aria-label='Открыть настройки'
                 title='Настройки'
-                onClick={onOpenSettings}
+                onClick={openSettings}
               ><FilterButtonIcon name="settings" /></button>
             </div>
             <fieldset className={styles.filterGroup} aria-label='Уровень'>
@@ -144,9 +207,10 @@ export function CatalogFilterPanel({
               aria-label='Начать изучение'
               title='Начать изучение'
               disabled={studySessionEntries.length === 0}
-              onClick={() => onStartLearning(studySessionEntries)}
+              onClick={startLearning}
             ><span>Начать</span></button>
           </div>
+        </div>
         </div>
       </div>
     </section>

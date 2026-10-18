@@ -60,18 +60,16 @@
   line-height: 1.4;
 }
 
-.fontSizeControl output {
-  flex: 0 0 auto;
-  color: var(--theme-accent-text, #c9baff);
-  font-size: calc(var(--vocabee-font-size-small) * var(--vocabee-ui-font-scale, 1));
-  font-variant-numeric: tabular-nums;
-}
-
-.fontSizeControl input {
-  width: 100%;
-  flex: 1 0 100%;
-  accent-color: var(--theme-accent-solid, #a15cff);
+.fontSizeControl select {
+  min-width: 92px;
+  min-height: var(--vocabee-control-height);
+  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
+  border-radius: var(--vocabee-radius-control);
+  background: var(--theme-surface-raised, #202640);
+  color: var(--theme-text, #f6f7ff);
   cursor: pointer;
+  padding: 0 10px;
+  font: inherit;
 }
 
 .batchSizeSetting select {

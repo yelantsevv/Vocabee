@@ -111,31 +111,29 @@ export function SettingsPanel({
             <span>
               <strong>Основной текст</strong>
             </span>
-            <output htmlFor="content-font-size">{settings.contentFontSize} px</output>
-            <input
+            <select
               id="content-font-size"
-              type="range"
-              min="18"
-              max="48"
-              step="1"
               value={settings.contentFontSize}
               onChange={(event) => updateSetting('contentFontSize', event.target.value)}
-            />
+            >
+              {[18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48].map((size) => (
+                <option key={size} value={size}>{size} px</option>
+              ))}
+            </select>
           </label>
           <label className={panelStyles.fontSizeControl} htmlFor="additional-font-size">
             <span>
               <strong>Дополнительный текст</strong>
             </span>
-            <output htmlFor="additional-font-size">{settings.additionalFontSize} px</output>
-            <input
+            <select
               id="additional-font-size"
-              type="range"
-              min="12"
-              max="28"
-              step="1"
               value={settings.additionalFontSize}
               onChange={(event) => updateSetting('additionalFontSize', event.target.value)}
-            />
+            >
+              {[12, 14, 16, 17, 18, 20, 22, 24, 26, 28].map((size) => (
+                <option key={size} value={size}>{size} px</option>
+              ))}
+            </select>
           </label>
         </section>
         <fieldset className={panelStyles.themeSetting}>
