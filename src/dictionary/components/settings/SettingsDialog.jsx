@@ -12,9 +12,6 @@ export function SettingsDialog({
   settingsStatus,
   catalog,
   speechLanguage,
-  refreshButtonPositionEditing,
-  onRefreshButtonPositionEditingChange,
-  onResetRefreshButtonPosition
 }) {
   const closeButtonRef = useRef(null);
 
@@ -55,10 +52,6 @@ export function SettingsDialog({
           settingsStatus={settingsStatus}
           catalog={catalog}
           speechLanguage={speechLanguage}
-          refreshButtonPosition={settings.refreshButtonPosition}
-          refreshButtonPositionEditing={refreshButtonPositionEditing}
-          onRefreshButtonPositionEditingChange={onRefreshButtonPositionEditingChange}
-          onResetRefreshButtonPosition={onResetRefreshButtonPosition}
           modal
         />
       </section>

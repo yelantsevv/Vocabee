@@ -298,8 +298,9 @@
 
 @media (max-width: 1260px) {
   .settingsModalBackdrop {
-    display: block;
-    overflow: auto;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
     padding: 0;
   }
 
@@ -311,7 +312,13 @@
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
-    max-height: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
     border-radius: 0;
   }
 

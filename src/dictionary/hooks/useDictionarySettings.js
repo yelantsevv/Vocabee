@@ -12,10 +12,9 @@ import {
   normalizeInterfaceFontScale,
   normalizeContentFontSize,
   normalizeAdditionalFontSize,
-  normalizeSpeechVoiceURIS,
-  normalizeRefreshButtonPosition
+  normalizeSpeechVoiceURIS
 } from '../utils/settings.js';
-import { targetLanguages } from '../utils/dictionaryUtils.js';
+import { targetLanguages } from '../utils/languages.js';
 
 export const DEFAULT_DICTIONARY_SETTINGS = {
   enabled: true,
@@ -27,9 +26,7 @@ export const DEFAULT_DICTIONARY_SETTINGS = {
   speechVoiceURIs: DEFAULT_SPEECH_VOICE_URIS,
   theme: DEFAULT_DICTIONARY_THEME,
   cardsPerLoad: 20,
-  hideTranslationsUntilHover: true,
-  refreshButtonPosition: null,
-  showRefreshButton: true
+  hideTranslationsUntilHover: true
 };
 
 function normalizeLoadedSettings(result) {
@@ -45,9 +42,7 @@ function normalizeLoadedSettings(result) {
     cardsPerLoad: Number.isInteger(result.cardsPerLoad) && result.cardsPerLoad >= 1 && result.cardsPerLoad <= 200
       ? result.cardsPerLoad
       : DEFAULT_DICTIONARY_SETTINGS.cardsPerLoad,
-    hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false,
-    refreshButtonPosition: normalizeRefreshButtonPosition(result.refreshButtonPosition),
-    showRefreshButton: result.showRefreshButton !== false
+    hideTranslationsUntilHover: result.hideTranslationsUntilHover !== false
   };
 }
 
@@ -58,7 +53,6 @@ function normalizeSettingValue(key, value) {
     interfaceFontScale: normalizeInterfaceFontScale,
     contentFontSize: normalizeContentFontSize,
     additionalFontSize: normalizeAdditionalFontSize,
-    refreshButtonPosition: normalizeRefreshButtonPosition,
     cardsPerLoad: (setting) => Math.min(
       200,
       Math.max(1, Math.round(Number(setting)) || DEFAULT_DICTIONARY_SETTINGS.cardsPerLoad)
@@ -99,7 +93,7 @@ export function useDictionarySettings() {
     settingsRef.current = nextSettings;
     setSettings(nextSettings);
     if (key === 'theme') document.documentElement.dataset.dictionaryTheme = nextValue;
-    if (['refreshButtonPosition', 'showRefreshButton', 'contentFontSize', 'additionalFontSize'].includes(key)) {
+    if (['contentFontSize', 'additionalFontSize'].includes(key)) {
       setAppliedSettings((current) => ({ ...current, [key]: nextValue }));
     }
 

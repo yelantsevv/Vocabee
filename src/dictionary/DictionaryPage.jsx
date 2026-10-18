@@ -10,8 +10,6 @@ import { useDictionarySettings } from './hooks/useDictionarySettings.js';
 
 export function DictionaryPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [refreshButtonPositionEditing, setRefreshButtonPositionEditing] = useState(false);
-  const [cardRefreshVersion, setCardRefreshVersion] = useState(0);
   const {
     settings,
     appliedSettings,
@@ -22,7 +20,6 @@ export function DictionaryPage() {
   } = useDictionarySettings();
   const closeSettings = useCallback(() => {
     commitPendingSettings();
-    setRefreshButtonPositionEditing(false);
     setSettingsOpen(false);
     exitMobileFullscreen();
   }, [commitPendingSettings]);
@@ -32,10 +29,6 @@ export function DictionaryPage() {
   }, []);
   const catalog = useDictionaryCatalog();
 
-  function refreshCards() {
-    setCardRefreshVersion((version) => version + 1);
-  }
-
   return (
     <InterfaceLanguageProvider>
     <main className={styles.page} style={pageStyle}>
@@ -44,15 +37,9 @@ export function DictionaryPage() {
         settingsOpen={settingsOpen}
         onAddToLearning={catalog.addToLearning}
         onOpenSettings={openSettings}
-        onRefreshCards={refreshCards}
-        refreshButtonPosition={appliedSettings.refreshButtonPosition}
-        refreshButtonPositionEditing={refreshButtonPositionEditing}
-        onRefreshButtonPositionChange={(position) => updateSetting('refreshButtonPosition', position)}
         cardsPerLoad={appliedSettings.cardsPerLoad}
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
         speechVoiceURIs={appliedSettings.speechVoiceURIs}
-        showRefreshButton={appliedSettings.showRefreshButton}
-        refreshVersion={cardRefreshVersion}
       />
 
       <SettingsDialog
@@ -64,12 +51,6 @@ export function DictionaryPage() {
         settingsStatus={settingsStatus}
         catalog={catalog}
         speechLanguage={catalog.availableSources.find(({ id }) => id === catalog.selectedSourceLanguage)?.language === 'de' ? 'de' : 'en'}
-        refreshButtonPositionEditing={refreshButtonPositionEditing}
-        onRefreshButtonPositionEditingChange={setRefreshButtonPositionEditing}
-        onResetRefreshButtonPosition={() => {
-          setRefreshButtonPositionEditing(false);
-          updateSetting('refreshButtonPosition', null);
-        }}
       />
 
     </main>

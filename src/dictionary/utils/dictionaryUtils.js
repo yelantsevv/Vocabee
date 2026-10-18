@@ -1,13 +1,3 @@
-import { targetLanguages as targetLanguageOptions } from './languages.js';
-
-export const languageNames = {
-  en: 'Английский',
-  ru: 'Русский',
-  de: 'Немецкий',
-  uk: 'Украинский'
-};
-
-export const targetLanguages = targetLanguageOptions.map(([code]) => code);
 export const LEARNED_ENTRIES_KEY = 'vocabee-learned-source-entries';
 export const IMPORTED_DICTIONARIES_KEY = 'vocabee-imported-dictionaries-v1';
 

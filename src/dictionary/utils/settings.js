@@ -47,13 +47,3 @@ export function normalizeSpeechVoiceURIS(value, legacyVoiceURI = '') {
     de: typeof value?.de === 'string' ? value.de : ''
   };
 }
-
-export function normalizeRefreshButtonPosition(value) {
-  if (!value || typeof value !== 'object') return null;
-  const { x, y } = value;
-  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
-  return {
-    x: Math.max(0, Math.min(1, x)),
-    y: Math.max(0, Math.min(1, y))
-  };
-}

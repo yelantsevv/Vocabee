@@ -7,7 +7,6 @@ import { getCatalogEntryKey, shuffleEntries } from '../../utils/catalogEntries.j
 import { openBrowserExtensionSettings } from '../../data/storage.js';
 import { LearningSessionModal } from '../cards/LearningSessionModal.jsx';
 import { enterMobileFullscreen, exitMobileFullscreen } from '../../utils/mobileFullscreen.js';
-import { RefreshCardsButton } from './RefreshCardsButton.jsx';
 import { useInterfaceText } from '../../i18n/interfaceLanguage.jsx';
 import { FilteredProgressBar } from './FilteredProgressBar.jsx';
 import { DictionaryEntriesList } from './DictionaryEntriesList.jsx';
@@ -18,15 +17,9 @@ export function DictionaryCatalogPanel({
   settingsOpen = false,
   onAddToLearning,
   onOpenSettings,
-  onRefreshCards,
-  refreshButtonPosition,
-  refreshButtonPositionEditing,
-  onRefreshButtonPositionChange,
   cardsPerLoad,
   hideTranslationsUntilHover,
-  speechVoiceURIs,
-  showRefreshButton = true,
-  refreshVersion
+  speechVoiceURIs
 }) {
   const t = useInterfaceText();
   const [extensionSettingsError, setExtensionSettingsError] = useState('');
@@ -47,7 +40,6 @@ export function DictionaryCatalogPanel({
     setEntryLearningLevel
   } = catalog;
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
-  const previousRefreshVersion = useRef(refreshVersion);
   const filteredEntryKeys = filteredSourceEntries.map(getCatalogEntryKey);
   const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
   const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
@@ -103,12 +95,6 @@ export function DictionaryCatalogPanel({
   }, []);
 
   useEffect(() => {
-    if (previousRefreshVersion.current !== refreshVersion) {
-      previousRefreshVersion.current = refreshVersion;
-      setShuffledEntries(shuffleEntries(filteredSourceEntries));
-      return;
-    }
-
     setShuffledEntries((current) => {
       const currentKeys = new Set(filteredEntryKeys);
       const entriesByKey = new Map(filteredSourceEntries.map((entry) => [getCatalogEntryKey(entry), entry]));
@@ -121,11 +107,11 @@ export function DictionaryCatalogPanel({
       ));
       return [...retainedEntries, ...shuffleEntries(newEntries)];
     });
-  }, [filteredSourceEntries, filteredEntrySignature, refreshVersion]);
+  }, [filteredSourceEntries, filteredEntrySignature]);
 
   useEffect(() => {
     setDisplayedCardCount(cardsPerLoad);
-  }, [cardsPerLoad, filteredEntrySignature, refreshVersion]);
+  }, [cardsPerLoad, filteredEntrySignature]);
 
   async function openExtensionSettings() {
     setExtensionSettingsError('');
@@ -151,13 +137,6 @@ export function DictionaryCatalogPanel({
       {(showStickyProgress || settingsOpen || learningSessionEntries) && (
         <FilteredProgressBar value={filteredDictionaryProgress} sticky />
       )}
-
-      {showRefreshButton && <RefreshCardsButton
-        position={refreshButtonPosition}
-        positionEditing={refreshButtonPositionEditing}
-        onPositionChange={onRefreshButtonPositionChange}
-        onRefresh={onRefreshCards}
-      />}
 
       {catalogLoading ? (
         <p className={styles.emptyCatalog}>{t('Проверяем базу словарей…')}</p>

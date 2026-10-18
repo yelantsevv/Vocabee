@@ -15,10 +15,6 @@ export function SettingsPanel({
   settingsStatus,
   catalog,
   speechLanguage = 'en',
-  refreshButtonPosition,
-  refreshButtonPositionEditing,
-  onRefreshButtonPositionEditingChange,
-  onResetRefreshButtonPosition,
   modal = false
 }) {
   const t = useInterfaceText();
@@ -164,36 +160,6 @@ export function SettingsPanel({
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
           />
         </label>
-        <section className={panelStyles.positionSetting} aria-labelledby="refresh-button-position-title">
-          <h2 id="refresh-button-position-title">{t('Положение кнопки обновления')}</h2>
-          <label className={panelStyles.positionToggle} htmlFor="edit-refresh-button-position">
-            <span>{t('Перемещать кнопку')}</span>
-            <input
-              id="edit-refresh-button-position"
-              type="checkbox"
-              checked={refreshButtonPositionEditing}
-              onChange={(event) => onRefreshButtonPositionEditingChange(event.target.checked)}
-            />
-          </label>
-          <label className={panelStyles.positionToggle} htmlFor="show-refresh-button">
-            <span>{t('Скрыть кнопку обновления')}</span>
-            <input
-              id="show-refresh-button"
-              type="checkbox"
-              checked={!settings.showRefreshButton}
-              onChange={(event) => updateSetting('showRefreshButton', !event.target.checked)}
-            />
-          </label>
-          <p className={panelStyles.positionHint}>
-            {t('Включите настройку, перетащите появившуюся кнопку в нужное место и выключите её.')}
-          </p>
-          <button
-            className={panelStyles.positionReset}
-            type="button"
-            onClick={onResetRefreshButtonPosition}
-            disabled={!refreshButtonPosition}
-          >{t('Сбросить положение')}</button>
-        </section>
         {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{t(settingsStatus)}</p>}
         <DatabaseManager />
       </section>

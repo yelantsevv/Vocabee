@@ -321,20 +321,6 @@ export function useDictionaryCatalog() {
     });
   }, [catalogView, importedDictionaries, selectedSourceLanguage, sourceConnections, sourceMetadata]);
 
-  const overallDictionaryProgress = getAverageProgress(
-    selectedSourceDictionary,
-    selectedSourceLanguage,
-    learningLevelOverrides
-  );
-  const selectedLevelEntries = selectedSourceDictionary.filter((entry) => (
-    sourceLevels.length === 0 || sourceLevels.includes(entry.level)
-  ));
-  const levelLearningProgress = getAverageProgress(
-    selectedLevelEntries,
-    selectedSourceLanguage,
-    learningLevelOverrides
-  );
-
   const sourceEntriesByFilters = useMemo(() => filterCatalogEntries(selectedSourceDictionary, {
     catalogView,
     selectedSourceLanguage,
@@ -524,10 +510,7 @@ export function useDictionaryCatalog() {
     learningLevelOverrides,
     studySessionEntries,
     selectedSourceDictionary,
-    overallDictionaryProgress,
     filteredDictionaryProgress,
-    selectedLevelEntries,
-    levelLearningProgress,
     filteredSourceEntries,
     addToLearning,
     setEntryLearningLevel
