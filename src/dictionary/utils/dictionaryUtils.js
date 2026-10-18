@@ -39,11 +39,6 @@ export function normalizeImportedEntries(payload) {
     if (!Array.isArray(entry.definitions) || !entry.definitions.every((item) => typeof item === 'string')) {
       throw new Error(`У записи «${entry.word}» неверный список переводов.`);
     }
-    if (entry.learning_level !== undefined
-      && (!Number.isInteger(entry.learning_level) || entry.learning_level < 0 || entry.learning_level > 9)) {
-      throw new Error(`У записи «${entry.word}» уровень знания должен быть от 0 до 9.`);
-    }
-
     return {
       word: entry.word.trim(),
       part_of_speech: entry.part_of_speech === 'phrasal-verb'
@@ -52,7 +47,9 @@ export function normalizeImportedEntries(payload) {
           ? entry.part_of_speech
           : 'verb',
       level: VALID_CEFR_LEVELS.has(entry.level) ? entry.level : 'A1',
-      learning_level: normalizeLearningLevel(entry.learning_level ?? 0),
+      // Learning progress belongs to this user's progress store, not to the
+      // dictionary file. Do not restore it when a dictionary is re-imported.
+      learning_level: 0,
       frequency_rank: Number.isFinite(entry.frequency_rank) ? entry.frequency_rank : 10000 + index,
       definitions: entry.definitions,
       ...(typeof entry.is_irregular === 'boolean' ? { is_irregular: entry.is_irregular } : {}),

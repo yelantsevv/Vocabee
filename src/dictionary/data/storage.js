@@ -48,8 +48,8 @@ export async function deleteExtensionIndexedDatabase(databaseName) {
   return requestExtension('DELETE_INDEXED_DATABASE', { databaseName }, 5000);
 }
 
-export async function getExtensionIndexedDatabases() {
-  return requestExtension('LIST_INDEXED_DATABASES', {}, 5000);
+export async function getExtensionIndexedDatabases(timeout = 5000) {
+  return requestExtension('LIST_INDEXED_DATABASES', {}, timeout);
 }
 
 export async function getMyVocabularyEntries() {
@@ -98,8 +98,7 @@ export async function getDictionarySettings(defaults) {
     });
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     return { ...defaults, ...settings, source: 'extension' };
-  } catch (error) {
-    console.info('Vocabee: using website settings because the extension bridge is unavailable.', error);
+  } catch {
     let storedSettings = {};
     try {
       storedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
@@ -115,8 +114,7 @@ export async function saveDictionarySettings(settings) {
     await requestExtension('SAVE_SETTINGS', { settings });
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     return 'extension';
-  } catch (error) {
-    console.info('Vocabee: saving settings locally because the extension bridge is unavailable.', error);
+  } catch {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     return 'website';
   }

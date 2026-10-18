@@ -158,7 +158,6 @@ export function SettingsPanel({
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
           />
         </label>
-        {settingsStatus && <p className={panelStyles.settingsStatus} role="status">{settingsStatus}</p>}
         <DatabaseManager />
       </section>
     </section>
