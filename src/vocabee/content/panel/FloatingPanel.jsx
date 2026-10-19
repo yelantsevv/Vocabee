@@ -100,6 +100,7 @@ export function FloatingPanel({ app }) {
       <PanelHeader
         activeView={panelState.activeView}
         onSelectView={selectView}
+        onRefresh={dictionary.load}
         onPointerDown={interactions.handleHeaderPointerDown}
         onPointerMove={interactions.handleHeaderPointerMove}
         onPointerUp={interactions.handleHeaderPointerUp}

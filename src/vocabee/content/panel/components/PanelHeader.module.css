@@ -74,7 +74,7 @@
   background: var(--vb-hover);
 }
 
-.homeButton + .sectionSwitch {
+.homeButton + .refreshButton {
   margin-left: auto;
 }
 
@@ -84,7 +84,18 @@
   fill: currentColor;
 }
 
-.sectionSwitch + .sectionSwitch {
+.refreshButton svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sectionSwitch + .refreshButton,
+.refreshButton + .sectionSwitch {
   margin-left: 3px;
 }
 

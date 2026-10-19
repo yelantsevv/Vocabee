@@ -158,6 +158,7 @@
       window.postMessage({
         channel: CHANNEL,
         type: 'MY_DICTIONARY_UPDATED',
+        action: message.action || 'updated',
         learningLevelUpdate: message.learningLevelUpdate
       }, window.location.origin);
     }

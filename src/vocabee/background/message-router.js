@@ -123,7 +123,7 @@ export function registerMessageHandlers() {
         .then((removed) => {
           sendResponse({ ok: true, removed });
           if (removed) {
-            chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
+            chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED', action: 'deleted' }, () => {
               void chrome.runtime.lastError;
             });
           }
@@ -139,6 +139,7 @@ export function registerMessageHandlers() {
           if (updated) {
             chrome.runtime.sendMessage({
               type: 'MY_DICTIONARY_UPDATED',
+              action: 'progress-changed',
               learningLevelUpdate: {
                 word: message.entry.word,
                 sourceLang: message.entry.sourceLang,
@@ -160,7 +161,7 @@ export function registerMessageHandlers() {
     saveRequest
       .then((result) => {
         sendResponse({ ok: true, ...result });
-        chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
+        chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED', action: 'saved' }, () => {
           void chrome.runtime.lastError;
         });
       })

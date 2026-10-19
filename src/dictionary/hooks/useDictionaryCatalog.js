@@ -63,6 +63,7 @@ export function useDictionaryCatalog() {
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
   const catalogMutationRef = useRef(0);
+  const myDictionaryRevisionRef = useRef(0);
   const [importedDictionaries, setImportedDictionaries] = useState({});
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readLearningLevelOverrides()
@@ -124,15 +125,31 @@ export function useDictionaryCatalog() {
     }
   }
 
+  function clearMyDictionaryProgressOverrides() {
+    setLearningLevelOverrides((current) => {
+      const next = Object.fromEntries(Object.entries(current)
+        .filter(([key]) => !key.startsWith('my-vocabee:')));
+      if (Object.keys(next).length === Object.keys(current).length) return current;
+      localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+      return next;
+    });
+  }
+
   useEffect(() => {
     let active = true;
     const mutationAtStart = catalogMutationRef.current;
+    const myDictionaryRevisionAtStart = myDictionaryRevisionRef.current;
     async function loadCatalogFromDatabase() {
       try {
         let records = await readCatalogDictionaries();
+        let myDictionaryLoaded = false;
         try {
-          const myDictionary = createMyDictionaryRecord(await getMyVocabularyEntries());
-          if (myDictionary) records.push(myDictionary);
+          const myDictionaryEntries = await getMyVocabularyEntries();
+          if (myDictionaryRevisionAtStart === myDictionaryRevisionRef.current) {
+            myDictionaryLoaded = true;
+            const myDictionary = createMyDictionaryRecord(myDictionaryEntries);
+            if (myDictionary) records.push(myDictionary);
+          }
         } catch (error) {
           console.info('Vocabee: extension my-dictionary database is unavailable.', error);
         }
@@ -149,6 +166,7 @@ export function useDictionaryCatalog() {
         records = [...records, ...legacyRecords];
         localStorage.removeItem('vocabee-imported-dictionaries-v1');
         if (!active || mutationAtStart !== catalogMutationRef.current) return;
+        if (myDictionaryLoaded) clearMyDictionaryProgressOverrides();
 
         records.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
         const dictionaries = Object.fromEntries(records.map(({ catalogId, language, entries }) => [
@@ -227,26 +245,13 @@ export function useDictionaryCatalog() {
 
   useEffect(() => {
     const runtime = globalThis.chrome?.runtime;
-    const refreshMyDictionary = (learningLevelUpdate) => {
+    const refreshMyDictionary = () => {
+      const refreshRevision = myDictionaryRevisionRef.current + 1;
+      myDictionaryRevisionRef.current = refreshRevision;
       getMyVocabularyEntries().then((entries) => {
-        if (learningLevelUpdate?.word && ['en', 'de'].includes(learningLevelUpdate.sourceLang)
-          && Number.isInteger(learningLevelUpdate.learningLevel)) {
-          const learningSource = `my-vocabee:${learningLevelUpdate.sourceLang}`;
-          const progressKey = getLearnedEntryKey(learningSource, learningLevelUpdate.word);
-          const storedEntry = entries.find((entry) => (
-            entry.word?.toLocaleLowerCase(learningLevelUpdate.sourceLang)
-              === learningLevelUpdate.word.toLocaleLowerCase(learningLevelUpdate.sourceLang)
-            && (entry.source_language || 'en') === learningLevelUpdate.sourceLang
-            && (entry.target_language || 'ru') === learningLevelUpdate.targetLang
-          ));
-          setLearningLevelOverrides((current) => {
-            const next = { ...current };
-            if (storedEntry?.learning_level === learningLevelUpdate.learningLevel) delete next[progressKey];
-            else next[progressKey] = learningLevelUpdate.learningLevel;
-            localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
-            return next;
-          });
-        }
+        if (refreshRevision !== myDictionaryRevisionRef.current) return;
+        clearMyDictionaryProgressOverrides();
+
         const record = createMyDictionaryRecord(entries);
         setImportedDictionaries((current) => {
           const next = { ...current };
@@ -271,21 +276,32 @@ export function useDictionaryCatalog() {
       }).catch((error) => console.warn('Vocabee: failed to refresh my dictionary.', error));
     };
     const handleRuntimeMessage = (message) => {
-      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary(message.learningLevelUpdate);
+      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary();
     };
-    const handleWindowMessage = (event) => {
-      if (event.source === window
-        && event.origin === window.location.origin
-        && event.data?.channel === 'VOCABEE_LOCAL_DICTIONARY'
-        && event.data?.type === 'MY_DICTIONARY_UPDATED') {
-        refreshMyDictionary(event.data.learningLevelUpdate);
-      }
+    const handleDictionaryUpdateEvent = (event) => {
+      if (event.detail?.action) refreshMyDictionary();
+    };
+    const handleExtensionBridgeMessage = (event) => {
+      const message = event.data;
+      if (event.source !== window
+        || event.origin !== window.location.origin
+        || message?.channel !== 'VOCABEE_LOCAL_DICTIONARY'
+        || message?.type !== 'MY_DICTIONARY_UPDATED') return;
+
+      window.dispatchEvent(new CustomEvent('vocabee:my-dictionary-updated', {
+        detail: {
+          action: message.action || 'updated',
+          learningLevelUpdate: message.learningLevelUpdate
+        }
+      }));
     };
     runtime?.onMessage?.addListener(handleRuntimeMessage);
-    window.addEventListener('message', handleWindowMessage);
+    window.addEventListener('vocabee:my-dictionary-updated', handleDictionaryUpdateEvent);
+    window.addEventListener('message', handleExtensionBridgeMessage);
     return () => {
       runtime?.onMessage?.removeListener(handleRuntimeMessage);
-      window.removeEventListener('message', handleWindowMessage);
+      window.removeEventListener('vocabee:my-dictionary-updated', handleDictionaryUpdateEvent);
+      window.removeEventListener('message', handleExtensionBridgeMessage);
     };
   }, []);
 
@@ -570,7 +586,9 @@ export function useDictionaryCatalog() {
     if (nextLevel === (entry.learning_level ?? 0) && !isExtensionDictionaryEntry) delete next[key];
     else next[key] = nextLevel;
     setLearningLevelOverrides(next);
-    localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+    if (!isExtensionDictionaryEntry) {
+      localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+    }
 
     if (isExtensionDictionaryEntry) {
       setMyVocabularyLearningLevel({
@@ -578,7 +596,16 @@ export function useDictionaryCatalog() {
         sourceLang: entry.source_language || entry._catalogLanguage,
         targetLang: entry.target_language || 'ru',
         learningLevel: nextLevel
-      }).catch((error) => console.warn('Vocabee: failed to sync learning progress with the extension.', error));
+      }).catch((error) => {
+        setLearningLevelOverrides((current) => {
+          if (current[key] !== nextLevel) return current;
+          const restored = { ...current };
+          delete restored[key];
+          localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(restored));
+          return restored;
+        });
+        console.warn('Vocabee: failed to sync learning progress with the extension.', error);
+      });
     }
   }
 
@@ -602,9 +629,11 @@ export function useDictionaryCatalog() {
       const normalizedWord = entry.word.toLocaleLowerCase(language);
       const learningProgressKey = getLearnedEntryKey(`my-vocabee:${language}`, entry.word);
       setLearningLevelOverrides((current) => {
-        if (!(learningProgressKey in current)) return current;
+        const phraseProgressKey = getLearnedEntryKey(`my-vocabee:${language}:phrases`, entry.word);
+        if (!(learningProgressKey in current) && !(phraseProgressKey in current)) return current;
         const next = { ...current };
         delete next[learningProgressKey];
+        delete next[phraseProgressKey];
         localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
         return next;
       });
