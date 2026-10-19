@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 function isExtensionContextValid() {
   try {
@@ -8,18 +8,20 @@ function isExtensionContextValid() {
   }
 }
 
-export function useDictionary(app, active, sourceLanguage = 'en') {
+export function useDictionary(active, sourceLanguage = 'en') {
   const [words, setWords] = useState([]);
   const [status, setStatus] = useState('Загружаю словарь…');
   const [loaded, setLoaded] = useState(false);
+  const latestLoadId = useRef(0);
 
   const load = useCallback(() => {
     if (!isExtensionContextValid()) return;
+    const loadId = latestLoadId.current + 1;
+    latestLoadId.current = loadId;
     setStatus('Загружаю словарь…');
-    setWords([]);
-    setLoaded(false);
     try {
       chrome.runtime.sendMessage({ type: 'GET_DICTIONARY_WORDS' }, (response) => {
+        if (loadId !== latestLoadId.current) return;
         if (!isExtensionContextValid() || chrome.runtime.lastError) {
           if (isExtensionContextValid()) console.error('Vocabee: could not request dictionary', chrome.runtime.lastError.message);
           setStatus('Не удалось загрузить словарь. Попробуйте открыть его снова.');
@@ -38,14 +40,28 @@ export function useDictionary(app, active, sourceLanguage = 'en') {
       if (isExtensionContextValid()) console.error('Vocabee: could not request dictionary', error);
       setStatus('Не удалось загрузить словарь. Попробуйте открыть его снова.');
     }
-  }, [app]);
+  }, []);
 
   useEffect(() => {
     if (active) load();
   }, [active, load]);
 
+  useEffect(() => {
+    const handleDictionaryUpdate = (message) => {
+      if (message?.type === 'MY_DICTIONARY_UPDATED' && active) load();
+    };
+    chrome.runtime.onMessage.addListener(handleDictionaryUpdate);
+    return () => chrome.runtime.onMessage.removeListener(handleDictionaryUpdate);
+  }, [active, load]);
+
+  const updateLearningLevel = useCallback((word, learningLevel) => {
+    setWords((currentWords) => currentWords.map((entry) => (
+      entry.id === word.id ? { ...entry, learning_level: learningLevel } : entry
+    )));
+  }, []);
+
   const languageWords = words.filter((word) => (word.sourceLang || sourceLanguage) === sourceLanguage);
   const visibleStatus = status || (languageWords.length ? '' : 'Нет сохранённых слов на выбранном языке.');
 
-  return { words: languageWords, status: visibleStatus, load, loaded };
+  return { words: languageWords, status: visibleStatus, load, loaded, updateLearningLevel };
 }

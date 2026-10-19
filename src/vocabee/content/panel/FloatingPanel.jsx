@@ -47,11 +47,14 @@ export function FloatingPanel({ app }) {
     app.state.sourceLang = subtitleLanguage;
   }, [app, subtitleLanguage]);
   const dictionary = useDictionary(
-    app,
     hydrated && panelState.visible && !panelState.minimized && panelState.activeView === 'dictionary',
     subtitleLanguage
   );
-  const { setLearningLevel, learningProgressLoaded } = useExtensionLearningProgress(app, dictionary.words, dictionary.loaded);
+  const { setLearningLevel, learningProgressLoaded } = useExtensionLearningProgress(
+    dictionary.words,
+    dictionary.loaded,
+    dictionary.updateLearningLevel
+  );
   const interactions = usePanelInteractions({ panelRef, panelState, setPanelState, save });
 
   useEffect(() => {

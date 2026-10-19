@@ -282,8 +282,9 @@ async function addWordToMyDictionary(payload, { startLearning = false } = {}) {
         } else {
           result = {
             duplicate: true,
-            alreadyLearning: startLearning && currentLearningLevel > 0 && currentLearningLevel < 9,
-            alreadyLearned: startLearning && currentLearningLevel === 9
+            alreadyLearning: startLearning && normalizeLearningLevel(currentLearningLevel) > 0
+              && normalizeLearningLevel(currentLearningLevel) < 3,
+            alreadyLearned: startLearning && normalizeLearningLevel(currentLearningLevel) === 3
           };
         }
         return;

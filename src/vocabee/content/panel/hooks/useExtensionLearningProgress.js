@@ -26,7 +26,7 @@ function getExtensionDictionaryWords() {
   });
 }
 
-export function useExtensionLearningProgress(app, words, dictionaryLoaded) {
+export function useExtensionLearningProgress(words, dictionaryLoaded, updateDictionaryLearningLevel) {
   const migrationStarted = useRef(false);
   const [learningProgressLoaded, setLearningProgressLoaded] = useState(false);
 
@@ -64,14 +64,17 @@ export function useExtensionLearningProgress(app, words, dictionaryLoaded) {
         });
         await Promise.all(updates);
         chrome.storage.local.remove(LEGACY_STORAGE_KEY);
-        if (updates.length) app.refreshDictionaryView?.();
+        if (updates.length) {
+          const allWords = await getExtensionDictionaryWords();
+          allWords.forEach((word) => updateDictionaryLearningLevel?.(word, word.learning_level));
+        }
       } catch (error) {
         console.error('Vocabee: could not migrate extension learning progress', error);
       } finally {
         setLearningProgressLoaded(true);
       }
     });
-  }, [app, dictionaryLoaded, words]);
+  }, [dictionaryLoaded, updateDictionaryLearningLevel, words]);
 
   const setLearningLevel = useCallback(async (word, level) => {
     try {
@@ -81,11 +84,11 @@ export function useExtensionLearningProgress(app, words, dictionaryLoaded) {
         targetLang: word.targetLang,
         learningLevel: level
       });
-      app.refreshDictionaryView?.();
+      updateDictionaryLearningLevel?.(word, level);
     } catch (error) {
       console.error('Vocabee: could not save extension learning progress', error);
     }
-  }, [app]);
+  }, [updateDictionaryLearningLevel]);
 
   return { setLearningLevel, learningProgressLoaded };
 }
