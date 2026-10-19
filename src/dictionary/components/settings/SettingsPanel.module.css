@@ -8,6 +8,27 @@
   padding: 12px 24px;
 }
 
+.myDictionaryLanguage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 2px 14px;
+  color: var(--theme-text-soft, #e1dcf5);
+  font-size: 13px;
+}
+
+.myDictionaryLanguage select {
+  min-width: 150px;
+  max-width: 58%;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 36%, transparent);
+  border-radius: 9px;
+  background: var(--theme-surface, #171b30);
+  color: var(--theme-text, #f3f4fc);
+  font: inherit;
+}
+
 .batchSizeSetting {
   display: flex;
   align-items: center;

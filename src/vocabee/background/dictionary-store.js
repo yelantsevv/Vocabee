@@ -16,6 +16,12 @@ function getDictionaryTextType(text) {
   return wordCount > 1 ? 'phrase' : 'noun';
 }
 
+function normalizeLearningLevel(level) {
+  if (!Number.isInteger(level) || level <= 0) return 0;
+  if (level <= 3) return level;
+  return Math.min(3, Math.ceil(level * 3 / 9));
+}
+
 function openExistingDatabase(databaseName) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(databaseName);
@@ -347,6 +353,43 @@ async function deleteWordFromMyDictionary({ word, sourceLang, targetLang }) {
   });
 }
 
+async function updateMyDictionaryLearningLevel({ word, sourceLang, targetLang, learningLevel }) {
+  if (typeof word !== 'string' || !word.trim()
+    || !SOURCE_LANGUAGES.includes(sourceLang)
+    || !TARGET_LANGUAGES.includes(targetLang)
+    || !Number.isInteger(learningLevel) || learningLevel < 0 || learningLevel > 3) {
+    throw new Error('Не удалось сохранить уровень изучения карточки.');
+  }
+
+  const database = await openMyVocabularyDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction('dictionaries', 'readwrite');
+    const store = transaction.objectStore('dictionaries');
+    let updated = false;
+    transaction.oncomplete = () => resolve(updated);
+    transaction.onerror = () => reject(new Error(
+      `Не удалось сохранить прогресс карточки: ${transaction.error?.message || 'ошибка IndexedDB'}`
+    ));
+    transaction.onabort = () => reject(new Error('Сохранение прогресса карточки отменено.'));
+
+    const lookup = store.get(sourceLang);
+    lookup.onsuccess = () => {
+      const current = lookup.result;
+      if (!current) return;
+      const normalizedWord = word.trim().toLocaleLowerCase(sourceLang);
+      const entries = (current.entries || []).map((entry) => {
+        const matches = entry.word?.toLocaleLowerCase(sourceLang) === normalizedWord
+          && (entry.target_language || current.targetLanguage || 'ru') === targetLang;
+        if (!matches) return entry;
+        updated = true;
+        return { ...entry, learning_level: learningLevel };
+      });
+      if (updated) store.put({ ...current, entries, updatedAt: Date.now() });
+    };
+    lookup.onerror = () => transaction.abort();
+  });
+}
+
 async function getDictionaryWords() {
   const entries = await getMyVocabularyEntries();
   return entries.map((entry, index) => ({
@@ -359,7 +402,7 @@ async function getDictionaryWords() {
     translatedText: entry.definitions[0] || '',
     sourceLang: entry.source_language,
     targetLang: entry.target_language,
-    learning_level: entry.learning_level || 0,
+    learning_level: normalizeLearningLevel(entry.learning_level),
     addedAt: entry.frequency_rank || index
   }));
 }
@@ -405,6 +448,7 @@ async function listIndexedDatabases() {
 export {
   addWordToMyDictionary,
   deleteWordFromMyDictionary,
+  updateMyDictionaryLearningLevel,
   deleteIndexedDatabase,
   getDictionaryWords,
   getMyVocabularyEntries,

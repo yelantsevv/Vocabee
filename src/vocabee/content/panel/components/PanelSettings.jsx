@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { SettingsSwitch } from '../../../components/settings/SettingsSwitch.jsx';
 import { DictionaryWordCard } from './DictionaryWordCard.jsx';
 import { WebsiteLink } from './WebsiteLink.jsx';
@@ -17,16 +16,17 @@ function FontSizeSetting({ id, label, value, unit, min, max, step, onChange, chi
   );
 }
 
-export function PanelSettings({ preferences, homepageUrl, showWebsiteLink, onShowWebsiteLinkChange, dictionaryFontSize, interfaceFontScale, theme, onThemeChange, onDictionaryFontSizeChange, onInterfaceFontScaleChange, }) {
+export function PanelSettings({ preferences, homepageUrl, subtitleLanguage, onSubtitleLanguageChange, dictionaryFontSize, interfaceFontScale, theme, onThemeChange, onDictionaryFontSizeChange, onInterfaceFontScaleChange, }) {
   return (
     <section className={styles.settingsRoot} data-panel-content="settings">
       <WebsiteLink href={homepageUrl} />
-      <SettingsSwitch
-        id="vocabee-show-website-link"
-        label="Показывать ссылку на сайт в словаре"
-        checked={showWebsiteLink}
-        onChange={onShowWebsiteLinkChange}
-      />
+      <label className={styles.languageSetting} htmlFor="vocabee-subtitle-language">
+        <strong>Язык субтитров</strong>
+        <select id="vocabee-subtitle-language" value={subtitleLanguage} onChange={(event) => onSubtitleLanguageChange(event.target.value)}>
+          <option value="en">Английский (EN)</option>
+          <option value="de">Немецкий (DE)</option>
+        </select>
+      </label>
       <SettingsSwitch
         id="panel-enabled"
         label="Перевод субтитров"

@@ -16,14 +16,14 @@
   }
 
   function loadSettings() {
-    app.storage.get({ enabled: true, vocabeeTabEnabled: true }, (settings) => {
+    app.storage.get({ enabled: true, vocabeeTabEnabled: true, subtitleLanguage: 'en' }, (settings) => {
       const tabEnabled = settings.vocabeeTabEnabled !== false;
       app.state = {
         ...app.state,
         enabled: Boolean(settings.enabled) && tabEnabled,
         tabEnabled,
         lang: 'ru',
-        sourceLang: 'en'
+        sourceLang: settings.subtitleLanguage === 'de' ? 'de' : 'en'
       };
       app.userEnabled = Boolean(settings.enabled);
       if (app.state.enabled) processCaptions();
@@ -51,11 +51,16 @@
   });
 
   app.storage.onChanged.addListener((changes, areaName) => {
-    if ((areaName !== 'sync' && areaName !== 'local') || !changes.enabled) return;
-    app.userEnabled = Boolean(changes.enabled.newValue);
-    app.state.enabled = app.userEnabled && app.state.tabEnabled !== false;
-    if (app.state.enabled) processCaptions();
-    else app.clearCaptionProcessing();
+    if (areaName !== 'sync' && areaName !== 'local') return;
+    if (changes.subtitleLanguage) {
+      app.state.sourceLang = changes.subtitleLanguage.newValue === 'de' ? 'de' : 'en';
+    }
+    if (changes.enabled) {
+      app.userEnabled = Boolean(changes.enabled.newValue);
+      app.state.enabled = app.userEnabled && app.state.tabEnabled !== false;
+      if (app.state.enabled) processCaptions();
+      else app.clearCaptionProcessing();
+    }
   });
 
   function observePage() {

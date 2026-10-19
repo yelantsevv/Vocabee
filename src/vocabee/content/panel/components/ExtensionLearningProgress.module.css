@@ -1,0 +1,64 @@
+.add,
+.progress,
+.learned {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.add {
+  border: 1px solid rgba(169, 91, 255, 0.5);
+  background: rgba(119, 82, 255, 0.15);
+  color: var(--vb-text, #e2d8ff);
+}
+
+.add span {
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.progress {
+  border: 0;
+  background: conic-gradient(#8b5cf6 var(--progress-angle), rgba(173, 183, 220, 0.15) 0);
+  color: var(--vb-text, #e2d8ff);
+}
+
+.progress span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--vb-surface, #171b30);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.learned {
+  border: 1px solid rgba(83, 211, 161, 0.4);
+  background: rgba(83, 211, 161, 0.13);
+  color: #78e2ae;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.add:focus-visible,
+.progress:focus-visible,
+.learned:focus-visible {
+  outline: 2px solid #d2c4ff;
+  outline-offset: 3px;
+}
+
+.add:disabled,
+.progress:disabled,
+.learned:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}

@@ -1,21 +1,28 @@
 import clsx from 'clsx';
+import { ExtensionLearningProgress } from './ExtensionLearningProgress.jsx';
 import styles from './DictionaryEntryHeader.module.css';
 
 export function DictionaryEntryHeader({
   word,
   translation,
-  learningLevel,
+  learningLevel = 0,
+  onLearningLevelChange,
+  onDeleteEntry,
+  learningProgressLoaded = true,
   forms,
   translationVisible = false,
-  onAddToLearning,
   onRevealTranslation,
-  onHideTranslation
+  onHideTranslation,
+  onSpeakWord
 }) {
   return (
     <div className={styles.entryHeader}>
       <div className={styles.entryMain}>
         <div className={styles.entryWordBlock}>
-          <h2>{word}</h2>
+          <h2>{onSpeakWord
+            ? <button className={styles.speakWordButton} type="button" aria-label={`Озвучить: ${word}`} title="Озвучить слово" onClick={onSpeakWord}>{word}</button>
+            : word}
+          </h2>
           {forms && <p className={styles.inlineForms}>{forms}</p>}
         </div>
         <div
@@ -28,29 +35,23 @@ export function DictionaryEntryHeader({
             className={clsx(styles.entryTranslation, translationVisible && styles.entryTranslationVisible)}
             aria-hidden={!translationVisible}
           >{translation}</p>
-          {learningLevel < 9 && onAddToLearning ? (
-            <button
-              className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
-              type="button"
-              aria-label={`Повысить уровень знания «${word}»: ${learningLevel}`}
-              data-translation-trigger=""
-              title={`Повысить уровень знания: ${learningLevel}`}
-              style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / 9 * 360}deg` } : undefined}
-              onPointerEnter={onRevealTranslation}
-              onClick={onAddToLearning}
-            >
-              {learningLevel === 0
-                ? <span aria-hidden="true">+</span>
-                : <span>{learningLevel}</span>}
-            </button>
-          ) : learningLevel === 9 ? (
-            <span
-              className={styles.learnedMark}
-              aria-label="Слово выучено"
-              data-translation-trigger=""
-              onPointerEnter={onRevealTranslation}
-            >✓</span>
-          ) : null}
+          <div className={styles.cardActions}>
+            <ExtensionLearningProgress
+              word={word}
+              level={learningLevel}
+              disabled={!learningProgressLoaded}
+              onChange={onLearningLevelChange}
+            />
+            {onDeleteEntry && (
+              <button
+                className={styles.deleteEntryButton}
+                type="button"
+                aria-label={`Удалить «${word}» из Моего словаря`}
+                title="Удалить карточку из Моего словаря"
+                onClick={onDeleteEntry}
+              ><span aria-hidden="true">−</span></button>
+            )}
+          </div>
         </div>
       </div>
     </div>

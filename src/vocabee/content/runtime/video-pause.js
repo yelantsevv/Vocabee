@@ -6,6 +6,8 @@
   let pointerX = -1;
   let pointerY = -1;
   let pauseAreaCheckTimer;
+  let activeSpeechId = 0;
+  let resumeAfterSpeech = false;
 
   function getPauseArea(target) {
     if (!app.state.enabled) return null;
@@ -41,6 +43,41 @@
     video.play().catch(() => {});
     delete video.dataset.vocabeePausedByTooltip;
   }
+
+  app.speakText = function (text, language) {
+    const spokenText = String(text || '').trim();
+    const speech = window.speechSynthesis;
+    if (!spokenText || !speech || !window.SpeechSynthesisUtterance) return;
+
+    const speechId = ++activeSpeechId;
+    speech.cancel();
+    const video = document.querySelector('video');
+    if (!resumeAfterSpeech) {
+      resumeAfterSpeech = Boolean(video && !video.paused);
+    }
+    if (resumeAfterSpeech && video && !video.paused) video.pause();
+
+    const utterance = new window.SpeechSynthesisUtterance(spokenText);
+    const sourceLanguage = language === 'de' ? 'de' : 'en';
+    utterance.lang = sourceLanguage === 'de' ? 'de-DE' : 'en-US';
+    const voice = speech.getVoices().find((item) => item.lang?.toLowerCase().startsWith(sourceLanguage));
+    if (voice) utterance.voice = voice;
+
+    const finishSpeech = () => {
+      if (speechId !== activeSpeechId) return;
+      activeSpeechId = 0;
+      const shouldResume = resumeAfterSpeech;
+      resumeAfterSpeech = false;
+      const currentVideo = document.querySelector('video');
+      if (shouldResume && currentVideo?.paused && currentVideo.dataset.vocabeePausedByTooltip !== 'true') {
+        currentVideo.play().catch(() => {});
+      }
+    };
+
+    utterance.onend = finishSpeech;
+    utterance.onerror = finishSpeech;
+    speech.speak(utterance);
+  };
 
   function updatePauseAreaState() {
     pointerInPauseArea = isPointerOverPauseArea();
@@ -78,7 +115,11 @@
       pauseAreaCheckTimer = setTimeout(updatePauseAreaState, 100);
     }
   }, true);
-  document.addEventListener('play', () => {
+  document.addEventListener('play', (event) => {
+    if (activeSpeechId && event.target instanceof HTMLVideoElement) {
+      event.target.pause();
+      return;
+    }
     if (!isPointerOverPauseArea()) return;
     pointerInPauseArea = true;
     pauseVideo();

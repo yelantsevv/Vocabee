@@ -9,10 +9,8 @@ import {
 } from './dictionaryUtils.js';
 
 export const CATALOG_FILTERS_KEY = 'vocabee-dictionary-catalog-filters';
-export const SOURCE_CONNECTIONS_KEY = 'vocabee-dictionary-source-connections';
 export const DICTIONARY_STATS_KEY = 'vocabee-dictionary-stats-v1';
 export const CATALOG_FILTERS_VERSION = 4;
-export const DEFAULT_SOURCE_CONNECTIONS = { my: true, language: true };
 
 const availableLevels = ['A1', 'A2', 'B1', 'B2'];
 const availableVerbTypes = ['regular', 'irregular', 'modal', 'phrasal'];
@@ -32,28 +30,13 @@ export function createMyDictionaryRecord(entries) {
   };
 }
 
-export function readSourceConnections() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SOURCE_CONNECTIONS_KEY) || '{}');
-    return {
-      my: typeof saved.my === 'boolean' ? saved.my : DEFAULT_SOURCE_CONNECTIONS.my,
-      language: typeof saved.language === 'boolean' ? saved.language : DEFAULT_SOURCE_CONNECTIONS.language
-    };
-  } catch {
-    return DEFAULT_SOURCE_CONNECTIONS;
+export function getCatalogSourceIds(language) {
+  if (language === 'my-vocabee'
+    || CATALOG_SOURCES[language]
+    || String(language || '').startsWith('custom-dictionary-')) {
+    return [language];
   }
-}
-
-export function getCatalogSourceIds(language, sourceConnections) {
-  const selectedSourceIds = sourceConnections.language
-    && (CATALOG_SOURCES[language] || String(language || '').startsWith('custom-dictionary-'))
-    ? [language]
-    : [];
-
-  return [
-    ...(sourceConnections.my ? ['my-vocabee'] : []),
-    ...selectedSourceIds
-  ];
+  return [];
 }
 
 export function createLearningStats() {

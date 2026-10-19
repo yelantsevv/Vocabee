@@ -8,14 +8,16 @@ function isExtensionContextValid() {
   }
 }
 
-export function useDictionary(app, active) {
+export function useDictionary(app, active, sourceLanguage = 'en') {
   const [words, setWords] = useState([]);
   const [status, setStatus] = useState('Загружаю словарь…');
+  const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(() => {
     if (!isExtensionContextValid()) return;
     setStatus('Загружаю словарь…');
     setWords([]);
+    setLoaded(false);
     try {
       chrome.runtime.sendMessage({ type: 'GET_DICTIONARY_WORDS' }, (response) => {
         if (!isExtensionContextValid() || chrome.runtime.lastError) {
@@ -30,6 +32,7 @@ export function useDictionary(app, active) {
         }
         setWords(response.words);
         setStatus(response.words.length ? '' : 'Нет сохранённых слов.');
+        setLoaded(true);
       });
     } catch (error) {
       if (isExtensionContextValid()) console.error('Vocabee: could not request dictionary', error);
@@ -41,5 +44,8 @@ export function useDictionary(app, active) {
     if (active) load();
   }, [active, load]);
 
-  return { words, status, load };
+  const languageWords = words.filter((word) => (word.sourceLang || sourceLanguage) === sourceLanguage);
+  const visibleStatus = status || (languageWords.length ? '' : 'Нет сохранённых слов на выбранном языке.');
+
+  return { words: languageWords, status: visibleStatus, load, loaded };
 }

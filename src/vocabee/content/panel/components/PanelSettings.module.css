@@ -2,6 +2,28 @@
   display: block;
 }
 
+.languageSetting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--vb-divider);
+  color: var(--vb-text);
+  font-size: calc(12px * var(--vocabee-ui-font-scale, 1));
+}
+
+.languageSetting select {
+  max-width: 58%;
+  min-width: 140px;
+  padding: 8px 10px;
+  border: 1px solid var(--vb-divider);
+  border-radius: 8px;
+  background: var(--vb-surface);
+  color: var(--vb-text);
+  font: inherit;
+}
+
 .fontSetting {
   display: grid;
   gap: 8px;

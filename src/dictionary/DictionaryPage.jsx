@@ -68,7 +68,9 @@ export function DictionaryPage() {
         updateSetting={updateSetting}
         settingsStatus={settingsStatus}
         catalog={catalog}
-        speechLanguage={catalog.availableSources.find(({ id }) => id === catalog.selectedSourceLanguage)?.language === 'de' ? 'de' : 'en'}
+        speechLanguage={catalog.selectedSourceLanguage === 'my-vocabee'
+          ? catalog.myVocabeeLanguage
+          : catalog.availableSources.find(({ id }) => id === catalog.selectedSourceLanguage)?.language === 'de' ? 'de' : 'en'}
       />
 
     </main>

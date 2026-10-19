@@ -6,7 +6,11 @@ import {
   writeCustomDictionary,
   writeCatalogDictionary
 } from '../data/catalogDatabase.js';
-import { getMyVocabularyEntries } from '../data/storage.js';
+import {
+  deleteMyVocabularyEntry as deleteStoredMyVocabularyEntry,
+  getMyVocabularyEntries,
+  setMyVocabularyLearningLevel
+} from '../data/storage.js';
 import { DEFAULT_DICTIONARY_URL, DEFAULT_GERMAN_DICTIONARY_URL } from '../config/dictionaryConfig.js';
 import {
   getEntryLearningLevel,
@@ -28,13 +32,21 @@ import {
   getCatalogSourceIds,
   readLearningLevelOverrides,
   readCatalogFilters,
-  readSourceConnections,
   readStoredObject,
   CATALOG_FILTERS_VERSION,
   CATALOG_FILTERS_KEY,
-  DICTIONARY_STATS_KEY,
-  SOURCE_CONNECTIONS_KEY
+  DICTIONARY_STATS_KEY
 } from '../utils/catalogPreferences.js';
+
+const MY_VOCABEE_LANGUAGE_KEY = 'vocabee-my-dictionary-language';
+
+function readMyVocabeeLanguage() {
+  try {
+    return localStorage.getItem(MY_VOCABEE_LANGUAGE_KEY) === 'de' ? 'de' : 'en';
+  } catch {
+    return 'en';
+  }
+}
 
 export function useDictionaryCatalog() {
   const [initialFilters] = useState(readCatalogFilters);
@@ -45,7 +57,7 @@ export function useDictionaryCatalog() {
   const [sourceVerbTypes, setSourceVerbTypesState] = useState(initialFilters.sourceVerbTypes);
   const [sourceCategories, setSourceCategoriesState] = useState(initialFilters.sourceCategories);
   const [progressViews, setProgressViewsState] = useState(initialFilters.progressViews);
-  const [sourceConnections, setSourceConnections] = useState(readSourceConnections);
+  const [myVocabeeLanguage, setMyVocabeeLanguageState] = useState(readMyVocabeeLanguage);
   const [catalogView, setCatalogViewState] = useState(initialFilters.catalogView);
   const [importStatus, setImportStatus] = useState('');
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
@@ -101,6 +113,16 @@ export function useDictionaryCatalog() {
   function setSourceVerbTypes(value) { updateFilter('sourceVerbTypes', value); }
   function setSourceCategories(value) { updateFilter('sourceCategories', value); }
   function setProgressViews(value) { updateFilter('progressViews', value); }
+
+  function setMyVocabeeLanguage(value) {
+    const language = value === 'de' ? 'de' : 'en';
+    setMyVocabeeLanguageState(language);
+    try {
+      localStorage.setItem(MY_VOCABEE_LANGUAGE_KEY, language);
+    } catch (error) {
+      console.warn('Vocabee: unable to save Vocabee dictionary language.', error);
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -205,8 +227,26 @@ export function useDictionaryCatalog() {
 
   useEffect(() => {
     const runtime = globalThis.chrome?.runtime;
-    const refreshMyDictionary = () => {
+    const refreshMyDictionary = (learningLevelUpdate) => {
       getMyVocabularyEntries().then((entries) => {
+        if (learningLevelUpdate?.word && ['en', 'de'].includes(learningLevelUpdate.sourceLang)
+          && Number.isInteger(learningLevelUpdate.learningLevel)) {
+          const learningSource = `my-vocabee:${learningLevelUpdate.sourceLang}`;
+          const progressKey = getLearnedEntryKey(learningSource, learningLevelUpdate.word);
+          const storedEntry = entries.find((entry) => (
+            entry.word?.toLocaleLowerCase(learningLevelUpdate.sourceLang)
+              === learningLevelUpdate.word.toLocaleLowerCase(learningLevelUpdate.sourceLang)
+            && (entry.source_language || 'en') === learningLevelUpdate.sourceLang
+            && (entry.target_language || 'ru') === learningLevelUpdate.targetLang
+          ));
+          setLearningLevelOverrides((current) => {
+            const next = { ...current };
+            if (storedEntry?.learning_level === learningLevelUpdate.learningLevel) delete next[progressKey];
+            else next[progressKey] = learningLevelUpdate.learningLevel;
+            localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+            return next;
+          });
+        }
         const record = createMyDictionaryRecord(entries);
         setImportedDictionaries((current) => {
           const next = { ...current };
@@ -231,14 +271,14 @@ export function useDictionaryCatalog() {
       }).catch((error) => console.warn('Vocabee: failed to refresh my dictionary.', error));
     };
     const handleRuntimeMessage = (message) => {
-      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary();
+      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary(message.learningLevelUpdate);
     };
     const handleWindowMessage = (event) => {
       if (event.source === window
         && event.origin === window.location.origin
         && event.data?.channel === 'VOCABEE_LOCAL_DICTIONARY'
         && event.data?.type === 'MY_DICTIONARY_UPDATED') {
-        refreshMyDictionary();
+        refreshMyDictionary(event.data.learningLevelUpdate);
       }
     };
     runtime?.onMessage?.addListener(handleRuntimeMessage);
@@ -275,18 +315,13 @@ export function useDictionaryCatalog() {
     }
   }, [catalogLoading, catalogView, selectedSourceLanguage, sourceLevels, sourceVerbTypes, sourceCategories, progressViews]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(SOURCE_CONNECTIONS_KEY, JSON.stringify(sourceConnections));
-    } catch (error) {
-      console.warn('Vocabee: unable to save dictionary source connections.', error);
-    }
-  }, [sourceConnections]);
-
   const availableSources = useMemo(() => Object.keys(importedDictionaries)
     .filter((sourceId) => sourceMetadata[sourceId])
     .map((sourceId) => {
-      const entries = importedDictionaries[sourceId] || [];
+      const sourceEntries = importedDictionaries[sourceId] || [];
+      const entries = sourceId === 'my-vocabee'
+        ? sourceEntries.filter((entry) => (entry.source_language || 'en') === myVocabeeLanguage)
+        : sourceEntries;
       const words = createLearningStats();
       const phrases = createLearningStats();
 
@@ -315,7 +350,7 @@ export function useDictionaryCatalog() {
         words,
         phrases
       };
-    }), [importedDictionaries, learningLevelOverrides, sourceMetadata]);
+    }), [importedDictionaries, learningLevelOverrides, myVocabeeLanguage, sourceMetadata]);
 
   useEffect(() => {
     if (catalogLoading) return;
@@ -336,8 +371,10 @@ export function useDictionaryCatalog() {
   }, [availableSources, catalogLoading, selectedSourceLanguage]);
 
   const selectedSourceDictionary = useMemo(() => {
-    const sourceIds = getCatalogSourceIds(selectedSourceLanguage, sourceConnections);
+    const sourceIds = getCatalogSourceIds(selectedSourceLanguage);
     const entries = sourceIds.flatMap((sourceId) => (importedDictionaries[sourceId] || [])
+      .filter((entry) => sourceId !== 'my-vocabee'
+        || (entry.source_language || 'en') === myVocabeeLanguage)
       .map((entry) => ({
         ...entry,
         _catalogId: sourceId,
@@ -378,7 +415,7 @@ export function useDictionaryCatalog() {
         }));
       return [...savedPhrase, ...examplePhrases];
     });
-  }, [catalogView, importedDictionaries, selectedSourceLanguage, sourceConnections, sourceMetadata]);
+  }, [catalogView, importedDictionaries, myVocabeeLanguage, selectedSourceLanguage, sourceMetadata]);
 
   const sourceEntriesByFilters = useMemo(() => filterCatalogEntries(selectedSourceDictionary, {
     catalogView,
@@ -523,16 +560,26 @@ export function useDictionaryCatalog() {
   function updateEntryLearningLevel(entry, getNextLevel) {
     const learningSource = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
     const key = getLearnedEntryKey(learningSource, entry.word);
-    setLearningLevelOverrides((current) => {
-      const currentLevel = getEntryLearningLevel(entry, learningSource, current);
-      const nextLevel = Math.max(0, Math.min(MAX_LEARNING_LEVEL, getNextLevel(currentLevel)));
-      if (nextLevel === currentLevel) return current;
-      const next = { ...current };
-      if (nextLevel === (entry.learning_level ?? 0)) delete next[key];
-      else next[key] = nextLevel;
-      localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
-      return next;
-    });
+    const currentLevel = getEntryLearningLevel(entry, learningSource, learningLevelOverrides);
+    const nextLevel = Math.max(0, Math.min(MAX_LEARNING_LEVEL, getNextLevel(currentLevel)));
+    if (nextLevel === currentLevel) return;
+
+    const isExtensionDictionaryEntry = entry._catalogId === 'my-vocabee'
+      && ['en', 'de'].includes(entry.source_language || entry._catalogLanguage);
+    const next = { ...learningLevelOverrides };
+    if (nextLevel === (entry.learning_level ?? 0) && !isExtensionDictionaryEntry) delete next[key];
+    else next[key] = nextLevel;
+    setLearningLevelOverrides(next);
+    localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+
+    if (isExtensionDictionaryEntry) {
+      setMyVocabularyLearningLevel({
+        word: entry.word,
+        sourceLang: entry.source_language || entry._catalogLanguage,
+        targetLang: entry.target_language || 'ru',
+        learningLevel: nextLevel
+      }).catch((error) => console.warn('Vocabee: failed to sync learning progress with the extension.', error));
+    }
   }
 
   function addToLearning(entry) {
@@ -541,6 +588,39 @@ export function useDictionaryCatalog() {
 
   function setEntryLearningLevel(entry, level) {
     updateEntryLearningLevel(entry, () => level);
+  }
+
+  async function deleteMyVocabeeEntry(entry) {
+    try {
+      const removed = await deleteStoredMyVocabularyEntry({
+        word: entry.word,
+        sourceLang: entry.source_language || entry._catalogLanguage,
+        targetLang: entry.target_language || 'ru'
+      });
+      if (!removed) return false;
+      const language = entry.source_language || entry._catalogLanguage;
+      const normalizedWord = entry.word.toLocaleLowerCase(language);
+      const learningProgressKey = getLearnedEntryKey(`my-vocabee:${language}`, entry.word);
+      setLearningLevelOverrides((current) => {
+        if (!(learningProgressKey in current)) return current;
+        const next = { ...current };
+        delete next[learningProgressKey];
+        localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+        return next;
+      });
+      setImportedDictionaries((current) => ({
+        ...current,
+        'my-vocabee': (current['my-vocabee'] || []).filter((item) => (
+          (item.source_language || 'en') !== language
+          || item.word?.toLocaleLowerCase(language) !== normalizedWord
+          || (item.target_language || 'ru') !== (entry.target_language || 'ru')
+        ))
+      }));
+      return true;
+    } catch (error) {
+      setImportStatus(error.message || 'Не удалось удалить карточку из Моего словаря.');
+      return false;
+    }
   }
 
   return {
@@ -559,8 +639,8 @@ export function useDictionaryCatalog() {
     setCatalogView,
     progressViews,
     setProgressViews,
-    sourceConnections,
-    setSourceConnections,
+    myVocabeeLanguage,
+    setMyVocabeeLanguage,
     importStatus,
     sourceMetadata,
     createCustomDictionary,
@@ -572,7 +652,8 @@ export function useDictionaryCatalog() {
     filteredDictionaryProgress,
     filteredSourceEntries,
     addToLearning,
-    setEntryLearningLevel
+    setEntryLearningLevel,
+    deleteMyVocabeeEntry
   };
 }
 

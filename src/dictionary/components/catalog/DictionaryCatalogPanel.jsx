@@ -62,7 +62,6 @@ export function DictionaryCatalogPanel({
     catalogLoading,
     catalogError,
     sourceCategories,
-    sourceConnections,
     filteredDictionaryProgress,
     learningLevelOverrides,
     filteredSourceEntries,
@@ -75,10 +74,9 @@ export function DictionaryCatalogPanel({
   const numberFormat = new Intl.NumberFormat('ru-RU');
   const loadedLanguages = availableSources.filter(({ id }) => ['en', 'de'].includes(id));
   const hasMyDictionary = availableSources.some(({ id }) => id === 'my-vocabee');
-  const activeLanguage = loadedLanguages.find(({ id }) => id === selectedSourceLanguage)
-    || loadedLanguages[0];
-  const hasViewableSource = (sourceConnections.my && hasMyDictionary)
-    || (sourceConnections.language && Boolean(activeLanguage));
+  const hasViewableSource = selectedSourceLanguage === 'my-vocabee'
+    ? hasMyDictionary
+    : availableSources.some(({ id }) => id === selectedSourceLanguage);
   const isPageAtTop = () => Math.max(
     window.scrollY,
     document.documentElement.scrollTop,
@@ -219,7 +217,7 @@ export function DictionaryCatalogPanel({
         <div className={styles.emptyCatalog}>
           {hasMyDictionary || loadedLanguages.length ? (
             <p>
-              Оба источника отключены. Включите нужный словарь кнопками выше.
+              Выберите словарь кнопками выше.
             </p>
           ) : (
             <>
@@ -250,6 +248,7 @@ export function DictionaryCatalogPanel({
             examplesPerCard={examplesPerCard}
             showWordRelations={showWordRelations}
             onAddToLearning={onAddToLearning}
+            onDeleteMyVocabeeEntry={catalog.deleteMyVocabeeEntry}
             onSpeakWord={speakEntry}
             onSpeakExample={speakExample}
           />

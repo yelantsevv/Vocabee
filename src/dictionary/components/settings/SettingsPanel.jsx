@@ -114,7 +114,27 @@ export function SettingsPanel({
         <SettingsActionButtons
           actions={actions}
         />
-        <DictionaryStats sources={catalog.availableSources} selectedSourceLanguage={catalog.selectedSourceLanguage} />
+        {loadedSources.has('my-vocabee') && (
+          <label className={panelStyles.myDictionaryLanguage} htmlFor="my-vocabee-language">
+            <span>Язык словаря Vocabee</span>
+            <select
+              id="my-vocabee-language"
+              value={catalog.myVocabeeLanguage}
+              onChange={(event) => {
+                catalog.setMyVocabeeLanguage(event.target.value);
+                catalog.setSelectedSourceLanguage('my-vocabee');
+              }}
+            >
+              <option value="en">Английский (EN)</option>
+              <option value="de">Немецкий (DE)</option>
+            </select>
+          </label>
+        )}
+        <DictionaryStats
+          sources={catalog.availableSources}
+          selectedSourceLanguage={catalog.selectedSourceLanguage}
+          myVocabeeLanguage={catalog.myVocabeeLanguage}
+        />
         <section className={panelStyles.fontSizeSettings} aria-label='Размер текста'>
           <label className={panelStyles.fontSizeControl} htmlFor="content-font-size">
             <span>

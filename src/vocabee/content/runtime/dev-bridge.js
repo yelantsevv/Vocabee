@@ -63,6 +63,23 @@
       return;
     }
 
+    if (message.action === 'SET_MY_DICTIONARY_LEARNING_LEVEL' && message.entry) {
+      chrome.runtime.sendMessage({
+        type: 'SET_MY_DICTIONARY_LEARNING_LEVEL',
+        entry: message.entry
+      }, (response) => {
+        const error = chrome.runtime.lastError?.message;
+        window.postMessage({
+          channel: CHANNEL,
+          type: 'RESPONSE',
+          id: message.id,
+          result: response?.ok ? true : undefined,
+          error: error || response?.error
+        }, window.location.origin);
+      });
+      return;
+    }
+
     if (message.action === 'OPEN_EXTENSION_SETTINGS') {
       chrome.runtime.sendMessage({ type: 'OPEN_EXTENSION_SETTINGS' }, (response) => {
         const error = chrome.runtime.lastError?.message;
@@ -140,7 +157,8 @@
     if (message?.type === 'MY_DICTIONARY_UPDATED') {
       window.postMessage({
         channel: CHANNEL,
-        type: 'MY_DICTIONARY_UPDATED'
+        type: 'MY_DICTIONARY_UPDATED',
+        learningLevelUpdate: message.learningLevelUpdate
       }, window.location.origin);
     }
   });

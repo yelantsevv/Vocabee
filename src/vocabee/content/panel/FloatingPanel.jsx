@@ -14,10 +14,11 @@ import { usePanelInteractions } from './hooks/usePanelInteractions.js';
 import { usePanelPreferences } from './hooks/usePanelPreferences.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { useStoredSetting } from './hooks/useStoredSetting.js';
+import { useExtensionLearningProgress } from './hooks/useExtensionLearningProgress.js';
 import { useTheme } from '../../shared/hooks/useTheme.js';
 import styles from './FloatingPanel.module.css';
 
-const normalizeBooleanSetting = (value) => value !== false;
+const normalizeSubtitleLanguage = (value) => value === 'de' ? 'de' : 'en';
 
 export function FloatingPanel({ app }) {
   const panelRef = useRef(null);
@@ -36,13 +37,21 @@ export function FloatingPanel({ app }) {
     initialValue: DEFAULT_INTERFACE_FONT_SCALE,
     normalize: normalizeInterfaceFontScale
   });
-  const [showWebsiteLink, changeShowWebsiteLink] = useStoredSetting({
+  const [subtitleLanguage, changeSubtitleLanguage] = useStoredSetting({
     app,
-    key: 'showWebsiteLinkInDictionary',
-    initialValue: true,
-    normalize: normalizeBooleanSetting
+    key: 'subtitleLanguage',
+    initialValue: 'en',
+    normalize: normalizeSubtitleLanguage
   });
-  const dictionary = useDictionary(app, hydrated && panelState.visible && !panelState.minimized && panelState.activeView === 'dictionary');
+  useEffect(() => {
+    app.state.sourceLang = subtitleLanguage;
+  }, [app, subtitleLanguage]);
+  const dictionary = useDictionary(
+    app,
+    hydrated && panelState.visible && !panelState.minimized && panelState.activeView === 'dictionary',
+    subtitleLanguage
+  );
+  const { setLearningLevel, learningProgressLoaded } = useExtensionLearningProgress(app, dictionary.words, dictionary.loaded);
   const interactions = usePanelInteractions({ panelRef, panelState, setPanelState, save });
 
   useEffect(() => {
@@ -97,8 +106,8 @@ export function FloatingPanel({ app }) {
           ? <PanelSettings
               preferences={preferences}
               homepageUrl={app.homepageUrl}
-              showWebsiteLink={showWebsiteLink}
-              onShowWebsiteLinkChange={changeShowWebsiteLink}
+              subtitleLanguage={subtitleLanguage}
+              onSubtitleLanguageChange={changeSubtitleLanguage}
               dictionaryFontSize={dictionaryFontSize}
               interfaceFontScale={interfaceFontScale}
               theme={theme}
@@ -110,7 +119,28 @@ export function FloatingPanel({ app }) {
               {...dictionary}
               fill={Number.isFinite(panelState.width) && Number.isFinite(panelState.height)}
               homepageUrl={app.homepageUrl}
-              showWebsiteLink={showWebsiteLink}
+              onLearningLevelChange={setLearningLevel}
+              learningProgressLoaded={learningProgressLoaded}
+              onSpeakWord={(word, sourceLanguage) => app.speakText?.(
+                word,
+                sourceLanguage === 'de' || sourceLanguage === 'en' ? sourceLanguage : subtitleLanguage
+              )}
+              onDeleteWord={(word) => {
+                chrome.runtime.sendMessage({
+                  type: 'DELETE_MY_VOCABEE_ENTRY',
+                  entry: {
+                    word: word.sourceText,
+                    sourceLang: word.sourceLang,
+                    targetLang: word.targetLang
+                  }
+                }, (response) => {
+                  if (chrome.runtime.lastError || !response?.ok || !response.removed) {
+                    console.error('Vocabee: could not delete dictionary card', chrome.runtime.lastError?.message || response?.error);
+                    return;
+                  }
+                  app.refreshDictionaryView?.();
+                });
+              }}
             />}
       </div>
       {!panelState.minimized && ['left', 'right', 'bottom', 'bottom-left', 'bottom-right'].map((edge) => (

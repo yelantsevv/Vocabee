@@ -12,6 +12,7 @@ export function DictionaryWordCard({
   forms,
   translationVisible = false,
   onAddToLearning,
+  onDeleteEntry,
   onSpeakWord,
   children
 }) {
@@ -47,20 +48,33 @@ export function DictionaryWordCard({
         />
         {children}
       </div>
-      {learningLevel < MAX_LEARNING_LEVEL && onAddToLearning ? (
-        <button
-          className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
-          type="button"
-          aria-label={`Повысить уровень знания: ${word}: ${learningLevel}`}
-          title={`Повысить уровень знания: ${learningLevel}`}
-          style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / MAX_LEARNING_LEVEL * 360}deg` } : undefined}
-          onClick={onAddToLearning}
-        >
-          {learningLevel === 0 ? <span aria-hidden="true">+</span> : <span>{learningLevel}</span>}
-        </button>
-      ) : learningLevel === MAX_LEARNING_LEVEL ? (
-        <span className={styles.learnedMark} aria-label="Слово выучено">✓</span>
-      ) : null}
+      {(onAddToLearning || learningLevel === MAX_LEARNING_LEVEL || onDeleteEntry) && (
+        <div className={styles.cardActions}>
+          {learningLevel < MAX_LEARNING_LEVEL && onAddToLearning ? (
+            <button
+              className={learningLevel === 0 ? styles.addToLearningButton : styles.progressCircle}
+              type="button"
+              aria-label={`Повысить уровень знания: ${word}: ${learningLevel}`}
+              title={`Повысить уровень знания: ${learningLevel}`}
+              style={learningLevel > 0 ? { '--progress-angle': `${learningLevel / MAX_LEARNING_LEVEL * 360}deg` } : undefined}
+              onClick={onAddToLearning}
+            >
+              {learningLevel === 0 ? <span aria-hidden="true">+</span> : <span>{learningLevel}</span>}
+            </button>
+          ) : learningLevel === MAX_LEARNING_LEVEL ? (
+            <span className={styles.learnedMark} aria-label="Слово выучено">✓</span>
+          ) : null}
+          {onDeleteEntry && (
+            <button
+              className={styles.deleteEntryButton}
+              type="button"
+              aria-label={`Удалить «${word}» из Моего словаря`}
+              title="Удалить карточку из Моего словаря"
+              onClick={onDeleteEntry}
+            ><span aria-hidden="true">−</span></button>
+          )}
+        </div>
+      )}
     </li>
   );
 }

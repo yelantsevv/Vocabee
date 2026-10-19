@@ -10,7 +10,8 @@ import {
   deleteIndexedDatabase,
   getDictionaryWords,
   getMyVocabularyEntries,
-  listIndexedDatabases
+  listIndexedDatabases,
+  updateMyDictionaryLearningLevel
 } from './dictionary-store.js';
 
 export function registerMessageHandlers() {
@@ -54,6 +55,7 @@ export function registerMessageHandlers() {
       'START_DICTIONARY_WORD_LEARNING',
       'GET_DICTIONARY_WORDS',
       'GET_MY_VOCABEE_DICTIONARY',
+      'SET_MY_DICTIONARY_LEARNING_LEVEL',
       'DELETE_MY_VOCABEE_ENTRY',
       'DELETE_INDEXED_DATABASE',
       'LIST_INDEXED_DATABASES'
@@ -122,6 +124,28 @@ export function registerMessageHandlers() {
           sendResponse({ ok: true, removed });
           if (removed) {
             chrome.runtime.sendMessage({ type: 'MY_DICTIONARY_UPDATED' }, () => {
+              void chrome.runtime.lastError;
+            });
+          }
+        })
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+    }
+
+    if (message.type === 'SET_MY_DICTIONARY_LEARNING_LEVEL') {
+      updateMyDictionaryLearningLevel(message.entry)
+        .then((updated) => {
+          sendResponse({ ok: true, updated });
+          if (updated) {
+            chrome.runtime.sendMessage({
+              type: 'MY_DICTIONARY_UPDATED',
+              learningLevelUpdate: {
+                word: message.entry.word,
+                sourceLang: message.entry.sourceLang,
+                targetLang: message.entry.targetLang,
+                learningLevel: message.entry.learningLevel
+              }
+            }, () => {
               void chrome.runtime.lastError;
             });
           }

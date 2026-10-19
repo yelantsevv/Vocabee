@@ -15,6 +15,7 @@ export function DictionaryEntriesList({
   examplesPerCard,
   showWordRelations,
   onAddToLearning,
+  onDeleteMyVocabeeEntry,
   onSpeakWord,
   onSpeakExample
 }) {
@@ -48,6 +49,9 @@ export function DictionaryEntriesList({
               forms={formatVerbForms(entry, ' - ') || undefined}
               translationVisible={translationVisible}
               onAddToLearning={() => onAddToLearning(entry)}
+              onDeleteEntry={entry._catalogId === 'my-vocabee'
+                ? () => onDeleteMyVocabeeEntry(entry)
+                : undefined}
               onSpeakWord={() => onSpeakWord(entry)}
             >
               {examples.length > 0 && (

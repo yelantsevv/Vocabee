@@ -68,6 +68,15 @@ export async function deleteMyVocabularyEntry(entry) {
   return requestExtension('DELETE_MY_VOCABEE_ENTRY', { entry }, 5000);
 }
 
+export async function setMyVocabularyLearningLevel(entry) {
+  const message = { type: 'SET_MY_DICTIONARY_LEARNING_LEVEL', entry };
+  if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
+    await sendExtensionMessage(message);
+    return;
+  }
+  await requestExtension('SET_MY_DICTIONARY_LEARNING_LEVEL', { entry }, 5000);
+}
+
 export async function openBrowserExtensionSettings() {
   if (window.location.protocol === 'chrome-extension:' && globalThis.chrome?.runtime?.sendMessage) {
     await sendExtensionMessage({ type: 'OPEN_EXTENSION_SETTINGS' });

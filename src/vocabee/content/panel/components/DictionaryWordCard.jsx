@@ -7,11 +7,14 @@ export function DictionaryWordCard({
   word,
   translation,
   learningLevel,
+  onLearningLevelChange,
+  learningProgressLoaded,
+  onDeleteEntry,
   forms,
   translationVisible = false,
-  onAddToLearning,
   onRevealTranslation,
   onHideTranslation,
+  onSpeakWord,
   children
 }) {
   return (
@@ -20,11 +23,14 @@ export function DictionaryWordCard({
         word={word}
         translation={translation}
         learningLevel={learningLevel}
+        onLearningLevelChange={onLearningLevelChange}
+        onDeleteEntry={onDeleteEntry}
+        learningProgressLoaded={learningProgressLoaded}
         forms={forms}
         translationVisible={translationVisible}
-        onAddToLearning={onAddToLearning}
         onRevealTranslation={onRevealTranslation}
         onHideTranslation={onHideTranslation}
+        onSpeakWord={onSpeakWord}
       />
       {children}
     </li>

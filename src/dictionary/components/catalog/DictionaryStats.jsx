@@ -2,14 +2,14 @@ import styles from './DictionaryStats.module.css';
 
 const numberFormat = new Intl.NumberFormat('ru-RU');
 
-export function DictionaryStats({ sources, selectedSourceLanguage }) {
+export function DictionaryStats({ sources, selectedSourceLanguage, myVocabeeLanguage = 'en' }) {
   const activeSource = sources.find(({ id }) => id === selectedSourceLanguage);
   const totals = activeSource || {
     words: { total: 0, inProgress: 0, learned: 0 },
     phrases: { total: 0, inProgress: 0, learned: 0 }
   };
   const dictionaryName = selectedSourceLanguage === 'my-vocabee'
-    ? 'Vocabee'
+    ? `Vocabee ${myVocabeeLanguage.toUpperCase()}`
     : selectedSourceLanguage === 'de'
       ? 'DE-RU'
       : selectedSourceLanguage === 'en'
