@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CATALOG_SOURCES,
   createCustomDictionary as createStoredCustomDictionary,
@@ -60,10 +60,13 @@ export function useDictionaryCatalog() {
   const [myVocabeeLanguage, setMyVocabeeLanguageState] = useState(readMyVocabeeLanguage);
   const [catalogView, setCatalogViewState] = useState(initialFilters.catalogView);
   const [importStatus, setImportStatus] = useState('');
+  const [myDictionaryRefreshing, setMyDictionaryRefreshing] = useState(false);
+  const [myDictionaryRefreshError, setMyDictionaryRefreshError] = useState('');
   const [remoteImportLoading, setRemoteImportLoading] = useState(false);
   const [sourceMetadata, setSourceMetadata] = useState(CATALOG_SOURCES);
   const catalogMutationRef = useRef(0);
   const myDictionaryRevisionRef = useRef(0);
+  const lastMyDictionaryReturnRefreshRef = useRef(0);
   const [importedDictionaries, setImportedDictionaries] = useState({});
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readLearningLevelOverrides()
@@ -134,6 +137,54 @@ export function useDictionaryCatalog() {
       return next;
     });
   }
+
+  const refreshMyDictionary = useCallback(async () => {
+    const refreshRevision = myDictionaryRevisionRef.current + 1;
+    myDictionaryRevisionRef.current = refreshRevision;
+    setMyDictionaryRefreshing(true);
+    setMyDictionaryRefreshError('');
+
+    try {
+      const entries = await getMyVocabularyEntries();
+      if (refreshRevision !== myDictionaryRevisionRef.current) return;
+
+      setLearningLevelOverrides((current) => {
+        const next = Object.fromEntries(Object.entries(current)
+          .filter(([key]) => !key.startsWith('my-vocabee:')));
+        if (Object.keys(next).length === Object.keys(current).length) return current;
+        localStorage.setItem(LEARNED_ENTRIES_KEY, JSON.stringify(next));
+        return next;
+      });
+
+      const record = createMyDictionaryRecord(entries);
+      setImportedDictionaries((current) => {
+        const next = { ...current };
+        if (record) next['my-vocabee'] = record.entries;
+        else delete next['my-vocabee'];
+        return next;
+      });
+      if (record) {
+        setSourceMetadata((current) => ({
+          ...current,
+          'my-vocabee': {
+            id: 'my-vocabee',
+            databaseName: 'my-vocabee',
+            language: record.language,
+            targetLanguage: record.targetLanguage,
+            title: 'Мой словарь',
+            label: '📘 Мой словарь',
+            isCustom: true
+          }
+        }));
+      }
+    } catch (error) {
+      if (refreshRevision === myDictionaryRevisionRef.current) {
+        setMyDictionaryRefreshError(error.message || 'Не удалось обновить личный словарь.');
+      }
+    } finally {
+      if (refreshRevision === myDictionaryRevisionRef.current) setMyDictionaryRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -245,41 +296,12 @@ export function useDictionaryCatalog() {
 
   useEffect(() => {
     const runtime = globalThis.chrome?.runtime;
-    const refreshMyDictionary = () => {
-      const refreshRevision = myDictionaryRevisionRef.current + 1;
-      myDictionaryRevisionRef.current = refreshRevision;
-      getMyVocabularyEntries().then((entries) => {
-        if (refreshRevision !== myDictionaryRevisionRef.current) return;
-        clearMyDictionaryProgressOverrides();
-
-        const record = createMyDictionaryRecord(entries);
-        setImportedDictionaries((current) => {
-          const next = { ...current };
-          if (record) next['my-vocabee'] = record.entries;
-          else delete next['my-vocabee'];
-          return next;
-        });
-        if (record) {
-          setSourceMetadata((current) => ({
-            ...current,
-            'my-vocabee': {
-              id: 'my-vocabee',
-              databaseName: 'my-vocabee',
-              language: record.language,
-              targetLanguage: record.targetLanguage,
-              title: 'Мой словарь',
-              label: '📘 Мой словарь',
-              isCustom: true
-            }
-          }));
-        }
-      }).catch((error) => console.warn('Vocabee: failed to refresh my dictionary.', error));
-    };
+    const refreshFromUpdateSignal = () => { void refreshMyDictionary(); };
     const handleRuntimeMessage = (message) => {
-      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshMyDictionary();
+      if (message?.type === 'MY_DICTIONARY_UPDATED') refreshFromUpdateSignal();
     };
     const handleDictionaryUpdateEvent = (event) => {
-      if (event.detail?.action) refreshMyDictionary();
+      if (event.detail?.action) refreshFromUpdateSignal();
     };
     const handleExtensionBridgeMessage = (event) => {
       const message = event.data;
@@ -303,7 +325,26 @@ export function useDictionaryCatalog() {
       window.removeEventListener('vocabee:my-dictionary-updated', handleDictionaryUpdateEvent);
       window.removeEventListener('message', handleExtensionBridgeMessage);
     };
-  }, []);
+  }, [refreshMyDictionary]);
+
+  useEffect(() => {
+    if (selectedSourceLanguage !== 'my-vocabee') return undefined;
+
+    const refreshAfterReturn = () => {
+      if (document.visibilityState === 'hidden') return;
+      const now = Date.now();
+      if (now - lastMyDictionaryReturnRefreshRef.current < 1200) return;
+      lastMyDictionaryReturnRefreshRef.current = now;
+      void refreshMyDictionary();
+    };
+
+    document.addEventListener('visibilitychange', refreshAfterReturn);
+    window.addEventListener('focus', refreshAfterReturn);
+    return () => {
+      document.removeEventListener('visibilitychange', refreshAfterReturn);
+      window.removeEventListener('focus', refreshAfterReturn);
+    };
+  }, [refreshMyDictionary, selectedSourceLanguage]);
 
   useEffect(() => {
     if (catalogLoading) return;
@@ -671,6 +712,9 @@ export function useDictionaryCatalog() {
     myVocabeeLanguage,
     setMyVocabeeLanguage,
     importStatus,
+    myDictionaryRefreshing,
+    myDictionaryRefreshError,
+    refreshMyDictionary,
     sourceMetadata,
     createCustomDictionary,
     importDictionaryFromUrl,

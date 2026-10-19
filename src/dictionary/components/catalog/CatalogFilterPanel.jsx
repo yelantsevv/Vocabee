@@ -26,7 +26,10 @@ export function CatalogFilterPanel({
     setSourceCategories,
     progressViews,
     setProgressViews,
-    studySessionEntries
+    studySessionEntries,
+    myDictionaryRefreshing,
+    myDictionaryRefreshError,
+    refreshMyDictionary
   } = catalog;
   const isGermanDictionary = selectedSourceLanguage === 'de';
 
@@ -67,6 +70,7 @@ export function CatalogFilterPanel({
       ref={filtersRef}
       className={clsx(
         styles.dictionaryFilters,
+        selectedSourceLanguage === 'my-vocabee' && styles.hasMyDictionaryRefresh,
         !mobileFiltersOpen && styles.dictionaryFiltersMobileCollapsed,
         mobileFiltersOpen && styles.dictionaryFiltersMobileOpen
       )}
@@ -213,6 +217,25 @@ export function CatalogFilterPanel({
         </div>
         </div>
       </div>
+      {selectedSourceLanguage === 'my-vocabee' && (
+        <div className={styles.myDictionaryRefresh}>
+          <button
+            className={clsx(styles.myDictionaryRefreshButton, myDictionaryRefreshing && styles.refreshing)}
+            type="button"
+            aria-label={myDictionaryRefreshing ? 'Обновление словаря' : 'Обновить словарь'}
+            title={myDictionaryRefreshing ? 'Обновление словаря…' : 'Обновить словарь'}
+            aria-busy={myDictionaryRefreshing}
+            disabled={myDictionaryRefreshing}
+            onClick={refreshMyDictionary}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 7v5h-5" />
+              <path d="M19.1 12a7.1 7.1 0 1 1-1.7-4.6L20 12" />
+            </svg>
+          </button>
+          {myDictionaryRefreshError && <p role="status">{myDictionaryRefreshError}</p>}
+        </div>
+      )}
     </section>
   );
 }
