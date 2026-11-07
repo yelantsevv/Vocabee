@@ -105,7 +105,7 @@ export function useDictionarySettings() {
     settingsRef.current = nextSettings;
     setSettings(nextSettings);
     if (key === 'theme') document.documentElement.dataset.dictionaryTheme = nextValue;
-    if (['contentFontSize', 'additionalFontSize'].includes(key)) {
+    if (['contentFontSize', 'additionalFontSize', 'hideTranslationsUntilHover'].includes(key)) {
       setAppliedSettings((current) => ({ ...current, [key]: nextValue }));
     }
 

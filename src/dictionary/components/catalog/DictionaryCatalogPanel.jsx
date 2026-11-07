@@ -46,10 +46,11 @@ export function DictionaryCatalogPanel({
   onAddToLearning,
   onOpenSettings,
   cardsPerLoad,
-  hideTranslationsUntilHover,
+  hideTranslationsUntilHover = true,
   examplesPerCard,
   showWordRelations,
   showSearchBar = true,
+  onToggleTranslationVisibility = () => {},
   speechVoiceURIs
 }) {
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
@@ -221,6 +222,8 @@ export function DictionaryCatalogPanel({
         }}
         reverseDirection={reverseDirection}
         onToggleDirection={() => setReverseDirection((value) => !value)}
+        hideTranslationsUntilHover={hideTranslationsUntilHover}
+        onToggleTranslationVisibility={onToggleTranslationVisibility}
       />
       {(showStickyProgress || settingsOpen || learningSessionEntries) && (
         <FilteredProgressBar value={filteredDictionaryProgress} sticky />

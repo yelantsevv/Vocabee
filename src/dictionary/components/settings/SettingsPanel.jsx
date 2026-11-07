@@ -226,17 +226,8 @@ export function SettingsPanel({
             ))}
           </select>
         </label>
-        <label className={panelStyles.toggleSetting} htmlFor="hide-translations-until-hover">
-          <span>Скрывать перевод</span>
-          <input
-            id="hide-translations-until-hover"
-            type="checkbox"
-            checked={settings.hideTranslationsUntilHover}
-            onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
-          />
-        </label>
         <label className={panelStyles.toggleSetting} htmlFor="show-dictionary-search">
-          <span>Показывать строку поиска в словаре</span>
+          <span>Показывать поиск в словаре</span>
           <input
             id="show-dictionary-search"
             type="checkbox"

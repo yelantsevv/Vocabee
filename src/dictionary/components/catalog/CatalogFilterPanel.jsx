@@ -16,7 +16,9 @@ export function CatalogFilterPanel({
   searchQuery = '',
   onSearchQueryChange = () => {},
   reverseDirection = false,
-  onToggleDirection = () => {}
+  onToggleDirection = () => {},
+  hideTranslationsUntilHover = true,
+  onToggleTranslationVisibility = () => {}
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const {
@@ -39,7 +41,8 @@ export function CatalogFilterPanel({
   const isGermanDictionary = selectedSourceLanguage === 'de';
   const directionLanguage = selectedSourceLanguage === 'my-vocabee'
     ? catalog.myVocabeeLanguage || 'en'
-    : selectedSourceLanguage;
+    : catalog.availableSources.find(({ id }) => id === selectedSourceLanguage)?.language
+      || (['en', 'de'].includes(selectedSourceLanguage) ? selectedSourceLanguage : 'en');
 
   function openSettings() {
     setMobileFiltersOpen(false);
@@ -87,6 +90,22 @@ export function CatalogFilterPanel({
       <FilteredProgressBar value={progressValue} mobilePinned />
       {showSearchBar && (
         <div className={styles.searchRow}>
+          <button
+            className={clsx(styles.searchVisibilityButton, !hideTranslationsUntilHover && styles.searchVisibilityButtonVisible)}
+            type="button"
+            aria-label={hideTranslationsUntilHover ? 'Показать переводы' : 'Скрыть переводы'}
+            aria-pressed={!hideTranslationsUntilHover}
+            title={hideTranslationsUntilHover ? 'Показывать переводы' : 'Скрывать переводы'}
+            onClick={onToggleTranslationVisibility}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              {hideTranslationsUntilHover ? (
+                <><path d="M3 3l18 18" /><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" /><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.2 0 9 5.7 9 7a10 10 0 0 1-2.2 3.1" /><path d="M6.2 6.2C3.9 7.7 3 10.4 3 12c0 1.3 3.8 7 9 7 1 0 1.9-.2 2.7-.6" /></>
+              ) : (
+                <><path d="M2.5 12s3.2-7 9.5-7 9.5 7 9.5 7-3.2 7-9.5 7-9.5-7-9.5-7Z" /><circle cx="12" cy="12" r="3" /></>
+              )}
+            </svg>
+          </button>
           <button
             className={styles.searchDirectionButton}
             type="button"
