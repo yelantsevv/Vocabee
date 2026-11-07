@@ -235,6 +235,15 @@ export function SettingsPanel({
             onChange={(event) => updateSetting('hideTranslationsUntilHover', event.target.checked)}
           />
         </label>
+        <label className={panelStyles.toggleSetting} htmlFor="show-dictionary-search">
+          <span>Показывать строку поиска в словаре</span>
+          <input
+            id="show-dictionary-search"
+            type="checkbox"
+            checked={settings.showSearchBar}
+            onChange={(event) => updateSetting('showSearchBar', event.target.checked)}
+          />
+        </label>
         <label className={panelStyles.batchSizeSetting} htmlFor="examples-per-card">
           <span>Примеров на карточке</span>
           <select

@@ -49,10 +49,14 @@ export function DictionaryCatalogPanel({
   hideTranslationsUntilHover,
   examplesPerCard,
   showWordRelations,
+  showSearchBar = true,
   speechVoiceURIs
 }) {
   const [learningSessionEntries, setLearningSessionEntries] = useState(null);
   const [showStickyProgress, setShowStickyProgress] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [reverseDirection, setReverseDirection] = useState(false);
+  const normalizedSearchQuery = searchQuery.trim().toLocaleLowerCase();
   const filtersRef = useRef(null);
   const pullStartRef = useRef(null);
   const {
@@ -70,6 +74,12 @@ export function DictionaryCatalogPanel({
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
   const filteredEntryKeys = filteredSourceEntries.map(getCatalogEntryKey);
   const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
+  const searchedSourceEntries = filteredSourceEntries.filter((entry) => {
+    const query = normalizedSearchQuery;
+    if (!query) return true;
+    return [entry.word, ...(entry.definitions || [])]
+      .some((value) => String(value || '').toLocaleLowerCase().includes(query));
+  });
   const [displayedCardCount, setDisplayedCardCount] = useState(cardsPerLoad);
   const numberFormat = new Intl.NumberFormat('ru-RU');
   const loadedLanguages = availableSources.filter(({ id }) => ['en', 'de'].includes(id));
@@ -182,6 +192,10 @@ export function DictionaryCatalogPanel({
     setDisplayedCardCount(cardsPerLoad);
   }, [cardsPerLoad, filteredEntrySignature]);
 
+  useEffect(() => {
+    if (!showSearchBar && searchQuery) setSearchQuery('');
+  }, [showSearchBar, searchQuery]);
+
   return (
     <section
       className={clsx(commonStyles.content, styles.dictionaryContent)}
@@ -199,6 +213,14 @@ export function DictionaryCatalogPanel({
           enterMobileFullscreen();
           setLearningSessionEntries(shuffleEntries(entries));
         }}
+        showSearchBar={showSearchBar}
+        searchQuery={searchQuery}
+        onSearchQueryChange={(value) => {
+          setSearchQuery(value);
+          setDisplayedCardCount(cardsPerLoad);
+        }}
+        reverseDirection={reverseDirection}
+        onToggleDirection={() => setReverseDirection((value) => !value)}
       />
       {(showStickyProgress || settingsOpen || learningSessionEntries) && (
         <FilteredProgressBar value={filteredDictionaryProgress} sticky />
@@ -237,11 +259,12 @@ export function DictionaryCatalogPanel({
       ) : (
         <>
           <DictionaryEntriesList
-            entries={shuffledEntries}
-            hasMatches={filteredSourceEntries.length > 0}
+            entries={normalizedSearchQuery ? searchedSourceEntries : shuffledEntries}
+            hasMatches={searchedSourceEntries.length > 0}
             visibleCount={displayedCardCount}
             catalogView={catalogView}
             selectedSourceLanguage={selectedSourceLanguage}
+            reverseDirection={reverseDirection}
             learningLevelOverrides={learningLevelOverrides}
             sourceCategories={sourceCategories}
             hideTranslationsUntilHover={hideTranslationsUntilHover}
@@ -252,7 +275,7 @@ export function DictionaryCatalogPanel({
             onSpeakWord={speakEntry}
             onSpeakExample={speakExample}
           />
-          {displayedCardCount < shuffledEntries.length && (
+          {displayedCardCount < (normalizedSearchQuery ? searchedSourceEntries.length : shuffledEntries.length) && (
             <button
               className={styles.loadMoreButton}
               type="button"
@@ -261,9 +284,9 @@ export function DictionaryCatalogPanel({
               }
             >
               {numberFormat.format(
-                Math.min(displayedCardCount, shuffledEntries.length),
+                Math.min(displayedCardCount, normalizedSearchQuery ? searchedSourceEntries.length : shuffledEntries.length),
               )}{" "}
-              из {numberFormat.format(shuffledEntries.length)}
+              из {numberFormat.format(normalizedSearchQuery ? searchedSourceEntries.length : shuffledEntries.length)}
             </button>
           )}
         </>
@@ -273,6 +296,8 @@ export function DictionaryCatalogPanel({
           entries={learningSessionEntries}
           catalogView={catalogView}
           examplesPerCard={examplesPerCard}
+          reverseDirection={reverseDirection}
+          onToggleDirection={() => setReverseDirection((value) => !value)}
           speechVoiceURIs={speechVoiceURIs}
           getLearningLevel={(entry) =>
             getEntryLearningLevel(

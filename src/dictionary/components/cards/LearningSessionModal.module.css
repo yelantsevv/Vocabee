@@ -298,6 +298,7 @@
 }
 
 .learnedButton,
+.directionButton,
 .knowledgeActions button {
   box-sizing: border-box;
   min-height: 42px;
@@ -328,6 +329,16 @@
 .knowledgeActions button,
 .learnedButton {
   width: 100%;
+}
+
+.directionButton {
+  min-height: 42px;
+  flex: 1 1 0;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 22%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-text-soft, #e8eafa);
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .knowledgeActions button {

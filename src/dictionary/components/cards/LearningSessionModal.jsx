@@ -6,6 +6,8 @@ export function LearningSessionModal({
   entries,
   catalogView,
   examplesPerCard = 3,
+  reverseDirection,
+  onToggleDirection,
   speechVoiceURIs = {},
   initialIndex = 0,
   getLearningLevel,
@@ -215,6 +217,12 @@ export function LearningSessionModal({
               onClick={() => rateAndContinue(MAX_LEARNING_LEVEL)}
               disabled={learningLevel === MAX_LEARNING_LEVEL}
             >{learningLevel === MAX_LEARNING_LEVEL ? '✓ Изучено' : '✓  Изученное'}</button>
+            <button
+              className={styles.directionButton}
+              type="button"
+              aria-label="Изменить направление перевода"
+              onClick={() => onToggleDirection?.()}
+            >{reverseDirection ? `RU → ${entryLanguage.toUpperCase()}` : `${entryLanguage.toUpperCase()} → RU`}</button>
             <button className={styles.closeButton} type="button" onClick={onClose} aria-label='Закрыть изучение'>
               <span className={styles.closeSymbol} aria-hidden="true">×</span>
               <span className={styles.closeLabel}>Закрыть</span>
@@ -245,14 +253,14 @@ export function LearningSessionModal({
                 aria-pressed={audioPlaying}
                 title='Нажмите, чтобы озвучить текст'
               >
-                <h3>{entry.word}</h3>
-                {forms && <p className={styles.forms}>{forms}</p>}
-                {example && <p className={styles.example}>{example.phrase || example.example}</p>}
+                <h3>{reverseDirection ? entry.definitions?.join(' · ') : entry.word}</h3>
+                {!reverseDirection && forms && <p className={styles.forms}>{forms}</p>}
+                {example && <p className={styles.example}>{reverseDirection ? example.translation : example.phrase || example.example}</p>}
               </section>
             ) : (
               <section className={styles.englishBlock} aria-label='Текст на иностранном языке'>
-                <h3>{entry.word}</h3>
-                {forms && <p className={styles.forms}>{forms}</p>}
+                <h3>{reverseDirection ? entry.definitions?.join(' · ') : entry.word}</h3>
+                {!reverseDirection && forms && <p className={styles.forms}>{forms}</p>}
                 {example && <p className={styles.example}>{example.phrase || example.example}</p>}
               </section>
             )}
@@ -272,7 +280,7 @@ export function LearningSessionModal({
             >
               {translationVisible ? (
                 <>
-                  <p className={styles.translation}>{entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
+                  <p className={styles.translation}>{reverseDirection ? entry.word : entry.definitions?.join(' · ') || 'Перевод не указан'}</p>
                   {translationExamples.length > 0 && (
                     <ul className={styles.translationExampleList}>
                       {translationExamples.map((item, index) => (

@@ -8,6 +8,7 @@ export function DictionaryWordCard({
   className,
   word,
   translation,
+  reverseDirection = false,
   learningLevel,
   forms,
   translationVisible = false,
@@ -40,8 +41,8 @@ export function DictionaryWordCard({
       />
       <div className={styles.cardContent}>
         <DictionaryEntryHeader
-          word={word}
-          translation={translation}
+          word={reverseDirection ? translation : word}
+          translation={reverseDirection ? word : translation}
           forms={forms}
           translationVisible={translationVisible}
           onSpeakWord={onSpeakWord}

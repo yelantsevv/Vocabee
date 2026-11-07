@@ -33,9 +33,7 @@ export function getStudySessionEntries(entries, progressViews, selectedSourceLan
       entry,
       ...getEntryProgressCategory(entry, selectedSourceLanguage, learningLevelOverrides)
     }))
-    .filter(({ learningLevel, category }) => (
-      learningLevel < MAX_LEARNING_LEVEL && (progressViews.length === 0 || progressViews.includes(category))
-    ))
+    .filter(({ category }) => progressViews.length === 0 || progressViews.includes(category))
     .sort((first, second) => {
       const firstInProgress = first.learningLevel > 0 ? 0 : 1;
       const secondInProgress = second.learningLevel > 0 ? 0 : 1;

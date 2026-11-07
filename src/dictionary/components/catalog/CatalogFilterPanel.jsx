@@ -11,7 +11,12 @@ export function CatalogFilterPanel({
   filtersRef,
   progressValue,
   onOpenSettings,
-  onStartLearning
+  onStartLearning,
+  showSearchBar = true,
+  searchQuery = '',
+  onSearchQueryChange = () => {},
+  reverseDirection = false,
+  onToggleDirection = () => {}
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const {
@@ -32,6 +37,9 @@ export function CatalogFilterPanel({
     refreshMyDictionary
   } = catalog;
   const isGermanDictionary = selectedSourceLanguage === 'de';
+  const directionLanguage = selectedSourceLanguage === 'my-vocabee'
+    ? catalog.myVocabeeLanguage || 'en'
+    : selectedSourceLanguage;
 
   function openSettings() {
     setMobileFiltersOpen(false);
@@ -77,6 +85,27 @@ export function CatalogFilterPanel({
       aria-label='Фильтры словаря'
     >
       <FilteredProgressBar value={progressValue} mobilePinned />
+      {showSearchBar && (
+        <div className={styles.searchRow}>
+          <button
+            className={styles.searchDirectionButton}
+            type="button"
+            aria-label="Изменить направление изучения"
+            onClick={onToggleDirection}
+          >{reverseDirection ? `RU → ${directionLanguage.toUpperCase()}` : `${directionLanguage.toUpperCase()} → RU`}</button>
+          <label className={styles.searchBar}>
+            <span className={styles.searchBarIcon} aria-hidden="true" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => onSearchQueryChange(event.target.value)}
+              placeholder="Поиск по словам и переводу"
+              aria-label="Поиск по словам и переводу"
+            />
+            {searchQuery && <button type="button" aria-label="Очистить поиск" onClick={() => onSearchQueryChange('')}>×</button>}
+          </label>
+        </div>
+      )}
       <div className={styles.filterControlsAnchor}>
         <div className={styles.mobileFiltersToggleSlot}>
           <button

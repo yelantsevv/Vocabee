@@ -9,6 +9,7 @@ export function DictionaryEntriesList({
   visibleCount,
   catalogView,
   selectedSourceLanguage,
+  reverseDirection = false,
   learningLevelOverrides,
   sourceCategories,
   hideTranslationsUntilHover,
@@ -45,6 +46,7 @@ export function DictionaryEntriesList({
               key={`${entry._catalogId || entry._catalogLanguage}:${entry._catalogLanguage}:${entry._entryKey || entry.word}`}
               word={entry.word}
               translation={entry.definitions.join(' · ')}
+              reverseDirection={reverseDirection}
               learningLevel={learningLevel}
               forms={formatVerbForms(entry, ' - ') || undefined}
               translationVisible={translationVisible}
@@ -57,23 +59,31 @@ export function DictionaryEntriesList({
               {examples.length > 0 && (
                 <section className={catalogStyles.entrySection} aria-label='Примеры'>
                   <ul className={catalogStyles.exampleList}>
-                    {examples.map((example, index) => (
-                      <li key={`${example.phrase || example.example}-${index}`}>
-                        <button
-                          className={catalogStyles.exampleSpeechButton}
-                          type="button"
-                          onClick={() => onSpeakExample(example.phrase || example.example, entry)}
-                          aria-label={`Озвучить пример: ${example.phrase || example.example}`}
-                          title="Озвучить пример"
-                        >{example.phrase || example.example}</button>
+                    {examples.map((example, index) => {
+                      const sourcePhrase = example.phrase || example.example;
+                      const displayedPhrase = reverseDirection ? example.translation : sourcePhrase;
+                      const hiddenPhrase = reverseDirection ? sourcePhrase : example.translation;
+                      return (
+                      <li key={`${sourcePhrase}-${index}`}>
+                        {reverseDirection ? (
+                          <span>{displayedPhrase}</span>
+                        ) : (
+                          <button
+                            className={catalogStyles.exampleSpeechButton}
+                            type="button"
+                            onClick={() => onSpeakExample(sourcePhrase, entry)}
+                            aria-label={`Озвучить пример: ${sourcePhrase}`}
+                            title="Озвучить пример"
+                          >{displayedPhrase}</button>
+                        )}
                         <span
                           className={translationVisible
                             ? catalogStyles.exampleTranslation
                             : `${catalogStyles.exampleTranslation} ${catalogStyles.exampleTranslationHidden}`}
                           data-translation-hidden={!translationVisible || undefined}
-                        >{example.translation}</span>
+                        >{hiddenPhrase}</span>
                       </li>
-                    ))}
+                    );})}
                   </ul>
                 </section>
               )}
