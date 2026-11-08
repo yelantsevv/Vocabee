@@ -1,4 +1,5 @@
 export const LEARNED_ENTRIES_KEY = 'vocabee-learned-source-entries';
+export const HIDDEN_ENTRIES_KEY = 'vocabee-hidden-source-entries';
 export const IMPORTED_DICTIONARIES_KEY = 'vocabee-imported-dictionaries-v1';
 export const MAX_LEARNING_LEVEL = 3;
 export const LEARNING_LEVEL_SCALE_VERSION = 4;

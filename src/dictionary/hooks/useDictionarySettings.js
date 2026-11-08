@@ -29,7 +29,8 @@ export const DEFAULT_DICTIONARY_SETTINGS = {
   hideTranslationsUntilHover: true,
   examplesPerCard: 3,
   showWordRelations: true,
-  showSearchBar: true
+  showSearchBar: true,
+  showHiddenEntries: false
 };
 
 function normalizeLoadedSettings(result) {
@@ -50,7 +51,8 @@ function normalizeLoadedSettings(result) {
       ? result.examplesPerCard
       : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard,
     showWordRelations: result.showWordRelations !== false,
-    showSearchBar: result.showSearchBar !== false
+    showSearchBar: result.showSearchBar !== false,
+    showHiddenEntries: result.showHiddenEntries === true
   };
 }
 
@@ -66,6 +68,7 @@ function normalizeSettingValue(key, value) {
       Math.max(1, Math.round(Number(setting)) || DEFAULT_DICTIONARY_SETTINGS.cardsPerLoad)
     ),
     showSearchBar: (setting) => setting !== false,
+    showHiddenEntries: (setting) => setting === true,
     examplesPerCard: (setting) => [0, 1, 2, 3].includes(Number(setting))
       ? Number(setting)
       : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard

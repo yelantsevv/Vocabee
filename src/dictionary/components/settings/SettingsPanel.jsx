@@ -235,6 +235,15 @@ export function SettingsPanel({
             onChange={(event) => updateSetting('showSearchBar', event.target.checked)}
           />
         </label>
+        <label className={panelStyles.toggleSetting} htmlFor="show-hidden-entries">
+          <span>Показывать скрытые карточки</span>
+          <input
+            id="show-hidden-entries"
+            type="checkbox"
+            checked={settings.showHiddenEntries}
+            onChange={(event) => updateSetting('showHiddenEntries', event.target.checked)}
+          />
+        </label>
         <label className={panelStyles.batchSizeSetting} htmlFor="examples-per-card">
           <span>Примеров на карточке</span>
           <select

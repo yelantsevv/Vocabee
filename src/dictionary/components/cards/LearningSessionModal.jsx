@@ -12,6 +12,7 @@ export function LearningSessionModal({
   initialIndex = 0,
   getLearningLevel,
   onSetLearningLevel,
+  onHideEntry,
   onClose
 }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -300,6 +301,13 @@ export function LearningSessionModal({
 
           <div className={styles.cardActions}>
             <div className={styles.knowledgeActions}>
+              {learningLevel === MAX_LEARNING_LEVEL && (
+                <button className={styles.hideEntryButton} type="button" onClick={() => {
+                  onHideEntry?.(entry);
+                  if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
+                  else onClose();
+                }}>Скрыть</button>
+              )}
               <button className={styles.dontKnowButton} type="button" onClick={() => rateAndContinue(learningLevel - 1)}>
                 Не знаю
               </button>

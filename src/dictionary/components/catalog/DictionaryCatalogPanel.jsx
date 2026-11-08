@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from '../../styles/DictionaryPage.module.css';
@@ -50,6 +50,7 @@ export function DictionaryCatalogPanel({
   examplesPerCard,
   showWordRelations,
   showSearchBar = true,
+  showHiddenEntries = false,
   onToggleTranslationVisibility = () => {},
   speechVoiceURIs
 }) {
@@ -69,9 +70,23 @@ export function DictionaryCatalogPanel({
     sourceCategories,
     filteredDictionaryProgress,
     learningLevelOverrides,
-    filteredSourceEntries,
+    filteredSourceEntries: catalogFilteredEntries,
     setEntryLearningLevel
   } = catalog;
+  const shouldShowHiddenEntries = showHiddenEntries || catalog.showHiddenEntries;
+  const filteredSourceEntries = useMemo(() => shouldShowHiddenEntries
+    ? catalogFilteredEntries
+    : catalogFilteredEntries.filter((entry) => {
+    const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
+    const key = `${source}:${String(entry.word || '').toLocaleLowerCase()}`;
+    return !catalog.hiddenEntryKeys?.has(key);
+  }), [shouldShowHiddenEntries, catalogFilteredEntries, catalog.hiddenEntryKeys, selectedSourceLanguage]);
+  const visibleStudySessionEntries = useMemo(() => shouldShowHiddenEntries
+    ? catalog.studySessionEntries
+    : catalog.studySessionEntries.filter((entry) => {
+      const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
+      return !catalog.hiddenEntryKeys?.has(`${source}:${String(entry.word || '').toLocaleLowerCase()}`);
+    }), [shouldShowHiddenEntries, catalog.studySessionEntries, catalog.hiddenEntryKeys, selectedSourceLanguage]);
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
   const filteredEntryKeys = filteredSourceEntries.map(getCatalogEntryKey);
   const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
@@ -206,7 +221,7 @@ export function DictionaryCatalogPanel({
       onTouchCancel={handlePullCancel}
     >
       <CatalogFilterPanel
-        catalog={catalog}
+        catalog={{ ...catalog, studySessionEntries: visibleStudySessionEntries }}
         filtersRef={filtersRef}
         progressValue={filteredDictionaryProgress}
         onOpenSettings={onOpenSettings}
@@ -313,6 +328,7 @@ export function DictionaryCatalogPanel({
             )
           }
           onSetLearningLevel={setEntryLearningLevel}
+          onHideEntry={catalog.hideEntry}
           onClose={() => {
             setLearningSessionEntries(null);
           }}

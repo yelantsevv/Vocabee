@@ -322,6 +322,7 @@
 
 .knowledgeActions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0;
   width: 100%;
 }
@@ -343,6 +344,16 @@
 
 .knowledgeActions button {
   flex: 1 1 50%;
+}
+
+.knowledgeActions .hideEntryButton {
+  flex-basis: 100%;
+  min-height: 42px;
+  border-radius: 0;
+  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 22%, transparent);
+  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  color: var(--theme-text-soft, #e8eafa);
+  font-size: 14px;
 }
 
 .knowledgeActions button {

@@ -15,6 +15,7 @@ import { DEFAULT_DICTIONARY_URL, DEFAULT_GERMAN_DICTIONARY_URL } from '../config
 import {
   getEntryLearningLevel,
   getLearnedEntryKey,
+  HIDDEN_ENTRIES_KEY,
   LEARNED_ENTRIES_KEY,
   MAX_LEARNING_LEVEL,
   normalizeImportedEntries
@@ -71,6 +72,10 @@ export function useDictionaryCatalog() {
   const [learningLevelOverrides, setLearningLevelOverrides] = useState(() => (
     readLearningLevelOverrides()
   ));
+  const [hiddenEntryKeys, setHiddenEntryKeys] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_ENTRIES_KEY) || '[]')); }
+    catch { return new Set(); }
+  });
   const persistedFiltersRef = useRef({
     catalogView: initialFilters.catalogView,
     selectedSourceLanguage: initialFilters.selectedSourceLanguage,
@@ -510,6 +515,17 @@ export function useDictionaryCatalog() {
     learningLevelOverrides
   ), [sourceEntriesByFilters, learningLevelOverrides, selectedSourceLanguage, progressViews]);
 
+  function hideEntry(entry) {
+    const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
+    const key = getLearnedEntryKey(source, entry.word);
+    setHiddenEntryKeys((current) => {
+      const next = new Set(current);
+      next.add(key);
+      localStorage.setItem(HIDDEN_ENTRIES_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }
+
   async function saveImportedDictionary(payload, sourceName, forcedLanguage) {
     const declaredLanguage = [
       payload?.language,
@@ -720,10 +736,12 @@ export function useDictionaryCatalog() {
     importDictionaryFromUrl,
     remoteImportLoading,
     learningLevelOverrides,
+    hiddenEntryKeys,
     studySessionEntries,
     selectedSourceDictionary,
     filteredDictionaryProgress,
     filteredSourceEntries,
+    hideEntry,
     addToLearning,
     setEntryLearningLevel,
     deleteMyVocabeeEntry

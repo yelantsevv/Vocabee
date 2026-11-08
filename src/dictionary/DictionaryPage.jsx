@@ -58,6 +58,7 @@ export function DictionaryPage() {
         examplesPerCard={appliedSettings.examplesPerCard}
         showWordRelations={appliedSettings.showWordRelations}
         showSearchBar={appliedSettings.showSearchBar}
+        showHiddenEntries={appliedSettings.showHiddenEntries}
         onToggleTranslationVisibility={() => updateSetting(
           'hideTranslationsUntilHover',
           !settings.hideTranslationsUntilHover
