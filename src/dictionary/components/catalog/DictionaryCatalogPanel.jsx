@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import commonStyles from '../../styles/DictionaryPage.module.css';
-import { getEntryLearningLevel } from '../../utils/dictionaryUtils.js';
+import { getEntryLearningLevel, MAX_LEARNING_LEVEL } from '../../utils/dictionaryUtils.js';
 import { getCatalogEntryKey, shuffleEntries } from '../../utils/catalogEntries.js';
 import { LearningSessionModal } from '../cards/LearningSessionModal.jsx';
 import { enterMobileFullscreen } from '../../utils/mobileFullscreen.js';
@@ -50,7 +50,8 @@ export function DictionaryCatalogPanel({
   examplesPerCard,
   showWordRelations,
   showSearchBar = true,
-  showHiddenEntries = false,
+  reviewMode = false,
+  onToggleReviewMode = () => {},
   onToggleTranslationVisibility = () => {},
   speechVoiceURIs
 }) {
@@ -70,23 +71,27 @@ export function DictionaryCatalogPanel({
     sourceCategories,
     filteredDictionaryProgress,
     learningLevelOverrides,
+    sourceEntriesByFilters,
     filteredSourceEntries: catalogFilteredEntries,
     setEntryLearningLevel
   } = catalog;
-  const shouldShowHiddenEntries = showHiddenEntries || catalog.showHiddenEntries;
-  const filteredSourceEntries = useMemo(() => shouldShowHiddenEntries
-    ? catalogFilteredEntries
-    : catalogFilteredEntries.filter((entry) => {
-    const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
-    const key = `${source}:${String(entry.word || '').toLocaleLowerCase()}`;
-    return !catalog.hiddenEntryKeys?.has(key);
-  }), [shouldShowHiddenEntries, catalogFilteredEntries, catalog.hiddenEntryKeys, selectedSourceLanguage]);
-  const visibleStudySessionEntries = useMemo(() => shouldShowHiddenEntries
-    ? catalog.studySessionEntries
-    : catalog.studySessionEntries.filter((entry) => {
+  const visibleByReviewMode = useMemo(() => {
+    const isHiddenEntry = (entry) => {
       const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
-      return !catalog.hiddenEntryKeys?.has(`${source}:${String(entry.word || '').toLocaleLowerCase()}`);
-    }), [shouldShowHiddenEntries, catalog.studySessionEntries, catalog.hiddenEntryKeys, selectedSourceLanguage]);
+      const key = `${source}:${String(entry.word || '').toLocaleLowerCase()}`;
+      return catalog.hiddenEntryKeys?.has(key);
+    };
+    return (entry) => {
+      if (!reviewMode) return !isHiddenEntry(entry);
+      const source = entry._learningSource || entry._catalogId || entry._catalogLanguage || selectedSourceLanguage;
+      return isHiddenEntry(entry)
+        && getEntryLearningLevel(entry, source, learningLevelOverrides) === MAX_LEARNING_LEVEL;
+    };
+  }, [reviewMode, catalog.hiddenEntryKeys, selectedSourceLanguage, learningLevelOverrides]);
+  const filteredSourceEntries = useMemo(() => (reviewMode ? sourceEntriesByFilters : catalogFilteredEntries || [])
+    .filter(visibleByReviewMode), [catalogFilteredEntries, sourceEntriesByFilters, reviewMode, visibleByReviewMode]);
+  const visibleStudySessionEntries = useMemo(() => (reviewMode ? sourceEntriesByFilters : catalog.studySessionEntries || [])
+    .filter(visibleByReviewMode), [reviewMode, sourceEntriesByFilters, catalog.studySessionEntries, visibleByReviewMode]);
   const [shuffledEntries, setShuffledEntries] = useState(() => shuffleEntries(filteredSourceEntries));
   const filteredEntryKeys = filteredSourceEntries.map(getCatalogEntryKey);
   const filteredEntrySignature = JSON.stringify([...filteredEntryKeys].sort());
@@ -230,6 +235,12 @@ export function DictionaryCatalogPanel({
           setLearningSessionEntries(shuffleEntries(entries));
         }}
         showSearchBar={showSearchBar}
+        reviewMode={reviewMode}
+        onToggleReviewMode={() => {
+          setSearchQuery('');
+          setDisplayedCardCount(cardsPerLoad);
+          onToggleReviewMode();
+        }}
         searchQuery={searchQuery}
         onSearchQueryChange={(value) => {
           setSearchQuery(value);

@@ -30,7 +30,8 @@ export const DEFAULT_DICTIONARY_SETTINGS = {
   examplesPerCard: 3,
   showWordRelations: true,
   showSearchBar: true,
-  showHiddenEntries: false
+  showHiddenEntries: false,
+  workOnline: false
 };
 
 function normalizeLoadedSettings(result) {
@@ -52,7 +53,8 @@ function normalizeLoadedSettings(result) {
       : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard,
     showWordRelations: result.showWordRelations !== false,
     showSearchBar: result.showSearchBar !== false,
-    showHiddenEntries: result.showHiddenEntries === true
+    showHiddenEntries: result.showHiddenEntries === true,
+    workOnline: result.workOnline === true
   };
 }
 
@@ -69,6 +71,7 @@ function normalizeSettingValue(key, value) {
     ),
     showSearchBar: (setting) => setting !== false,
     showHiddenEntries: (setting) => setting === true,
+    workOnline: (setting) => setting === true,
     examplesPerCard: (setting) => [0, 1, 2, 3].includes(Number(setting))
       ? Number(setting)
       : DEFAULT_DICTIONARY_SETTINGS.examplesPerCard
@@ -80,6 +83,7 @@ export function useDictionarySettings() {
   const [settings, setSettings] = useState(DEFAULT_DICTIONARY_SETTINGS);
   const [appliedSettings, setAppliedSettings] = useState(DEFAULT_DICTIONARY_SETTINGS);
   const [settingsStatus, setSettingsStatus] = useState('');
+  const [isOnlineSettingLoaded, setIsOnlineSettingLoaded] = useState(false);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
 
@@ -95,6 +99,7 @@ export function useDictionarySettings() {
       const loadedSettings = normalizeLoadedSettings(result);
       setSettings(loadedSettings);
       setAppliedSettings(loadedSettings);
+      setIsOnlineSettingLoaded(true);
       if (result.source === 'website') {
         setSettingsStatus('Настройки расширения недоступны: изменения сохраняются только на этом сайте.');
       }
@@ -111,6 +116,21 @@ export function useDictionarySettings() {
     if (['contentFontSize', 'additionalFontSize', 'hideTranslationsUntilHover'].includes(key)) {
       setAppliedSettings((current) => ({ ...current, [key]: nextValue }));
     }
+    if (key === 'workOnline' && isOnlineSettingLoaded && 'serviceWorker' in navigator) {
+      const appBasePath = new URL(import.meta.env.BASE_URL, window.location.origin);
+      if (nextValue) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations
+            .filter((registration) => registration.scope === appBasePath.href)
+            .forEach((registration) => registration.unregister());
+        });
+      } else if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+        navigator.serviceWorker.register(new URL('service-worker.js', appBasePath).href, {
+          scope: appBasePath.pathname
+        })
+          .catch((error) => console.error('Vocabee: could not enable offline mode', error));
+      }
+    }
 
     try {
       await saveDictionarySettings(nextSettings);
@@ -119,7 +139,7 @@ export function useDictionarySettings() {
       console.error('Vocabee: could not save dictionary settings', error);
       setSettingsStatus(`Не удалось сохранить настройки: ${error.message}`);
     }
-  }, []);
+  }, [isOnlineSettingLoaded]);
 
   const commitPendingSettings = useCallback(() => {
     setAppliedSettings(settingsRef.current);

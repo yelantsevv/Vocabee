@@ -739,6 +739,7 @@ export function useDictionaryCatalog() {
     hiddenEntryKeys,
     studySessionEntries,
     selectedSourceDictionary,
+    sourceEntriesByFilters,
     filteredDictionaryProgress,
     filteredSourceEntries,
     hideEntry,

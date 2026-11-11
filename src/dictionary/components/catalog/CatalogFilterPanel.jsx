@@ -13,6 +13,8 @@ export function CatalogFilterPanel({
   onOpenSettings,
   onStartLearning,
   showSearchBar = true,
+  reviewMode = false,
+  onToggleReviewMode = () => {},
   searchQuery = '',
   onSearchQueryChange = () => {},
   reverseDirection = false,
@@ -88,8 +90,17 @@ export function CatalogFilterPanel({
       aria-label='Фильтры словаря'
     >
       <FilteredProgressBar value={progressValue} mobilePinned />
-      {showSearchBar && (
-        <div className={styles.searchRow}>
+      <div className={styles.searchRow}>
+        <button
+          className={clsx(styles.searchVisibilityButton, styles.reviewModeButton, reviewMode && styles.searchVisibilityButtonVisible)}
+          type="button"
+          aria-pressed={reviewMode}
+          aria-label="Режим повторения"
+          title="Режим повторения"
+          onClick={onToggleReviewMode}
+        >↻</button>
+        {showSearchBar ? (
+          <>
           <button
             className={clsx(styles.searchVisibilityButton, !hideTranslationsUntilHover && styles.searchVisibilityButtonVisible)}
             type="button"
@@ -123,8 +134,16 @@ export function CatalogFilterPanel({
             />
             {searchQuery && <button type="button" aria-label="Очистить поиск" onClick={() => onSearchQueryChange('')}>×</button>}
           </label>
-        </div>
-      )}
+          </>
+        ) : (
+          <button
+            className={styles.searchDirectionButton}
+            type="button"
+            aria-label="Изменить направление изучения"
+            onClick={onToggleDirection}
+          >{reverseDirection ? `RU → ${directionLanguage.toUpperCase()}` : `${directionLanguage.toUpperCase()} → RU`}</button>
+        )}
+      </div>
       <div className={styles.filterControlsAnchor}>
         <div className={styles.mobileFiltersToggleSlot}>
           <button

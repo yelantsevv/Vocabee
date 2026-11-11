@@ -9,6 +9,7 @@ import { useDictionarySettings } from './hooks/useDictionarySettings.js';
 
 export function DictionaryPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [reviewMode, setReviewMode] = useState(false);
   const {
     settings,
     appliedSettings,
@@ -58,7 +59,8 @@ export function DictionaryPage() {
         examplesPerCard={appliedSettings.examplesPerCard}
         showWordRelations={appliedSettings.showWordRelations}
         showSearchBar={appliedSettings.showSearchBar}
-        showHiddenEntries={appliedSettings.showHiddenEntries}
+        reviewMode={reviewMode}
+        onToggleReviewMode={() => setReviewMode((enabled) => !enabled)}
         onToggleTranslationVisibility={() => updateSetting(
           'hideTranslationsUntilHover',
           !settings.hideTranslationsUntilHover

@@ -8,6 +8,34 @@
   padding: 12px 24px;
 }
 
+.modeSetting {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 0;
+  padding: 14px 2px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 13%, transparent);
+  color: var(--theme-text, #f3f4fc);
+  font-size: calc(var(--vocabee-font-size-body) * var(--vocabee-ui-font-scale, 1));
+}
+
+.modeSetting legend {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.modeSetting label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.modeSetting input {
+  accent-color: var(--theme-accent-solid, #a15cff);
+}
+
 .myDictionaryLanguage {
   display: flex;
   align-items: center;

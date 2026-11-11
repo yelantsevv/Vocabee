@@ -226,22 +226,34 @@ export function SettingsPanel({
             ))}
           </select>
         </label>
-        <label className={panelStyles.toggleSetting} htmlFor="show-dictionary-search">
-          <span>Показывать поиск в словаре</span>
+        <fieldset className={panelStyles.modeSetting}>
+          <legend>Панель каталога</legend>
+          <label>
+            <input
+              type="radio"
+              name="catalog-toolbar-mode"
+              checked={settings.showSearchBar}
+              onChange={() => updateSetting('showSearchBar', true)}
+            />
+            <span>Поиск</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="catalog-toolbar-mode"
+              checked={!settings.showSearchBar}
+              onChange={() => updateSetting('showSearchBar', false)}
+            />
+            <span>Направление изучения языка</span>
+          </label>
+        </fieldset>
+        <label className={panelStyles.toggleSetting} htmlFor="work-offline">
+          <span>Работать офлайн</span>
           <input
-            id="show-dictionary-search"
+            id="work-offline"
             type="checkbox"
-            checked={settings.showSearchBar}
-            onChange={(event) => updateSetting('showSearchBar', event.target.checked)}
-          />
-        </label>
-        <label className={panelStyles.toggleSetting} htmlFor="show-hidden-entries">
-          <span>Показывать скрытые карточки</span>
-          <input
-            id="show-hidden-entries"
-            type="checkbox"
-            checked={settings.showHiddenEntries}
-            onChange={(event) => updateSetting('showHiddenEntries', event.target.checked)}
+            checked={!settings.workOnline}
+            onChange={(event) => updateSetting('workOnline', !event.target.checked)}
           />
         </label>
         <label className={panelStyles.batchSizeSetting} htmlFor="examples-per-card">

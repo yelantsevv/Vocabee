@@ -80,6 +80,12 @@
   cursor: pointer;
 }
 
+.reviewModeButton {
+  flex: 0 0 42px;
+  font-size: 24px;
+  line-height: 1;
+}
+
 .searchVisibilityButton svg {
   width: 20px;
   height: 20px;
