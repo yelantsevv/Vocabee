@@ -51,25 +51,37 @@
   width: auto;
   min-height: 40px;
   flex: 0 0 42px;
-  padding: 0 12px;
+  padding: 0;
   white-space: nowrap;
 }
 
 .sessionStats {
   flex: 1 1 auto;
   display: flex;
-  min-width: 42px;
+  min-width: 0;
   min-height: 40px;
   align-items: center;
   justify-content: center;
+  gap: clamp(6px, 1.2vw, 12px);
   border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 38%, transparent);
-  border-radius: 10px;
+  border-radius: 13px;
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 12%, transparent);
   color: var(--theme-text, #f3f4fc);
-  font-size: 16px;
-  font-weight: 750;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 550;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.sessionStats strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.statsDivider,
+.statsTotal {
+  color: var(--theme-muted, #a5acc4);
 }
 
 .headerLearningLevel {
@@ -114,12 +126,8 @@
 
 .closeButton {
   width: 42px;
-  font-size: 27px;
+  font-size: 36px;
   line-height: 1;
-}
-
-.closeLabel {
-  display: none;
 }
 
 .card {
@@ -242,7 +250,7 @@
 }
 
 .translationHint {
-  margin: auto;
+  margin: 8px auto auto;
   color: var(--theme-muted, #aeb5cb);
   font-size: var(--vocabee-additional-font-size, 15px);
   line-height: 1.5;
@@ -360,16 +368,6 @@
   flex: 1 1 50%;
 }
 
-.knowledgeActions .hideEntryButton {
-  flex-basis: 100%;
-  min-height: 42px;
-  border-radius: 0;
-  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 22%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
-  color: var(--theme-text-soft, #e8eafa);
-  font-size: 14px;
-}
-
 .knowledgeActions button {
   position: relative;
   z-index: 1;
@@ -473,10 +471,10 @@
     width: auto;
     flex: 0 0 42px;
     min-height: 38px;
-    padding: 0 8px;
-    font-size: 11px;
+    padding: 0;
+    font-size: 36px;
     white-space: nowrap;
-    line-height: 1.1;
+    line-height: 1;
   }
 
 }
@@ -500,29 +498,17 @@
     width: auto;
     min-width: 42px;
     min-height: 40px;
-    padding: 0 4px;
-    font-size: 12px;
+    padding: 0;
+    font-size: 36px;
     white-space: nowrap;
     flex: 0 0 42px;
   }
 
   .sessionStats {
-    flex: 0 0 42px;
+    flex: 1 1 auto;
     min-height: 40px;
-    font-size: 15px;
-  }
-
-  .headerActions .closeButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .closeSymbol {
-    display: none;
-  }
-
-  .closeLabel {
-    display: inline;
+    gap: 6px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 }

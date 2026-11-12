@@ -29,6 +29,8 @@ export function LearningSessionModal({
     const level = getLearningLevel(item);
     return level > 0 && level < MAX_LEARNING_LEVEL;
   }).length;
+  const learnedCount = entries.filter((item) => getLearningLevel(item) === MAX_LEARNING_LEVEL).length;
+  const remainingCount = entries.length - inProgressCount - learnedCount;
   const example = entry?.examples?.[0];
   const translationExamples = entry?.examples?.slice(0, examplesPerCard) || [];
 
@@ -216,8 +218,15 @@ export function LearningSessionModal({
       >
         <header className={styles.header}>
           <div className={styles.headerActions}>
-            <div className={styles.sessionStats} aria-label={`В процессе изучения: ${inProgressCount}`} title="Карточек в процессе изучения">
-              {inProgressCount}
+            <div
+              className={styles.sessionStats}
+              aria-label={`В процессе ${inProgressCount}, выучено ${learnedCount}, осталось ${remainingCount} из ${entries.length}`}
+              title={`В процессе: ${inProgressCount} · Выучено: ${learnedCount} · Осталось: ${remainingCount}`}
+            >
+              <span><strong>{inProgressCount}</strong> учу</span>
+              <span className={styles.statsDivider} aria-hidden="true">·</span>
+              <span><strong>{learnedCount}</strong> выучено</span>
+              <span className={styles.statsTotal}>/ {entries.length}</span>
             </div>
             <button
               className={styles.directionButton}
@@ -225,10 +234,7 @@ export function LearningSessionModal({
               aria-label="Изменить направление перевода"
               onClick={() => onToggleDirection?.()}
             >{reverseDirection ? `RU → ${entryLanguage.toUpperCase()}` : `${entryLanguage.toUpperCase()} → RU`}</button>
-            <button className={styles.closeButton} type="button" onClick={onClose} aria-label='Закрыть изучение'>
-              <span className={styles.closeSymbol} aria-hidden="true">×</span>
-              <span className={styles.closeLabel}>Закрыть</span>
-            </button>
+            <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Закрыть изучение">×</button>
           </div>
         </header>
 
@@ -302,19 +308,20 @@ export function LearningSessionModal({
 
           <div className={styles.cardActions}>
             <div className={styles.knowledgeActions}>
-              {learningLevel === MAX_LEARNING_LEVEL && (
-                <button className={styles.hideEntryButton} type="button" onClick={() => {
-                  onHideEntry?.(entry);
-                  if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
-                  else onClose();
-                }}>Скрыть</button>
-              )}
               <button className={styles.dontKnowButton} type="button" onClick={() => rateAndContinue(learningLevel - 1)}>
                 Не знаю
               </button>
-              <button className={styles.knowButton} type="button" onClick={() => rateAndContinue(learningLevel + 1)}>
-                Знаю
-              </button>
+              {learningLevel === MAX_LEARNING_LEVEL ? (
+                <button className={styles.knowButton} type="button" onClick={() => {
+                  onHideEntry?.(entry);
+                  if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
+                  else onClose();
+                }}>Выучено</button>
+              ) : (
+                <button className={styles.knowButton} type="button" onClick={() => rateAndContinue(learningLevel + 1)}>
+                  Знаю
+                </button>
+              )}
             </div>
           </div>
         </div>

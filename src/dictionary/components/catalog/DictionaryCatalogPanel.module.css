@@ -11,9 +11,18 @@
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 1.5vw, 20px);
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%), transparent);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-text, #aeb5cb) var(--theme-border-soft-strength, 14%),
+      transparent
+    );
   border-radius: var(--vocabee-radius-panel);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%,
+    transparent
+  );
   padding: clamp(12px, 1.5vw, 20px);
 }
 
@@ -30,34 +39,58 @@
 }
 
 .searchRow {
-  display: flex;
-  width: min(100%, 640px);
-  align-self: center;
+  position: relative;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 48px minmax(220px, 1fr) minmax(104px, auto) minmax(
+      112px,
+      auto
+    );
+  grid-template-areas: "visibility search direction start";
   align-items: stretch;
-  gap: 8px;
-  margin-top: 24px;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.mobileSearchButton,
+.mobileSearchClose {
+  display: none;
 }
 
 .searchBar {
   display: flex;
   width: 100%;
   min-width: 0;
-  min-height: 42px;
+  min-height: 48px;
+  grid-area: search;
   align-items: center;
   align-self: center;
   gap: 10px;
   box-sizing: border-box;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
   border-radius: var(--vocabee-radius-control);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%,
+    transparent
+  );
   padding: 0 12px;
 }
 
 .searchDirectionButton {
-  flex: 0 0 auto;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  grid-area: direction;
+  border: 1px solid
+    color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
   border-radius: var(--vocabee-radius-control);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%,
+    transparent
+  );
   color: var(--theme-text-soft, #e8eafa);
   cursor: pointer;
   padding: 0 12px;
@@ -69,21 +102,30 @@
 
 .searchVisibilityButton {
   display: grid;
-  width: 42px;
-  min-width: 42px;
-  height: 42px;
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  grid-area: visibility;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
   border-radius: var(--vocabee-radius-control);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%,
+    transparent
+  );
   color: var(--theme-muted, #a5acc4);
   cursor: pointer;
 }
 
-.reviewModeButton {
-  flex: 0 0 42px;
-  font-size: 24px;
-  line-height: 1;
+.searchRow .startLearningButton {
+  width: auto;
+  min-width: 112px;
+  min-height: 48px;
+  grid-area: start;
+  border-radius: var(--vocabee-radius-control);
+  white-space: nowrap;
 }
 
 .searchVisibilityButton svg {
@@ -97,17 +139,34 @@
 }
 
 .searchVisibilityButtonVisible {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 60%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 60%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 12%,
+    var(--theme-surface, #141a2d)
+  );
   color: var(--theme-accent-text, #d2c4ff);
 }
 
 .searchDirectionButton:hover,
 .searchDirectionButton:focus-visible {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 65%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 65%,
+    transparent
+  );
 }
 
 .searchBar:focus-within {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 65%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 65%,
+    transparent
+  );
 }
 
 .searchBar input {
@@ -120,7 +179,9 @@
   font: inherit;
 }
 
-.searchBar input::placeholder { color: var(--theme-muted, #a5acc4); }
+.searchBar input::placeholder {
+  color: var(--theme-muted, #a5acc4);
+}
 
 .searchBar button {
   border: 0;
@@ -147,7 +208,7 @@
   width: 6px;
   height: 2px;
   background: currentColor;
-  content: '';
+  content: "";
   transform: rotate(45deg);
 }
 
@@ -175,7 +236,11 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--theme-accent-solid, #8b5cf6), var(--theme-success, #43d5b0));
+  background: linear-gradient(
+    90deg,
+    var(--theme-accent-solid, #8b5cf6),
+    var(--theme-success, #43d5b0)
+  );
   transition: width var(--vocabee-motion-normal, 200ms) ease;
 }
 
@@ -236,16 +301,25 @@
   height: 38px;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 50%;
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, var(--theme-panel, #202333));
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+    var(--theme-panel, #202333)
+  );
   color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 8px;
 }
 
 .myDictionaryRefreshButton:hover {
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 32%, var(--theme-panel, #202333));
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 32%,
+    var(--theme-panel, #202333)
+  );
 }
 
 .myDictionaryRefreshButton:disabled {
@@ -275,7 +349,9 @@
 }
 
 @keyframes dictionaryRefreshSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .emptyCatalog p {
@@ -284,9 +360,14 @@
 
 .emptyCatalog button {
   min-height: 42px;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 10px;
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 0 14px;
@@ -314,15 +395,27 @@
   min-height: var(--vocabee-filter-square-size);
   align-items: center;
   justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%),
+      transparent
+    );
   border-radius: var(--vocabee-radius-control);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%,
+    transparent
+  );
   color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 0 8px;
   font-size: 12px;
   font-weight: 650;
-  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
+  transition:
+    border-color var(--vocabee-motion-fast) ease,
+    background var(--vocabee-motion-fast) ease,
+    color var(--vocabee-motion-fast) ease;
 }
 
 .wordsViewButton,
@@ -347,14 +440,26 @@
 }
 
 .sourceViewButton.selected {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 72%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
 }
 
 .sourceViewButton:disabled {
   border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 2%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 2%,
+    transparent
+  );
   color: var(--theme-faint, #7f879e);
   cursor: not-allowed;
   opacity: 0.45;
@@ -362,8 +467,16 @@
 
 @media (hover: hover) and (pointer: fine) {
   .sourceViewButton:hover {
-    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--theme-accent, #a95bff) 72%,
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+      transparent
+    );
     color: var(--theme-text, #f3f4fc);
   }
 }
@@ -390,7 +503,7 @@
   gap: 6px;
 }
 
-.levelControls>.filterChips {
+.levelControls > .filterChips {
   display: flex;
   min-width: 0;
   flex: 0 0 auto;
@@ -410,27 +523,55 @@
 
 .filterChip {
   min-height: var(--vocabee-filter-square-size);
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%),
+      transparent
+    );
   border-radius: 9px;
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%,
+    transparent
+  );
   color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 0 10px;
   font-size: 12px;
   line-height: 1.25;
-  transition: border-color var(--vocabee-motion-fast) ease, background var(--vocabee-motion-fast) ease, color var(--vocabee-motion-fast) ease;
+  transition:
+    border-color var(--vocabee-motion-fast) ease,
+    background var(--vocabee-motion-fast) ease,
+    color var(--vocabee-motion-fast) ease;
 }
 
 .filterChip.selected {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 72%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .filterChip:hover {
-    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--theme-accent, #a95bff) 72%,
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+      transparent
+    );
     color: var(--theme-text, #f3f4fc);
   }
 }
@@ -456,8 +597,8 @@
 }
 
 .typeChip span,
-.progressButton>span,
-.startLearningButton>span {
+.progressButton > span,
+.startLearningButton > span {
   font-size: 11px;
   font-weight: 650;
   line-height: 1.1;
@@ -498,9 +639,18 @@
   justify-content: center;
   flex-direction: row;
   gap: 6px;
-  border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%), transparent);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-text, #aeb5cb) var(--theme-border-strength, 20%),
+      transparent
+    );
   border-radius: 9px;
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%,
+    transparent
+  );
   color: var(--theme-muted, #aeb5cb);
   cursor: pointer;
   padding: 4px;
@@ -519,9 +669,14 @@
   justify-content: center;
   flex-direction: row;
   gap: 5px;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 60%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-accent, #a95bff) 60%, transparent);
   border-radius: 9px;
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 24%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 24%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 8px 12px;
@@ -531,8 +686,16 @@
 
 @media (hover: hover) and (pointer: fine) {
   .startLearningButton:hover {
-    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 90%, transparent);
-    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 36%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--theme-accent, #a95bff) 90%,
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      rgb(var(--theme-tint-rgb, 119, 82, 255)) 36%,
+      transparent
+    );
   }
 }
 
@@ -542,15 +705,31 @@
 }
 
 .progressButton.selected {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 72%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .progressButton:hover {
-    border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
-    background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--theme-accent, #a95bff) 72%,
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%,
+      transparent
+    );
     color: var(--theme-text, #f3f4fc);
   }
 }
@@ -565,9 +744,14 @@
   min-height: 44px;
   align-self: center;
   margin: 16px 0 4px;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-accent, #a95bff) 55%, transparent);
   border-radius: 10px;
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 18%,
+    transparent
+  );
   color: var(--theme-text, #f3f4fc);
   cursor: pointer;
   padding: 0 18px;
@@ -576,8 +760,16 @@
 }
 
 .loadMoreButton:hover {
-  border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 85%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 30%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #a95bff) 85%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    rgb(var(--theme-tint-rgb, 119, 82, 255)) 30%,
+    transparent
+  );
 }
 
 .entrySection {
@@ -649,7 +841,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--theme-text, #aeb5cb) 10%, transparent);
   padding-top: 12px;
   color: var(--theme-muted, #aeb5cb);
   font-size: var(--vocabee-additional-font-size, 12px);
@@ -667,6 +860,94 @@
 }
 
 @container catalog-filters (max-width: 820px) {
+  .searchRow {
+    z-index: 1;
+    grid-template-columns: 44px 44px minmax(64px, 1fr) minmax(64px, 1fr);
+    grid-template-areas: "visibility searchToggle direction start";
+    gap: 6px;
+  }
+
+  .searchRowMobileOpen > :not(.searchBar) {
+    visibility: hidden;
+  }
+
+  .mobileSearchButton {
+    display: grid;
+    width: 44px;
+    height: 48px;
+    grid-area: searchToggle;
+    place-items: center;
+    border: 1px solid
+      color-mix(in srgb, var(--theme-text, #aeb5cb) 20%, transparent);
+    border-radius: var(--vocabee-radius-control);
+    background: color-mix(
+      in srgb,
+      rgb(var(--theme-overlay-rgb, 255, 255, 255)) 5%,
+      transparent
+    );
+    color: var(--theme-text-soft, #e8eafa);
+    cursor: pointer;
+  }
+
+  .mobileSearchButton svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  .searchRow:not(.searchRowMobileOpen) .searchBar {
+    display: none;
+  }
+
+  .searchRowMobileOpen .searchBar {
+    position: absolute;
+    z-index: 5;
+    inset: 0;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    background: var(--theme-surface, #141a2d);
+    box-shadow: 0 8px 24px color-mix(in srgb, #000 22%, transparent);
+  }
+
+  .mobileSearchClose {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    place-items: center;
+    border: 0;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--theme-text, #aeb5cb) 8%, transparent);
+    color: var(--theme-text-soft, #e8eafa);
+    cursor: pointer;
+    font-size: 22px;
+  }
+
+  .searchRow .searchDirectionButton {
+    width: 100%;
+    min-width: 0;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 11px;
+  }
+
+  .searchRow .searchVisibilityButton {
+    width: 44px;
+    min-width: 44px;
+    height: 48px;
+  }
+
+  .searchRow .startLearningButton {
+    width: 100%;
+    min-width: 0;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
 
   .filterLayout,
   .filterLeftGroup,
@@ -686,7 +967,7 @@
   }
 
   .filterLeftTopRow,
-  .filterRightGroup>* {
+  .filterRightGroup > * {
     width: 100%;
     min-width: 0;
     align-self: stretch;
@@ -716,8 +997,8 @@
     flex-direction: column;
   }
 
-  .levelControls>.filterChips,
-  .filterLeftGroup .levelControls>.filterChips {
+  .levelControls > .filterChips,
+  .filterLeftGroup .levelControls > .filterChips {
     display: flex;
     width: 100%;
     min-width: 0;
@@ -846,6 +1127,10 @@
 }
 
 @media (max-width: 759px) {
+  .searchRow {
+    margin-top: 24px;
+  }
+
   .exampleList li {
     flex-direction: column;
     gap: 3px;
@@ -857,7 +1142,6 @@
 }
 
 @container catalog-filters (max-width: 820px) {
-
   .typeChip,
   .progressButton,
   .startLearningButton {
@@ -874,8 +1158,8 @@
   }
 
   .typeChip span,
-  .progressButton>span,
-  .startLearningButton>span {
+  .progressButton > span,
+  .startLearningButton > span {
     font-size: 10px;
     line-height: 1.1;
     text-align: center;
@@ -915,7 +1199,7 @@
 
   .sourceViewButtons,
   .levelControls,
-  .levelControls>.filterChips,
+  .levelControls > .filterChips,
   .verbTypeChips,
   .progressFilters {
     display: flex;
@@ -1048,7 +1332,8 @@
     box-sizing: border-box;
     max-height: calc(100dvh - 48px);
     overflow: auto;
-    border: 1px solid color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--theme-text, #aeb5cb) 16%, transparent);
     border-radius: 0 0 var(--vocabee-radius-panel) var(--vocabee-radius-panel);
     background: var(--theme-surface, #171b30);
     box-shadow: 0 10px 28px color-mix(in srgb, #000 28%, transparent);
@@ -1082,7 +1367,8 @@
     transition: transform 160ms ease;
   }
 
-  .dictionaryFilters:not(.dictionaryFiltersMobileCollapsed) .mobileFiltersChevron {
+  .dictionaryFilters:not(.dictionaryFiltersMobileCollapsed)
+    .mobileFiltersChevron {
     transform: translateY(2px) rotate(225deg);
   }
 }

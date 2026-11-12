@@ -58,7 +58,6 @@ export function DictionaryPage() {
         hideTranslationsUntilHover={appliedSettings.hideTranslationsUntilHover}
         examplesPerCard={appliedSettings.examplesPerCard}
         showWordRelations={appliedSettings.showWordRelations}
-        showSearchBar={appliedSettings.showSearchBar}
         reviewMode={reviewMode}
         onToggleReviewMode={() => setReviewMode((enabled) => !enabled)}
         onToggleTranslationVisibility={() => updateSetting(

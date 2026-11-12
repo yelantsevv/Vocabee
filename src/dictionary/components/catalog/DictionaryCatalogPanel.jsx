@@ -49,7 +49,6 @@ export function DictionaryCatalogPanel({
   hideTranslationsUntilHover = true,
   examplesPerCard,
   showWordRelations,
-  showSearchBar = true,
   reviewMode = false,
   onToggleReviewMode = () => {},
   onToggleTranslationVisibility = () => {},
@@ -213,10 +212,6 @@ export function DictionaryCatalogPanel({
     setDisplayedCardCount(cardsPerLoad);
   }, [cardsPerLoad, filteredEntrySignature]);
 
-  useEffect(() => {
-    if (!showSearchBar && searchQuery) setSearchQuery('');
-  }, [showSearchBar, searchQuery]);
-
   return (
     <section
       className={clsx(commonStyles.content, styles.dictionaryContent)}
@@ -234,7 +229,6 @@ export function DictionaryCatalogPanel({
           enterMobileFullscreen();
           setLearningSessionEntries(shuffleEntries(entries));
         }}
-        showSearchBar={showSearchBar}
         reviewMode={reviewMode}
         onToggleReviewMode={() => {
           setSearchQuery('');

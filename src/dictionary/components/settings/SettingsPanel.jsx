@@ -226,27 +226,6 @@ export function SettingsPanel({
             ))}
           </select>
         </label>
-        <fieldset className={panelStyles.modeSetting}>
-          <legend>Панель каталога</legend>
-          <label>
-            <input
-              type="radio"
-              name="catalog-toolbar-mode"
-              checked={settings.showSearchBar}
-              onChange={() => updateSetting('showSearchBar', true)}
-            />
-            <span>Поиск</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="catalog-toolbar-mode"
-              checked={!settings.showSearchBar}
-              onChange={() => updateSetting('showSearchBar', false)}
-            />
-            <span>Направление изучения языка</span>
-          </label>
-        </fieldset>
         <label className={panelStyles.toggleSetting} htmlFor="work-offline">
           <span>Работать офлайн</span>
           <input

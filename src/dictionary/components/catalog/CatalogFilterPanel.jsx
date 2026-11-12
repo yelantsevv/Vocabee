@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './DictionaryCatalogPanel.module.css';
 import phraseCategories from '../../data/phrase-categories.json';
@@ -12,7 +12,6 @@ export function CatalogFilterPanel({
   progressValue,
   onOpenSettings,
   onStartLearning,
-  showSearchBar = true,
   reviewMode = false,
   onToggleReviewMode = () => {},
   searchQuery = '',
@@ -23,6 +22,10 @@ export function CatalogFilterPanel({
   onToggleTranslationVisibility = () => {}
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const searchRowRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const mobileSearchButtonRef = useRef(null);
   const {
     selectedSourceLanguage,
     catalogView,
@@ -78,6 +81,29 @@ export function CatalogFilterPanel({
     };
   }, [mobileFiltersOpen]);
 
+  useEffect(() => {
+    if (!mobileSearchOpen) return undefined;
+
+    searchInputRef.current?.focus();
+    const closeOnOutsidePress = (event) => {
+      if (!searchRowRef.current?.contains(event.target)) {
+        setMobileSearchOpen(false);
+      }
+    };
+    const closeOnEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      setMobileSearchOpen(false);
+      window.requestAnimationFrame(() => mobileSearchButtonRef.current?.focus());
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePress);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePress);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mobileSearchOpen]);
+
   return (
     <section
       ref={filtersRef}
@@ -90,59 +116,77 @@ export function CatalogFilterPanel({
       aria-label='Фильтры словаря'
     >
       <FilteredProgressBar value={progressValue} mobilePinned />
-      <div className={styles.searchRow}>
+      <div
+        ref={searchRowRef}
+        className={clsx(styles.searchRow, mobileSearchOpen && styles.searchRowMobileOpen)}
+      >
+            <button
+              className={clsx(styles.searchVisibilityButton, !hideTranslationsUntilHover && styles.searchVisibilityButtonVisible)}
+              type="button"
+              aria-label={hideTranslationsUntilHover ? 'Показать переводы' : 'Скрыть переводы'}
+              aria-pressed={!hideTranslationsUntilHover}
+              title={hideTranslationsUntilHover ? 'Показывать переводы' : 'Скрывать переводы'}
+              onClick={onToggleTranslationVisibility}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                {hideTranslationsUntilHover ? (
+                  <><path d="M3 3l18 18" /><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" /><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.2 0 9 5.7 9 7a10 10 0 0 1-2.2 3.1" /><path d="M6.2 6.2C3.9 7.7 3 10.4 3 12c0 1.3 3.8 7 9 7 1 0 1.9-.2 2.7-.6" /></>
+                ) : (
+                  <><path d="M2.5 12s3.2-7 9.5-7 9.5 7 9.5 7-3.2 7-9.5 7-9.5-7-9.5-7Z" /><circle cx="12" cy="12" r="3" /></>
+                )}
+              </svg>
+            </button>
+            <button
+              ref={mobileSearchButtonRef}
+              className={styles.mobileSearchButton}
+              type="button"
+              aria-label={mobileSearchOpen ? 'Поиск открыт' : 'Открыть поиск'}
+              aria-controls="dictionary-mobile-search"
+              aria-expanded={mobileSearchOpen}
+              onClick={() => setMobileSearchOpen(true)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="10.8" cy="10.8" r="6.8" />
+                <path d="m16 16 4.5 4.5" />
+              </svg>
+            </button>
+            <div className={styles.searchBar}>
+              <span className={styles.searchBarIcon} aria-hidden="true" />
+              <input
+                ref={searchInputRef}
+                id="dictionary-mobile-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => onSearchQueryChange(event.target.value)}
+                placeholder="Поиск по словам и переводу"
+                aria-label="Поиск по словам и переводу"
+              />
+              {searchQuery && <button type="button" aria-label="Очистить поиск" onClick={() => onSearchQueryChange('')}>×</button>}
+              <button
+                className={styles.mobileSearchClose}
+                type="button"
+                aria-label="Закрыть поиск"
+                onClick={() => {
+                  setMobileSearchOpen(false);
+                  window.requestAnimationFrame(() => mobileSearchButtonRef.current?.focus());
+                }}
+              >×</button>
+            </div>
+            <button
+              className={styles.searchDirectionButton}
+              type="button"
+              aria-label="Изменить направление изучения"
+              title="Изменить направление изучения"
+              onClick={onToggleDirection}
+            >{reverseDirection ? `RU → ${directionLanguage.toUpperCase()}` : `${directionLanguage.toUpperCase()} → RU`}</button>
         <button
-          className={clsx(styles.searchVisibilityButton, styles.reviewModeButton, reviewMode && styles.searchVisibilityButtonVisible)}
+          className={styles.startLearningButton}
           type="button"
-          aria-pressed={reviewMode}
-          aria-label="Режим повторения"
-          title="Режим повторения"
-          onClick={onToggleReviewMode}
-        >↻</button>
-        {showSearchBar ? (
-          <>
-          <button
-            className={clsx(styles.searchVisibilityButton, !hideTranslationsUntilHover && styles.searchVisibilityButtonVisible)}
-            type="button"
-            aria-label={hideTranslationsUntilHover ? 'Показать переводы' : 'Скрыть переводы'}
-            aria-pressed={!hideTranslationsUntilHover}
-            title={hideTranslationsUntilHover ? 'Показывать переводы' : 'Скрывать переводы'}
-            onClick={onToggleTranslationVisibility}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              {hideTranslationsUntilHover ? (
-                <><path d="M3 3l18 18" /><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" /><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.2 0 9 5.7 9 7a10 10 0 0 1-2.2 3.1" /><path d="M6.2 6.2C3.9 7.7 3 10.4 3 12c0 1.3 3.8 7 9 7 1 0 1.9-.2 2.7-.6" /></>
-              ) : (
-                <><path d="M2.5 12s3.2-7 9.5-7 9.5 7 9.5 7-3.2 7-9.5 7-9.5-7-9.5-7Z" /><circle cx="12" cy="12" r="3" /></>
-              )}
-            </svg>
-          </button>
-          <button
-            className={styles.searchDirectionButton}
-            type="button"
-            aria-label="Изменить направление изучения"
-            onClick={onToggleDirection}
-          >{reverseDirection ? `RU → ${directionLanguage.toUpperCase()}` : `${directionLanguage.toUpperCase()} → RU`}</button>
-          <label className={styles.searchBar}>
-            <span className={styles.searchBarIcon} aria-hidden="true" />
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(event) => onSearchQueryChange(event.target.value)}
-              placeholder="Поиск по словам и переводу"
-              aria-label="Поиск по словам и переводу"
-            />
-            {searchQuery && <button type="button" aria-label="Очистить поиск" onClick={() => onSearchQueryChange('')}>×</button>}
-          </label>
-          </>
-        ) : (
-          <button
-            className={styles.searchDirectionButton}
-            type="button"
-            aria-label="Изменить направление изучения"
-            onClick={onToggleDirection}
-          >{reverseDirection ? `RU → ${directionLanguage.toUpperCase()}` : `${directionLanguage.toUpperCase()} → RU`}</button>
-        )}
+          aria-label="Начать изучение"
+          title="Начать изучение"
+          disabled={studySessionEntries.length === 0}
+          onClick={startLearning}
+        ><span>Начать</span></button>
       </div>
       <div className={styles.filterControlsAnchor}>
         <div className={styles.mobileFiltersToggleSlot}>
@@ -273,13 +317,13 @@ export function CatalogFilterPanel({
               ><span>{label}</span></button>
             ))}
             <button
-              className={styles.startLearningButton}
+              className={clsx(styles.progressButton, styles.reviewModeFilterButton, reviewMode && styles.selected)}
               type="button"
-              aria-label='Начать изучение'
-              title='Начать изучение'
-              disabled={studySessionEntries.length === 0}
-              onClick={startLearning}
-            ><span>Начать</span></button>
+              aria-pressed={reviewMode}
+              aria-label="Режим повторения"
+              title="Режим повторения"
+              onClick={onToggleReviewMode}
+            ><span>Повтор</span></button>
           </div>
         </div>
         </div>
