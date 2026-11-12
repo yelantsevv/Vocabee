@@ -79,8 +79,7 @@
   font-weight: 800;
 }
 
-.statsDivider,
-.statsTotal {
+.statsDivider {
   color: var(--theme-muted, #a5acc4);
 }
 
@@ -157,6 +156,53 @@
   overflow: auto;
   padding: 12px;
   scrollbar-gutter: stable;
+}
+
+.cardLearningProgress {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  pointer-events: none;
+}
+
+.cardLearningProgressFill {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(var(--theme-accent-solid, #8b5cf6) var(--progress-angle), color-mix(in srgb, var(--theme-text, #aeb5cb) 18%, transparent) 0);
+}
+
+.cardLearningProgressFill > span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--theme-surface, #141a2d);
+  color: var(--theme-accent-text, #e2d8ff);
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardLearningProgressLearned {
+  border: 1px solid rgba(83, 211, 161, 0.4);
+  border-radius: 50%;
+  background: rgba(83, 211, 161, 0.13);
+  color: #78e2ae;
+}
+
+.cardLearningProgressCheck {
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .englishBlock,
@@ -433,6 +479,19 @@
   .cardContent {
     gap: 10px;
     padding: 12px;
+  }
+
+  .cardLearningProgress {
+    top: 10px;
+    right: 10px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .cardLearningProgressFill > span {
+    width: 38px;
+    height: 38px;
+    font-size: 11px;
   }
 
   .englishBlock {

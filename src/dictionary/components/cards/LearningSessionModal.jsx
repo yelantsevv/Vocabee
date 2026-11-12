@@ -19,18 +19,22 @@ export function LearningSessionModal({
   const [translationVisible, setTranslationVisible] = useState(false);
   const [translationClickArmed, setTranslationClickArmed] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  const [hiddenEntryKeys, setHiddenEntryKeys] = useState(() => new Set());
   const audioRef = useRef(null);
   const touchStartRef = useRef(null);
   const entry = entries[currentIndex];
   const entryLanguage = entry?._catalogLanguage || entry?.source_language || 'en';
   const spokenText = String(entry?.word || entry?.examples?.[0]?.phrase || '').trim();
   const learningLevel = entry ? getLearningLevel(entry) : 0;
+  const getSessionEntryKey = (item) => `${item?._learningSource || item?._catalogId || item?._catalogLanguage || item?.source_language || ''}:${String(item?.word || '').toLocaleLowerCase()}`;
   const inProgressCount = entries.filter((item) => {
+    if (hiddenEntryKeys.has(getSessionEntryKey(item))) return false;
     const level = getLearningLevel(item);
     return level > 0 && level < MAX_LEARNING_LEVEL;
   }).length;
-  const learnedCount = entries.filter((item) => getLearningLevel(item) === MAX_LEARNING_LEVEL).length;
-  const remainingCount = entries.length - inProgressCount - learnedCount;
+  const learnedCount = entries.filter((item) => (
+    !hiddenEntryKeys.has(getSessionEntryKey(item)) && getLearningLevel(item) === MAX_LEARNING_LEVEL
+  )).length;
   const example = entry?.examples?.[0];
   const translationExamples = entry?.examples?.slice(0, examplesPerCard) || [];
 
@@ -82,6 +86,13 @@ export function LearningSessionModal({
     onSetLearningLevel(entry, nextLevel);
     setTranslationVisible(false);
     setTranslationClickArmed(false);
+    if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
+    else onClose();
+  }
+
+  function hideAndContinue() {
+    onHideEntry?.(entry);
+    setHiddenEntryKeys((current) => new Set(current).add(getSessionEntryKey(entry)));
     if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
     else onClose();
   }
@@ -220,13 +231,12 @@ export function LearningSessionModal({
           <div className={styles.headerActions}>
             <div
               className={styles.sessionStats}
-              aria-label={`В процессе ${inProgressCount}, выучено ${learnedCount}, осталось ${remainingCount} из ${entries.length}`}
-              title={`В процессе: ${inProgressCount} · Выучено: ${learnedCount} · Осталось: ${remainingCount}`}
+              aria-label={`В процессе ${inProgressCount}, выучено ${learnedCount}`}
+              title={`В процессе: ${inProgressCount} · Выучено: ${learnedCount}`}
             >
               <span><strong>{inProgressCount}</strong> учу</span>
               <span className={styles.statsDivider} aria-hidden="true">·</span>
               <span><strong>{learnedCount}</strong> выучено</span>
-              <span className={styles.statsTotal}>/ {entries.length}</span>
             </div>
             <button
               className={styles.directionButton}
@@ -245,6 +255,23 @@ export function LearningSessionModal({
           onTouchCancel={() => { touchStartRef.current = null; }}
         >
           <div className={styles.cardContent}>
+            <div
+              className={`${styles.cardLearningProgress} ${learningLevel === MAX_LEARNING_LEVEL ? styles.cardLearningProgressLearned : ''}`}
+              role={learningLevel === MAX_LEARNING_LEVEL ? undefined : 'meter'}
+              aria-label={learningLevel === MAX_LEARNING_LEVEL ? 'Слово выучено' : `Прогресс обучения: ${learningLevel} из ${MAX_LEARNING_LEVEL}`}
+              aria-valuemin={learningLevel === MAX_LEARNING_LEVEL ? undefined : 0}
+              aria-valuemax={learningLevel === MAX_LEARNING_LEVEL ? undefined : MAX_LEARNING_LEVEL}
+              aria-valuenow={learningLevel === MAX_LEARNING_LEVEL ? undefined : learningLevel}
+              title={learningLevel === MAX_LEARNING_LEVEL ? 'Выучено' : `Прогресс обучения: ${learningLevel} из ${MAX_LEARNING_LEVEL}`}
+            >
+              {learningLevel === MAX_LEARNING_LEVEL ? (
+                <span className={styles.cardLearningProgressCheck} aria-hidden="true">✓</span>
+              ) : (
+                <span className={styles.cardLearningProgressFill} style={{ '--progress-angle': `${learningLevel / MAX_LEARNING_LEVEL * 360}deg` }}>
+                  <span>{learningLevel}/{MAX_LEARNING_LEVEL}</span>
+                </span>
+              )}
+            </div>
             {['en', 'de'].includes(entryLanguage) ? (
               <section
                 className={styles.englishBlock}
@@ -312,11 +339,7 @@ export function LearningSessionModal({
                 Не знаю
               </button>
               {learningLevel === MAX_LEARNING_LEVEL ? (
-                <button className={styles.knowButton} type="button" onClick={() => {
-                  onHideEntry?.(entry);
-                  if (currentIndex < entries.length - 1) setCurrentIndex(currentIndex + 1);
-                  else onClose();
-                }}>Выучено</button>
+                <button className={styles.knowButton} type="button" onClick={hideAndContinue}>Выучено</button>
               ) : (
                 <button className={styles.knowButton} type="button" onClick={() => rateAndContinue(learningLevel + 1)}>
                   Знаю
