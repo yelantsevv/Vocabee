@@ -23,7 +23,7 @@ function isLocalDictionaryUrl(url) {
   return url.protocol === 'http:'
     && url.port === '5173'
     && ['localhost', '127.0.0.1'].includes(url.hostname)
-    && url.pathname === '/dictionary/dictionary.html';
+    && url.pathname === '/index.html';
 }
 
 function isSupportedUrl(value) {

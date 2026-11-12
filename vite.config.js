@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
     outDir: resolve(projectRoot, 'dist/dictionary'),
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(dictionaryDirectory, mode === 'github-pages' ? 'index.html' : 'dictionary.html')
+      input: resolve(dictionaryDirectory, 'index.html')
     }
   }
 }));

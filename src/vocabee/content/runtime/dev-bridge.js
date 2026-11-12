@@ -4,7 +4,7 @@
     && window.location.port === '5173'
     && ['localhost', '127.0.0.1'].includes(window.location.hostname);
   const isLocalDictionary = isLocalHost
-    && ['/dictionary', '/dictionary/', '/dictionary/dictionary.html'].includes(window.location.pathname);
+    && ['/', '/index.html'].includes(window.location.pathname);
   const isPublishedDictionary = window.location.protocol === 'https:'
     && window.location.hostname === 'yelantsevv.github.io'
     && ['/Vocabee/', '/Vocabee/index.html'].includes(window.location.pathname);

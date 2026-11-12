@@ -25,6 +25,10 @@ export function LearningSessionModal({
   const entryLanguage = entry?._catalogLanguage || entry?.source_language || 'en';
   const spokenText = String(entry?.word || entry?.examples?.[0]?.phrase || '').trim();
   const learningLevel = entry ? getLearningLevel(entry) : 0;
+  const inProgressCount = entries.filter((item) => {
+    const level = getLearningLevel(item);
+    return level > 0 && level < MAX_LEARNING_LEVEL;
+  }).length;
   const example = entry?.examples?.[0];
   const translationExamples = entry?.examples?.slice(0, examplesPerCard) || [];
 
@@ -212,12 +216,9 @@ export function LearningSessionModal({
       >
         <header className={styles.header}>
           <div className={styles.headerActions}>
-            <button
-              className={styles.learnedButton}
-              type="button"
-              onClick={() => rateAndContinue(MAX_LEARNING_LEVEL)}
-              disabled={learningLevel === MAX_LEARNING_LEVEL}
-            >{learningLevel === MAX_LEARNING_LEVEL ? '✓ Изучено' : '✓  Изученное'}</button>
+            <div className={styles.sessionStats} aria-label={`В процессе изучения: ${inProgressCount}`} title="Карточек в процессе изучения">
+              {inProgressCount}
+            </div>
             <button
               className={styles.directionButton}
               type="button"

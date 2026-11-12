@@ -47,12 +47,28 @@
   margin-left: 0;
 }
 
-.headerActions .learnedButton,
 .headerActions .closeButton {
   width: auto;
   min-height: 40px;
-  flex: 1 1 0;
+  flex: 0 0 42px;
   padding: 0 12px;
+  white-space: nowrap;
+}
+
+.sessionStats {
+  flex: 1 1 auto;
+  display: flex;
+  min-width: 42px;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #a95bff) 38%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 12%, transparent);
+  color: var(--theme-text, #f3f4fc);
+  font-size: 16px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -297,7 +313,6 @@
   }
 }
 
-.learnedButton,
 .directionButton,
 .knowledgeActions button {
   box-sizing: border-box;
@@ -327,8 +342,7 @@
   width: 100%;
 }
 
-.knowledgeActions button,
-.learnedButton {
+.knowledgeActions button {
   width: 100%;
 }
 
@@ -382,23 +396,13 @@
   background: rgba(67, 213, 176, 0.12) !important;
 }
 
-.knowledgeActions button:disabled,
-.learnedButton:disabled {
+.knowledgeActions button:disabled {
   cursor: default;
   opacity: 0.48;
 }
 
-.learnedButton {
-  min-height: 46px;
-  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 22%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 4%, transparent);
-  color: var(--theme-muted, #b8bfd2);
-  font-size: 13px;
-}
-
 .closeButton:hover,
-.knowledgeActions button:not(:disabled):hover,
-.learnedButton:not(:disabled):hover {
+.knowledgeActions button:not(:disabled):hover {
   border-color: color-mix(in srgb, var(--theme-accent, #a95bff) 72%, transparent);
   background: color-mix(in srgb, rgb(var(--theme-tint-rgb, 119, 82, 255)) 20%, transparent);
 }
@@ -411,12 +415,6 @@
 .knowButton:not(:disabled):hover {
   border-color: rgba(67, 213, 176, 0.75) !important;
   background: rgba(67, 213, 176, 0.2) !important;
-}
-
-.learnedButton:not(:disabled):hover {
-  border-color: color-mix(in srgb, var(--theme-text, #aeb5cb) 38%, transparent);
-  background: color-mix(in srgb, rgb(var(--theme-overlay-rgb, 255, 255, 255)) 8%, transparent);
-  color: var(--theme-text-soft, #e8eafa);
 }
 
 @media (max-width: 1260px) {
@@ -471,12 +469,13 @@
     margin-left: 0;
   }
 
-  .headerActions .learnedButton,
   .headerActions .closeButton {
+    width: auto;
+    flex: 0 0 42px;
     min-height: 38px;
     padding: 0 8px;
     font-size: 11px;
-    white-space: normal;
+    white-space: nowrap;
     line-height: 1.1;
   }
 
@@ -496,15 +495,21 @@
     flex: 0 0 100%;
   }
 
-  .headerActions .learnedButton,
   .headerActions .closeButton {
     box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
+    width: auto;
+    min-width: 42px;
     min-height: 40px;
     padding: 0 4px;
     font-size: 12px;
     white-space: nowrap;
+    flex: 0 0 42px;
+  }
+
+  .sessionStats {
+    flex: 0 0 42px;
+    min-height: 40px;
+    font-size: 15px;
   }
 
   .headerActions .closeButton {
